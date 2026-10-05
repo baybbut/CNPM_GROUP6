@@ -131,3 +131,29 @@
     height: 200px;
   }
 }
+/* Trạng thái trước khi hiện */
+.welcome .gallery .art.art-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+
+  transition:
+    opacity 1600ms ease,
+    transform 850ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Trạng thái sau khi cuộn đến */
+.welcome .gallery .art.art-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tôn trọng cài đặt giảm chuyển động của người dùng */
+@media (prefers-reduced-motion: reduce) {
+  .welcome .gallery .art.art-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
