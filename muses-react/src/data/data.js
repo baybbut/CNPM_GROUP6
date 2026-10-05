@@ -14,10 +14,10 @@ import img10 from "../../tranh/tranhsonmai/THIEUNUBENHOAPHUDUNG.jpg";
 export const NAV_LINKS = ["visit", "exhibition", "explore"];
 
 export const HIGHLIGHTS = [
-  { id: 1, date: "6/10 - 14/10", img: img1, cls: "h1" },
-  { id: 2, date: "4/10 - 1/11", img: img2,  cls: "h2" },
-  { id: 3, date: "26/9 - 2/10", img: img3, cls: "h3" },
-  { id: 4, date: "14/10 - 31/10", img: img4, cls: "h4" },
+  { id: 1, date: "6/10 - 14/10", img: img1, cls: "h1" , title:"Triển lãm tranh 'Văn Giáo trên những nẻo đường'"},
+  { id: 2, date: "4/10 - 1/11", img: img2,  cls: "h2", title:" Triển lãm tranh 'Sắc Nước Huơng Trời'" },
+  { id: 3, date: "26/9 - 2/10", img: img3, cls: "h3", title:"Triển lãm Sơn Mài Sài Gòn lần thứ 4" },
+  { id: 4, date: "14/10 - 31/10", img: img4, cls: "h4", title:"Triển lãm tranh 'Nàng Sen'" },
 ];
 
 export const GALLERY = [
