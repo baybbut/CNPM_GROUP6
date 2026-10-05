@@ -1,0 +1,133 @@
+.welcome {
+  background: var(--black);
+  color: #fff;
+  padding: 40px 7.4% 28px;
+  text-align: center;
+  container-type: inline-size;
+}
+
+/* Tiêu đề */
+.welcome .title {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 28px;
+  padding: 0 24px 5px 0;
+  text-align: left;
+  font-size: clamp(22px, 4.4cqw, 44px);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+
+/* Khung tranh co giãn theo chiều rộng */
+.welcome .gallery {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 616 / 328;
+  margin-bottom: 16px;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+/* Giữ tranh ở đúng tọa độ trong gallery */
+.welcome .gallery .art {
+  position: absolute;
+  margin: 0;
+  background-repeat: no-repeat;
+}
+
+/* Tranh trên cùng bên trái */
+.welcome .gallery .g1 {
+  left: 0;
+  top: 0;
+  width: 22.2%;
+  height: 61%;
+}
+
+/* Tranh cô gái */
+.welcome .gallery .g2 {
+  left: 23%;
+  top: 11.3%;
+  width: 22.2%;
+  height: 49.7%;
+}
+
+/* Tranh cao ở giữa */
+.welcome .gallery .g3 {
+  left: 46.3%;
+  top: 17.4%;
+  width: 29.4%;
+  height: 82.6%;
+}
+
+/* Tranh trên cùng bên phải */
+.welcome .gallery .g4 {
+  left: 76.5%;
+  top: 0;
+  width: 23.5%;
+  height: 75%;
+}
+
+/* Tranh ngang phía dưới bên trái */
+.welcome .gallery .g5 {
+  left: 0;
+  top: 63%;
+  width: 45.2%;
+  height: 37%;
+}
+
+/* Tranh nhỏ phía dưới bên phải */
+.welcome .gallery .g6 {
+  left: 76.5%;
+  top: 76.5%;
+  width: 23.5%;
+  height: 23.5%;
+}
+
+/* Nút Explore */
+.welcome .btn-white {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+
+/* Điện thoại: chuyển sang lưới để tranh dễ nhìn */
+@media (max-width: 600px) {
+  .welcome {
+    padding: 32px 20px;
+  }
+
+  .welcome .title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .welcome .gallery {
+    aspect-ratio: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .welcome .gallery .art {
+    position: static;
+    width: 100%;
+    height: 200px;
+  }
+}

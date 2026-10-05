@@ -1,0 +1,10 @@
+.prepare{
+    padding:60px 5% 70px;
+    color:#fff;
+    min-height:460px;
+    background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)), url("../../../tranh/TRUONGCAPHO.jpg");
+    background-position: 0% 75%;
+}
+.prepare h2{font-size:clamp(30px,3.6vw,40px);font-weight:500}
+.prepare p{margin:14px 0 50px;max-width:380px;font-size:20px;line-height:1.5;font-weight:300}
+.prepare .btn{padding:20px 48px}

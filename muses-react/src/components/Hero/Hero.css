@@ -1,0 +1,40 @@
+.hero
+{position:relative;
+  padding-top:80px}
+.hero-img
+{height:min(62vw,560px);
+   background:center / cover url(../../../tranh/HOANHACTRONGGIADINHOHUE.jpg); 
+   background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  clip-path:url(#heroClip);
+  margin-top:-10px}
+.welcome-bar
+{display:flex;
+  align-items:center;
+  gap:32px;background:var(--dark);
+  color:#fff;margin-left:max(0px,39.5%);
+  padding:28px 24px}
+[dir="rtl"] 
+.welcome-bar
+{margin-left:0;
+  margin-right:max(0px,39.5%)}
+.welcome-text
+{display:flex;
+  flex-direction:column;
+  gap:6px;padding-inline-end:32px;
+  border-inline-end:1px solid rgba(255,255,255,.2);
+  line-height:1.5}
+.welcome-text strong
+{font-weight:500;
+  font-size:17px}
+.welcome-actions
+{display:flex;
+  flex-direction:column;
+  gap:14px;flex:1}
+.welcome-actions .btn{padding:12px 20px;font-size:14px}
+
+@media (max-width:900px){
+  .welcome-bar,[dir="rtl"] .welcome-bar{margin:0;flex-direction:column;align-items:stretch}
+  .welcome-text{border:0;padding:0}
+}

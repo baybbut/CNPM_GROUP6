@@ -1,0 +1,12 @@
+.footer{position:relative;background:#050505;color:#fff;padding:44px 5% 40px}
+.f-cols{display:flex;gap:80px;padding-inline-start:min(27%,240px);flex-wrap:wrap}
+.footer h4{font-family:var(--serif);font-weight:400;font-size:20px;letter-spacing:.08em;margin-bottom:8px}
+.footer a{display:block;margin-bottom:6px;font-size:15px}
+.socials{display:flex;gap:12px}
+.footer .social{width:42px;height:42px;border:1.5px solid #fff;border-radius:50%;display:grid;place-items:center;margin:0;font-size:13px}
+.f-logo{font-family:var(--serif);font-size:48px;margin-top:70px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.35)}
+.to-top{position:absolute;right:24px;top:-50px;width:52px;height:52px;border-radius:50%;background:rgba(200,200,205,.8);color:#222;font-size:22px}
+
+@media (max-width:900px){
+  .f-cols{padding-inline-start:0;gap:40px}
+}

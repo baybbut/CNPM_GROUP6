@@ -1,0 +1,23 @@
+/* Style dùng chung: biến, reset, nút, tiêu đề */
+@import url('https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap'); /*tải font Kalnia về */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');/* font poppins */
+
+:root{
+  --cream:#ecebc4; --sand:#9c9474; --brown:#8a6a3b; --dark:#3b3022; --black:#000;
+  --serif: "Kalnia", Georgia, serif; /*font chữ cho tiêu đề*/
+  --sans:"Jost",system-ui,sans-serif; /*font chữ cho nội dung*/
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans),"Noto Sans","Noto Sans JP","Noto Sans KR","Noto Sans SC","Noto Sans Thai","Noto Sans Arabic","Noto Sans Devanagari",sans-serif;background:var(--cream);color:#222;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--brown);outline-offset:2px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 28px;border-radius:999px;font-size:15px}
+.btn-brown{background:var(--brown);color:#fff}
+.btn-grey{background:rgba(200,200,205,.75);color:#222}
+.btn-white{background:#fff;color:#000;letter-spacing:.12em;padding:16px 38px;border-radius:12px}
+
+.title{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4vw,44px);letter-spacing:.06em;display:inline-block;padding-bottom:8px;border-bottom:1px solid currentColor;padding-right:24px}
+.title.dark{color:var(--dark)}
+.title.light{color:#fff}
