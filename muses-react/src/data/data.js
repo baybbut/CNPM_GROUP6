@@ -7,11 +7,15 @@ import img5 from "../../tranh/XUANVEHOITU.jpg";
 import img6 from "../../tranh/EMTHUY.jpeg";
 import img7 from "../../tranh/THIEUNUBENHOAHUE.jpg";
 import img8 from "../../tranh/THIEUNUBENHOASEN.jpg";
-import img9 from "../../tranh/XUANHOGUOM.jpeg";
+import img9 from "../../tranh/tranhsonmai/XUANHOGUOM.jpeg";
 import img10 from "../../tranh/tranhsonmai/THIEUNUBENHOAPHUDUNG.jpg";
 
 
-export const NAV_LINKS = ["visit", "exhibition", "explore"];
+export const NAV_LINKS = [
+  { key: "visit", to: "/visit" },
+  { key: "exhibition", to: "/exhibition" },
+    { key: "explore", to: "/explore" },
+];
 
 export const HIGHLIGHTS = [
   { id: 1, date: "6/10 - 14/10", img: img1, cls: "h1" , title:"Triển lãm tranh 'Văn Giáo trên những nẻo đường'"},

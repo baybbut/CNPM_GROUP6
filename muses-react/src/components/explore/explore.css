@@ -1,0 +1,55 @@
+.xp{padding-top:80px;background:var(--cream)}
+.xp-pic{background-size:cover;background-position:center}
+
+/* HERO: muốn dùng ảnh thật, điền HERO_IMG trong exploreData.js */
+.xp-hero{height:61vw;min-height:320px;max-height:840px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 4.5% 9%;
+  background:linear-gradient(rgba(90,70,50,.25),rgba(90,70,50,.25)),linear-gradient(120deg,#9a6a4a,#c9a27a 45%,#6a7a8a);
+  background-size:cover;background-position:center;color:#2a2418}
+.xp-hero h1{font-size:clamp(22px,3.4vw,44px);font-weight:600;letter-spacing:.04em}
+.xp-hero p{font-size:clamp(18px,2.4vw,32px);font-weight:300;padding-left:1.2%;margin-top:10px}
+
+/* BREADCRUMB */
+.xp-crumb{display:flex;align-items:center;gap:14px;padding:28px 3.5%;font-size:12px;letter-spacing:.06em}
+
+/* TRANG EXPLORE */
+.xp-big{display:flex;align-items:center;gap:6%;width:61%;margin:70px auto 80px;padding:20px 26px;background:#cfcfb0;border-radius:14px}
+.xp-big-pic{width:26%;aspect-ratio:195 / 97;flex:none}
+.xp-big span{flex:1;font-size:clamp(16px,1.9vw,24px);letter-spacing:.05em}
+.xp-big i{width:72px;height:72px;border:1px solid #222;border-radius:50%;display:grid;place-items:center;flex:none}
+.xp-text{width:78%;margin:0 auto;padding-bottom:140px;font-size:clamp(15px,1.6vw,21px);line-height:1.7;letter-spacing:.03em}
+
+/* TRANG COLLECTION: tìm kiếm */
+.xp-search{display:flex;align-items:center;width:57.5%;margin:28px auto 36px;height:58px;border:1px solid #222;padding:0 22px}
+.xp-search input{flex:1;background:none;border:0;font:inherit;font-size:clamp(14px,1.7vw,20px);letter-spacing:.04em;outline:none}
+
+/* 3 bộ sưu tập lớn */
+.xp-cols{display:grid;grid-template-columns:1fr 1fr;column-gap:6.6%;row-gap:38px;padding:0 7.5%}
+.xp-col .xp-pic{aspect-ratio:335 / 173}
+.xp-col h3{background:#cfcfb0;min-height:97px;padding:22px 22px;font-weight:400;font-size:clamp(16px,2.2vw,24px);letter-spacing:.06em}
+
+/* THEME COLLECTION */
+.xp-themehead{display:flex;align-items:center;gap:30px;padding:0 5.8%;margin:80px 0 56px}
+.xp-themehead i{flex:1;height:1px;background:#333}
+.xp-themehead h2{font-weight:400;font-size:clamp(20px,2.8vw,28px);letter-spacing:.06em}
+.xp-themes{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 2.8%;padding:0 3%}
+.xp-theme{display:flex;flex-direction:column;border:1px solid #222}
+.xp-theme .xp-pic{aspect-ratio:178 / 149}
+.xp-theme p{padding:12px 12px 16px;font-size:clamp(11px,1.4vw,15px);line-height:1.45;letter-spacing:.03em;min-height:66px}
+.xp-empty{text-align:center;padding:30px}
+.xp-more{text-align:center;margin:60px 0 70px}
+.xp-more a{font-size:12px;letter-spacing:.06em;border-bottom:1px solid #222;padding-bottom:3px}
+
+/* BẢN ĐỒ */
+.xp-mapwrap{background:#3f3626;padding:34px 3.4%}
+.xp-map{position:relative;display:grid;place-items:center;aspect-ratio:773 / 246;background-size:cover;background-position:center}
+.xp-map::after{content:"";position:absolute;inset:0;background:rgba(63,54,38,.55)}
+.xp-map span{position:relative;z-index:1;color:#fff;font-size:clamp(16px,2.9vw,32px);letter-spacing:.06em;text-align:center;padding:0 12px}
+
+@media (max-width:900px){
+  .xp-big{width:88%;gap:4%;padding:14px}
+  .xp-big i{width:48px;height:48px}
+  .xp-text{width:88%}
+  .xp-search{width:88%}
+  .xp-cols{grid-template-columns:1fr}
+  .xp-themes{grid-template-columns:1fr 1fr}
+}
