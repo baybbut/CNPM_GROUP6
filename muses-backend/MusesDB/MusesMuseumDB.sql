@@ -181,3 +181,72 @@ INSERT INTO ArtworkDescriptions (ArtworkID, LanguageID, ShortDescription, FullDe
 ((SELECT ArtworkID FROM Artworks WHERE ArtworkName = N'Vườn Xuân Trung Nam Bắc'), 2, N'National Treasure: Spring Garden of Central, North and South by Nguyen Gia Tri.', N'A masterpiece representing the culture of three regions, meticulously crafted over nearly 20 years from 1969 to 1989.', '/audio/vuon_xuan_en.mp3'),
 ((SELECT ArtworkID FROM Artworks WHERE ArtworkName = N'Thiếu nữ bên hoa huệ'), 1, N'Tác phẩm sơn dầu kinh điển Thiếu nữ bên hoa huệ của họa sĩ Tô Ngọc Vân.', N'Bức tranh khắc họa vẻ đẹp thanh tao, dịu dàng của thiếu nữ Hà Thành bên đóa hoa huệ trắng tinh khôi.', '/audio/thieu_nu_hoa_hue_vi.mp3');
 GO
+
+
+--check xem database đã được tạo thành công chưa
+SELECT name
+FROM sys.databases
+WHERE name = N'MusesMuseumDB';
+
+--check xem nhảy đủ 32 ko
+USE MusesMuseumDB;
+GO
+
+SELECT COUNT(*) AS ArtworkCount
+FROM dbo.Artworks;
+
+--cấp quyền cho DB này
+USE MusesMuseumDB;
+GO
+
+-- Tạo user trong database mới nếu chưa có.
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.database_principals
+    WHERE name = N'muses_app'
+)
+BEGIN
+    CREATE USER muses_app FOR LOGIN muses_app;
+END;
+GO
+
+-- Cấp quyền đọc dữ liệu.
+ALTER ROLE db_datareader ADD MEMBER muses_app;
+GO
+
+
+-- A
+USE MusesMuseumDB;
+GO
+
+-- Gắn ảnh với tác phẩm Em Thúy, tránh thêm trùng.
+INSERT INTO dbo.ArtworkImages (
+    ArtworkID,
+    ImageURL,
+    IsPrimary,
+    DisplayOrder
+)
+SELECT
+    a.ArtworkID,
+    N'/images/tranh/EMTHUY.jpeg',
+    1,
+    1
+FROM dbo.Artworks AS a
+WHERE a.ArtworkName = N'Em Thúy'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM dbo.ArtworkImages AS i
+      WHERE i.ArtworkID = a.ArtworkID
+        AND i.ImageURL = N'/images/tranh/EMTHUY.jpeg'
+  );
+
+-- Kiểm tra ảnh vừa gắn.
+SELECT
+    a.ArtworkID,
+    a.ArtworkName,
+    i.ImageURL,
+    i.IsPrimary
+FROM dbo.Artworks AS a
+JOIN dbo.ArtworkImages AS i
+    ON a.ArtworkID = i.ArtworkID
+WHERE a.ArtworkName = N'Em Thúy';
