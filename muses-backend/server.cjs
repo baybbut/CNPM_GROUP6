@@ -6,7 +6,7 @@ require("dotenv").config({
 
 const express = require("express");
 const cors = require("cors");
-const sql = require("mssql");
+const sql = require("mssql/msnodesqlv8");
 
 const app = express();
 const PORT = 3001;
@@ -27,17 +27,17 @@ app.use(cors({
   ]
 }));
 
+
 const dbConfig = {
   server: process.env.DB_SERVER,
-  port: Number(process.env.DB_PORT || 1433),
   database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  driver: "ODBC Driver 18 for SQL Server",
   options: {
-    encrypt: true,
+    trustedConnection: true,
     trustServerCertificate: true
   }
 };
+
 
 let pool;
 
