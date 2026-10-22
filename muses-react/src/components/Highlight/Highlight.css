@@ -87,6 +87,7 @@
   margin-top: 6px;
   font-size: 0.85em;
 }
+.hl-card.is-centered .hl-caption,
 .hl-card:hover .hl-caption,
 .hl-card:focus-visible .hl-caption {
   opacity: 1;
