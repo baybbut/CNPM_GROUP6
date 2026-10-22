@@ -92,3 +92,7 @@ Test API sử dụng database adapter giả để kiểm tra contract, validatio
 ## Đối chiếu ảnh database
 
 Xem [hướng dẫn và bảng ánh xạ 32 ảnh](muses-backend/MusesDB/README.md). Với database hiện có, chạy lần lượt `ArtworkImages.sql` và `HomeImages.sql`, không chạy lại script tạo/xóa database. Sau khi backend chạy, dùng `npm run images:check` trong `muses-backend` để kiểm tra từng ảnh trả về từ API.
+
+## Trang chi tiết tác phẩm
+
+Từ `/explore/collection`, bấm một tác phẩm để mở `/explore/artworks/:id`. Trang chi tiết dùng ảnh, tiêu đề, mô tả ngắn/đầy đủ, chất liệu, năm, kích thước và audio từ API; tác phẩm cùng nghệ sĩ được đối chiếu bằng `artistId` (fallback tên với API cũ), không bao gồm tác phẩm đang xem. Nút bản đồ dẫn tới `/visit#directions`. DB hiện chưa có trường lịch sử riêng, phần Lịch sử hiển thị trạng thái đang cập nhật thay vì suy diễn nội dung. Không cần chạy migration cho thay đổi giao diện này.

@@ -45,6 +45,7 @@ async function getArtworks(lang, id = null) {
         a.ArtworkID AS id,
         a.ArtworkName AS title,
         ar.ArtistName AS artist,
+        ar.ArtistID AS artistId,
         c.CategoryID AS categoryId,
         c.CategoryName AS category,
         a.Material AS material,

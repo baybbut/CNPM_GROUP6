@@ -8,14 +8,19 @@ import Exhibition from "./components/exhibition/exhibition";
 import Explore from "./components/explore/explore";
 import Collection from "./components/explore/collection";
 
-import ArtworkDetail from "./components/explore/Artworks";
+import ArtworkDetail from "./components/explore/ArtworkDetail";
 
 export default function App() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    // lỗi
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      document
+        .getElementById(hash.slice(1))
+        ?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
   return (
     <>

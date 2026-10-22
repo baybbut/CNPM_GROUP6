@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { fetchArtworks, mediaUrl } from "../../api/artworks";
 import "./artworks.css";
 
-function useArtworks(id) {
+export function useArtworks(id) {
   const { lang } = useLang();
   const [state, setState] = useState({
     loading: true,
@@ -43,7 +43,7 @@ function useArtworks(id) {
   };
 }
 
-function ArtworkImage({ artwork }) {
+export function ArtworkImage({ artwork }) {
   const src = mediaUrl(artwork.imageUrl);
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
@@ -62,7 +62,7 @@ function ArtworkImage({ artwork }) {
   );
 }
 
-function RequestState({ loading, error, retry, vi }) {
+export function RequestState({ loading, error, retry, vi }) {
   if (loading)
     return (
       <div className="aw-request" role="status">
@@ -212,78 +212,5 @@ export function ArtworkCollection({ compact = false }) {
         </>
       )}
     </section>
-  );
-}
-
-export default function ArtworkDetail() {
-  const { id } = useParams();
-  const state = useArtworks(id);
-  const { data: artwork, loading, error, vi } = state;
-  return (
-    <div className="aw-detail-page">
-      <Link className="aw-link" to="/explore/collection">
-        ← {vi ? "Trở về bộ sưu tập" : "Back to the collection"}
-      </Link>
-      <RequestState {...state} />
-      {!loading && !error && artwork && (
-        <article className="aw-detail">
-          <div className="aw-detail-image">
-            <ArtworkImage artwork={artwork} />
-          </div>
-          <div className="aw-detail-text">
-            <p className="aw-eyebrow">{artwork.category}</p>
-            <h1>{artwork.title}</h1>
-            <p className="aw-artist">{artwork.artist}</p>
-            <dl>
-              {[
-                [vi ? "Chất liệu" : "Material", artwork.material],
-                [vi ? "Thời gian sáng tác" : "Created", artwork.creationPeriod],
-                [vi ? "Kích thước" : "Dimensions", artwork.dimensions],
-                [
-                  vi ? "Năm công nhận bảo vật" : "National treasure since",
-                  artwork.isNationalTreasure && artwork.treasureYear,
-                ],
-              ]
-                .filter(([, value]) => value)
-                .map(([label, value]) => (
-                  <div key={label}>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-            </dl>
-            <p className="aw-description">
-              {artwork.description ||
-                (vi
-                  ? "Thông tin tác phẩm đang được cập nhật."
-                  : "More information about this artwork is coming soon.")}
-            </p>
-            {artwork.descriptionLanguage &&
-              artwork.descriptionLanguage !== (vi ? "vi" : "en") && (
-                <p className="aw-language-note">
-                  {vi
-                    ? "Hiển thị mô tả bằng ngôn ngữ hiện có."
-                    : "This description is shown in Vietnamese while the translation is being prepared."}
-                </p>
-              )}
-            {mediaUrl(artwork.audioUrl) && (
-              <div className="aw-audio">
-                <h2>{vi ? "Nghe thuyết minh" : "Listen to the story"}</h2>
-                <audio
-                  key={artwork.audioUrl}
-                  controls
-                  preload="none"
-                  src={mediaUrl(artwork.audioUrl)}
-                >
-                  {vi
-                    ? "Trình duyệt không hỗ trợ audio."
-                    : "Your browser does not support audio."}
-                </audio>
-              </div>
-            )}
-          </div>
-        </article>
-      )}
-    </div>
   );
 }
