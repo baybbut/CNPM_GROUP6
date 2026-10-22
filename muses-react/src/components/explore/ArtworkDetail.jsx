@@ -4,6 +4,7 @@ import { useArtworks, ArtworkImage, RequestState } from "./Artworks";
 import { mediaUrl } from "../../api/artworks";
 import indoorMap from "../../../maps/Mapindoormain.png";
 import "./artwork-detail.css";
+import Narration from "../Narration/Narration";
 import { SvgIcon } from "../Icons";
 
 function RelatedArtworks({ artwork, vi }) {
@@ -138,6 +139,9 @@ export default function ArtworkDetail() {
                     <h2>{vi ? "Nghe thuyết minh" : "Audio guide"}</h2>
                     <audio
                       controls
+                      onPlay={() =>
+                        window.dispatchEvent(new Event("muses-audio-play"))
+                      }
                       preload="none"
                       src={mediaUrl(artwork.audioUrl)}
                       key={`${id}-${artwork.audioUrl}`}
@@ -149,12 +153,20 @@ export default function ArtworkDetail() {
             <div className="detail-editorial">
               <section aria-labelledby="description-title">
                 <h2 id="description-title">{vi ? "MÔ TẢ" : "DESCRIPTION"}</h2>
-                <p>
-                  {artwork.description ||
-                    (vi
+                {artwork.description ? (
+                  <Narration
+                    key={`${id}-${artwork.descriptionLanguage || (vi ? "vi" : "en")}`}
+                    text={artwork.description}
+                    language={artwork.descriptionLanguage || (vi ? "vi" : "en")}
+                    vi={vi}
+                  />
+                ) : (
+                  <p>
+                    {vi
                       ? "Mô tả tác phẩm đang được cập nhật."
-                      : "The description of this artwork is being prepared.")}
-                </p>
+                      : "The description of this artwork is being prepared."}
+                  </p>
+                )}
                 {artwork.descriptionLanguage &&
                   artwork.descriptionLanguage !== (vi ? "vi" : "en") && (
                     <small className="detail-language-note">

@@ -44,3 +44,7 @@ Build: `npm run build`. Preview bản build: `npm run preview -- --port 4174`.
 - `src/Icons.jsx`, `src/assets.js`: icon và ảnh dùng chung.
 
 Đã kiểm tra build production; mở đủ 11 trang mới trên desktop và mobile 390px; tạo artwork và giữ qua refresh; tìm kiếm; check-in/check-out; đổi khoảng báo cáo và tải CSV; thêm nghệ sĩ; lưu bản dịch; validation ngày sự kiện; lưu điểm GPS; tạo/tải QR PNG; thêm staff demo; đổi tên profile cập nhật sidebar. Chưa kiểm thử API quản trị vì backend hiện chỉ cung cấp API đọc artwork.
+
+### Nghe thử văn bản
+
+Trong Languages & Audio, lưu mô tả ở tiếng Việt/Anh rồi chọn **Read aloud** để đọc và tô sáng chữ theo lời đọc. Có tạm dừng/tiếp tục, dừng, tốc độ và chọn giọng trên thiết bị. Không cần upload audio hoặc API key; giọng đọc dùng Web Speech API. Theo từ nếu giọng hỗ trợ boundary, nếu không sẽ tô sáng câu/đoạn đang đọc. Đóng modal sẽ dừng phát. Component dùng chung với website nên cần giữ `muses-react/src/components/Narration/` trong repo.

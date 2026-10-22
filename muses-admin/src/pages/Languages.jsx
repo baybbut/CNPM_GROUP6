@@ -13,12 +13,15 @@ import {
   Header,
   TextButton,
 } from "./shared";
+import Narration from "../../../muses-react/src/components/Narration/Narration";
+
 export default function Languages({ rows, search, toast }) {
   const [language, setLanguage] = useState("Vietnamese"),
     [content, setContent] = useSavedState("muses-admin-content", {}),
     [edit, setEdit] = useState(null),
     [error, setError] = useState(""),
-    [preview, setPreview] = useState(null);
+    [preview, setPreview] = useState(null),
+    [narration, setNarration] = useState(null);
   const key = (r) => `${rowKey(r)}:${language}`;
   const current = edit ? content[key(edit)] || {} : {};
   const save = (e) => {
@@ -122,6 +125,23 @@ export default function Languages({ rows, search, toast }) {
                       <td>{language}</td>
                       <td>
                         <Badge>{c.status || "Pending"}</Badge>
+                        {c.text && (
+                          <button
+                            type="button"
+                            className="pg-text-btn"
+                            aria-label={`Read ${r.title}`}
+                            onClick={() =>
+                              setNarration({
+                                text: c.text,
+                                language:
+                                  language === "Vietnamese" ? "vi" : "en",
+                                title: r.title,
+                              })
+                            }
+                          >
+                            Read aloud <Icon name="audio" size={16} />
+                          </button>
+                        )}
                       </td>
                       <td>
                         {c.audio ? (
@@ -200,7 +220,24 @@ export default function Languages({ rows, search, toast }) {
       {preview && (
         <Modal title="Listen to the story" onClose={() => setPreview(null)}>
           <p>{preview.fileName}</p>
-          <audio controls autoPlay src={preview.audio} />
+          <audio
+            controls
+            autoPlay
+            onPlay={() => window.dispatchEvent(new Event("muses-audio-play"))}
+            src={preview.audio}
+          />
+        </Modal>
+      )}
+      {narration && (
+        <Modal
+          title={`Read along · ${narration.title}`}
+          onClose={() => setNarration(null)}
+        >
+          <Narration
+            text={narration.text}
+            language={narration.language}
+            vi={false}
+          />
         </Modal>
       )}
     </>
