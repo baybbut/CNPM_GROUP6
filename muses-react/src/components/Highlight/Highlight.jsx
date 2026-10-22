@@ -8,12 +8,15 @@ export default function Highlight() {
   const { t, lang } = useLang();
   const images = useHomeImages(HIGHLIGHTS, "highlight");
   const track = useRef(null);
-  const activeRef = useRef(Math.floor(images.length / 2));
+  const count = images.length;
+  const slides = [...images, ...images, ...images];
+  const activeRef = useRef(count + Math.floor(count / 2));
+  const resetting = useRef(false);
   const [active, setActive] = useState(activeRef.current);
 
   function moveTo(index, smooth = true) {
     const element = track.current;
-    const target = Math.max(0, Math.min(images.length - 1, index));
+    const target = Math.max(0, Math.min(slides.length - 1, index));
     const card = element?.children[target];
     if (!card) return;
     element.scrollTo({
@@ -29,8 +32,29 @@ export default function Highlight() {
     const element = track.current;
     if (!element) return;
     let frame;
+    let settleTimer;
+    let resetFrame;
     let layoutWidth = element.clientWidth;
+    const recenter = () => {
+      const current = activeRef.current;
+      if (current >= count && current < count * 2) return;
+      const target = count + (((current % count) + count) % count);
+      resetting.current = true;
+      element.classList.add("is-resetting");
+      activeRef.current = target;
+      setActive(target);
+      moveTo(target, false);
+      if (element.contains(document.activeElement))
+        element.children[target]?.focus({ preventScroll: true });
+      cancelAnimationFrame(resetFrame);
+      resetFrame = requestAnimationFrame(() => {
+        resetting.current = false;
+        element.classList.remove("is-resetting");
+      });
+    };
     const onScroll = () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(recenter, 180);
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         if (element.clientWidth !== layoutWidth) return;
@@ -50,9 +74,13 @@ export default function Highlight() {
     resize.observe(element);
     moveTo(activeRef.current, false);
     element.addEventListener("scroll", onScroll, { passive: true });
+    element.addEventListener("scrollend", recenter);
     return () => {
       resize.disconnect();
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(resetFrame);
+      clearTimeout(settleTimer);
+      element.removeEventListener("scrollend", recenter);
       element.removeEventListener("scroll", onScroll);
     };
   }, [images.length]);
@@ -61,8 +89,8 @@ export default function Highlight() {
     const keys = {
       ArrowLeft: activeRef.current - 1,
       ArrowRight: activeRef.current + 1,
-      Home: 0,
-      End: images.length - 1,
+      Home: count,
+      End: count * 2 - 1,
     };
     if (event.key in keys) {
       event.preventDefault();
@@ -78,15 +106,19 @@ export default function Highlight() {
     >
       <h2 className="title">{t("highlight")}</h2>
       <div className="hl-track" ref={track} onKeyDown={keyboard} dir="ltr">
-        {images.map((item, index) => (
+        {slides.map((item, index) => (
           <button
             type="button"
-            key={item.id}
+            key={`${item.id}-${index}`}
             className={`hl-card ${index === active ? "is-centered" : ""}`}
             aria-label={`${item.title}${item.date ? ` · ${item.date}` : ""}`}
             aria-current={index === active ? "true" : undefined}
+            aria-hidden={index < count || index >= count * 2 ? true : undefined}
+            tabIndex={index >= count && index < count * 2 ? 0 : -1}
             onClick={() => moveTo(index)}
-            onFocus={() => moveTo(index)}
+            onFocus={() => {
+              if (!resetting.current) moveTo(index);
+            }}
           >
             <span className="hl-picture">
               <img src={item.img} alt={item.title} draggable="false" />
@@ -102,18 +134,16 @@ export default function Highlight() {
         <button
           type="button"
           aria-label={lang === "vi" ? "Ảnh trước" : "Previous highlight"}
-          disabled={active === 0}
           onClick={() => moveTo(activeRef.current - 1)}
         >
           <span aria-hidden="true">⟵</span>
         </button>
         <p className="hl-sr-only" aria-live="polite">
-          {active + 1} / {images.length}: {images[active]?.title}
+          {(active % count) + 1} / {count}: {images[active % count]?.title}
         </p>
         <button
           type="button"
           aria-label={lang === "vi" ? "Ảnh tiếp theo" : "Next highlight"}
-          disabled={active === images.length - 1}
           onClick={() => moveTo(activeRef.current + 1)}
         >
           <span aria-hidden="true">⟶</span>

@@ -159,3 +159,7 @@
     scroll-behavior: auto;
   }
 }
+
+.hl-track.is-resetting .hl-card {
+  transition: none;
+}
