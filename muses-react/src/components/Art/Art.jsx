@@ -8,6 +8,7 @@ export default function Art({
   delay = 0,
   flip = false,
   flipTitle = "",
+  onClick,
 }) {
   const [flipped, setFlipped] = useState(false);
 
@@ -27,17 +28,38 @@ export default function Art({
     .join(" ");
 
   // Art thông thường: giữ cách hiển thị cũ.
+
   if (!flip) {
+    const style = {
+      background,
+      "--reveal-delay": `${delay}ms`,
+    };
+
+    if (onClick) {
+      return (
+        <button
+          type="button"
+          className={className}
+          style={{
+            ...style,
+            border: 0,
+            padding: 0,
+            cursor: "pointer",
+          }}
+          aria-label={`Xem thông tin ${item.title || "tác phẩm"}`}
+          onClick={onClick}
+        />
+      );
+    }
+
     return (
       <div
         className={className}
-        style={{
-          background,
-          "--reveal-delay": `${delay}ms`,
-        }}
+        style={style}
       />
     );
   }
+
 
   // Art có hai mặt: dùng cho Highlight.
   return (

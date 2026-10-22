@@ -26,7 +26,10 @@ export function HomeImagesProvider({ children }) {
           const image = new Image();
           image.onload = () => {
             if (!controller.signal.aborted)
-              setImages((old) => ({ ...old, [row.slot]: src }));
+              setImages((old) => ({
+                ...old,
+                [row.slot]: { src, artworkId: row.artworkId },
+              }));
           };
           image.src = src;
         }
@@ -43,12 +46,14 @@ export function HomeImagesProvider({ children }) {
   return <Context.Provider value={images}>{children}</Context.Provider>;
 }
 export function useHomeImage(slot, fallback) {
-  return useContext(Context)[slot] || fallback;
+  return useContext(Context)[slot]?.src || fallback;
 }
 export function useHomeImages(items, section) {
   const images = useContext(Context);
   return items.map((item) => ({
     ...item,
-    img: images[`home.${section}.${item.cls}`] || item.img,
+    img: images[`home.${section}.${item.cls}`]?.src || item.img,
+    artworkId:
+      images[`home.${section}.${item.cls}`]?.artworkId || item.artworkId,
   }));
 }
