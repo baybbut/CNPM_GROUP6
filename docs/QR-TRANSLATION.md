@@ -13,7 +13,7 @@ docker compose -f compose.translation.yml logs -f --tail=30
 
 Lần đầu phải tải image và mô hình, có thể mất nhiều phút. Dịch mô tả dài trên CPU có thể mất gần một phút; web chờ tối đa 75 giây cho trang chi tiết. Container không thay đổi SQL Server hiện có. Mô hình được giữ trong Docker volume. Nếu Mac Apple Silicon báo thiếu image tương thích, dùng `DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose -f compose.translation.yml up -d` (chạy giả lập có thể chậm).
 
-Thêm/sửa trong `muses-backend/.env` (giữ nguyên cấu hình DB):
+Dịch tự động mặc định được bật và kết nối Docker tại `127.0.0.1:5000`. Có thể thêm/sửa trong `muses-backend/.env` (giữ nguyên cấu hình DB):
 
 ```dotenv
 TRANSLATE_ENABLED=true

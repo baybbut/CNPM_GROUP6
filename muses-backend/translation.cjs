@@ -1,6 +1,6 @@
 const SUPPORTED = ["vi", "en", "fr", "ja", "zh"];
 function createTranslator({
-  enabled = process.env.TRANSLATE_ENABLED === "true",
+  enabled = process.env.TRANSLATE_ENABLED !== "false",
   url = process.env.TRANSLATE_URL || "http://127.0.0.1:5000",
   fetcher = fetch,
 } = {}) {

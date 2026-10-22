@@ -79,7 +79,7 @@ export default function Narration({
   }, [sentence, word, follow]);
 
   function read() {
-    if (!supported || !segments.length || !translationReady) return;
+    if (!supported || !segments.length) return;
     const selectedVoice = chooseVoice(
       window.speechSynthesis.getVoices(),
       lang,
@@ -200,9 +200,7 @@ export default function Narration({
               <button
                 type="button"
                 className="narration-primary"
-                disabled={
-                  !segments.length || !translationReady || !available.length
-                }
+                disabled={!segments.length || !available.length}
                 onClick={status === "playing" ? pause : read}
               >
                 {status === "playing"
@@ -213,9 +211,13 @@ export default function Narration({
                     ? vi
                       ? "Tiếp tục"
                       : "Resume"
-                    : vi
-                      ? "Đọc văn bản"
-                      : "Read aloud"}
+                    : !translationReady
+                      ? vi
+                        ? "Đọc bản gốc"
+                        : "Read original"
+                      : vi
+                        ? "Đọc văn bản"
+                        : "Read aloud"}
               </button>
               <button type="button" disabled={!busy} onClick={stop}>
                 {vi ? "Dừng" : "Stop"}
@@ -269,7 +271,7 @@ export default function Narration({
                   : "Sentence highlighting; word highlighting when supported by the voice."}
               </small>
             </div>
-            {translationReady && !available.length && (
+            {!available.length && (
               <p className="narration-note">
                 {vi
                   ? `Thiết bị chưa cung cấp giọng ${lang.startsWith("vi") ? "tiếng Việt" : lang}. Bạn có thể cần thêm giọng đọc trong cài đặt thiết bị.`
@@ -287,8 +289,8 @@ export default function Narration({
         {!translationReady && (
           <p className="narration-note" role="status">
             {vi
-              ? "Chưa có nội dung để đọc bằng ngôn ngữ đã chọn."
-              : "Narration is unavailable in the selected language."}
+              ? "Chưa có bản dịch. Bạn có thể nghe bản gốc."
+              : "Translation unavailable. You can listen to the original."}
           </p>
         )}
         {error && (

@@ -203,7 +203,9 @@ export default function ArtworkDetail() {
                     {vi ? "Bản dịch tự động" : "Automatic translation"}
                   </p>
                 )}
-                {artwork.translationStatus === "unavailable" && (
+                {(artwork.translationStatus === "unavailable" ||
+                  (artwork.descriptionLanguage &&
+                    artwork.descriptionLanguage !== contentLanguage(lang))) && (
                   <p className="detail-translation-status" role="status">
                     {vi
                       ? "Chưa có bản dịch. Đang hiển thị bản gốc."
