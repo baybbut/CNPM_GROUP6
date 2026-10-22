@@ -1,5 +1,5 @@
 import { useLang } from "../../context/LangContext";
-import TicketIcon from "../../../icon/ticket.png";
+import TicketIcon from "../../../icon/ticketW.png";
 import { InfoIcon } from "../Icons";
 import "./Hero.css";
 

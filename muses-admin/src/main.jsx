@@ -4,7 +4,7 @@ import "./style.css";
 import lilies from "../../muses-react/tranh/THIEUNUBENHOAHUE.jpg";
 import spring from "../../muses-react/tranh/tranhsonmai/VUONXUANTRUNGNAMBAC.png";
 import seasons from "../../muses-react/tranh/tranhsonmai/GIAOMUA.jpg";
-import park from "../../muses-react/maps/maptong.png";
+import park from "../../muses-react/maps/MusesOutdoor.png";
 const paths = {
   home: "m3 10 9-7 9 7v11h-6v-7H9v7H3z",
   people:
