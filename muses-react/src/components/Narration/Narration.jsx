@@ -2,17 +2,26 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SvgIcon } from "../Icons";
 import { speechSegments, spokenWord } from "./speechText.mjs";
 import "./narration.css";
+import {
+  baseLanguage,
+  speechLocale,
+  matchingVoices,
+  chooseVoice,
+} from "./speechLanguage.mjs";
 
-export default function Narration({ text = "", language = "vi", vi = true }) {
+export default function Narration({
+  text = "",
+  language = "vi",
+  requestedLanguage = language,
+  vi = true,
+}) {
   const supported =
     typeof window !== "undefined" &&
     typeof window.speechSynthesis?.speak === "function" &&
     typeof window.SpeechSynthesisUtterance === "function";
-  const lang = language.startsWith("vi")
-    ? "vi-VN"
-    : language.startsWith("en")
-      ? "en-US"
-      : language;
+  const lang = speechLocale(language);
+  const translationReady =
+    baseLanguage(language) === baseLanguage(requestedLanguage);
   const segments = useMemo(() => speechSegments(text, lang), [text, lang]);
   const [voices, setVoices] = useState([]),
     [voiceId, setVoiceId] = useState(""),
@@ -26,10 +35,7 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
     current = useRef(null),
     transcript = useRef(null),
     highlighted = useRef(null);
-  const available = voices.filter(
-    (v) =>
-      v.lang.toLowerCase().split("-")[0] === lang.toLowerCase().split("-")[0],
-  );
+  const available = matchingVoices(voices, lang);
   const busy = status === "playing" || status === "paused";
   function stop() {
     run.current++;
@@ -61,7 +67,7 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
       synth.removeEventListener("voiceschanged", load);
       window.removeEventListener("muses-audio-play", audioStarted);
     };
-  }, [text, lang, supported]);
+  }, [text, lang, requestedLanguage, supported]);
   useEffect(() => {
     if (!follow || !highlighted.current || !transcript.current) return;
     const target = highlighted.current.getBoundingClientRect(),
@@ -73,7 +79,20 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
   }, [sentence, word, follow]);
 
   function read() {
-    if (!supported || !segments.length) return;
+    if (!supported || !segments.length || !translationReady) return;
+    const selectedVoice = chooseVoice(
+      window.speechSynthesis.getVoices(),
+      lang,
+      voiceId,
+    );
+    if (!selectedVoice) {
+      setError(
+        vi
+          ? "Chưa có giọng đọc cho ngôn ngữ này."
+          : "No voice available for this language.",
+      );
+      return;
+    }
     const synth = window.speechSynthesis;
     if (status === "paused") {
       synth.resume();
@@ -89,10 +108,7 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
     setError("");
     setWord(null);
     setStatus("playing");
-    const voice =
-      available.find((v) => v.voiceURI === voiceId) ||
-      available.find((v) => v.default) ||
-      available[0];
+    const voice = selectedVoice;
     function speak(index) {
       if (generation !== run.current) return;
       if (index >= segments.length) {
@@ -184,7 +200,9 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
               <button
                 type="button"
                 className="narration-primary"
-                disabled={!segments.length}
+                disabled={
+                  !segments.length || !translationReady || !available.length
+                }
                 onClick={status === "playing" ? pause : read}
               >
                 {status === "playing"
@@ -251,7 +269,7 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
                   : "Sentence highlighting; word highlighting when supported by the voice."}
               </small>
             </div>
-            {voices.length > 0 && !available.length && (
+            {translationReady && !available.length && (
               <p className="narration-note">
                 {vi
                   ? `Thiết bị chưa cung cấp giọng ${lang.startsWith("vi") ? "tiếng Việt" : lang}. Bạn có thể cần thêm giọng đọc trong cài đặt thiết bị.`
@@ -264,6 +282,13 @@ export default function Narration({ text = "", language = "vi", vi = true }) {
             {vi
               ? "Trình duyệt này chưa hỗ trợ đọc văn bản thành tiếng. Bạn vẫn có thể đọc mô tả bên dưới."
               : "This browser does not support speech synthesis. You can still read the description below."}
+          </p>
+        )}
+        {!translationReady && (
+          <p className="narration-note" role="status">
+            {vi
+              ? "Chưa có nội dung để đọc bằng ngôn ngữ đã chọn."
+              : "Narration is unavailable in the selected language."}
           </p>
         )}
         {error && (

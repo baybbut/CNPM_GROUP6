@@ -188,6 +188,7 @@ export default function ArtworkDetail() {
                     key={`${id}-${artwork.descriptionLanguage || (vi ? "vi" : "en")}`}
                     text={artwork.description}
                     language={artwork.descriptionLanguage || (vi ? "vi" : "en")}
+                    requestedLanguage={contentLanguage(lang)}
                     vi={vi}
                   />
                 ) : (
@@ -199,9 +200,7 @@ export default function ArtworkDetail() {
                 )}
                 {artwork.translationSource === "automatic" && (
                   <p className="detail-translation-status">
-                    {vi
-                      ? "Bản dịch tự động"
-                      : "Automatic translation"}
+                    {vi ? "Bản dịch tự động" : "Automatic translation"}
                   </p>
                 )}
                 {artwork.translationStatus === "unavailable" && (
