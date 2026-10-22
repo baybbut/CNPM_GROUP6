@@ -163,3 +163,12 @@
 .header .search-btn::after {
   background: currentColor;
 }
+/* Keep collection navigation usable on narrow screens. */
+@media (max-width:600px){
+  .header{padding:0 14px;grid-template-columns:auto minmax(0,1fr);gap:14px}
+  .header .logo{font-size:29px}
+  .header .nav-right{min-width:0;gap:12px;font-size:12px}
+  .header .search-btn{display:none}
+  .header .nav-right .btn{padding:8px 10px;font-size:12px;gap:5px}
+  .header .lang-toggle{font-size:11px;gap:3px}
+}

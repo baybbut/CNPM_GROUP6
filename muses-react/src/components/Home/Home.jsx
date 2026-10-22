@@ -3,7 +3,7 @@ import Highlight from "../../components/Highlight/Highlight";
 import News from "../../components/News/News";
 import Welcome from "../../components/Welcome/Welcome";
 import Prepare from "../../components/Prepare/Prepare";
-import ArtworkApiDemo from "../../components/ArtworkApiDemo";
+import { ArtworkCollection } from "../explore/Artworks";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       <News />
       <Welcome />
       <Prepare />
-      <ArtworkApiDemo /> //Thử api
+      <ArtworkCollection compact />
     </>
   );
 }

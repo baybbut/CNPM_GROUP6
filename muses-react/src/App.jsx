@@ -8,11 +8,14 @@ import Exhibition from "./components/exhibition/exhibition";
 import Explore from "./components/explore/explore";
 import Collection from "./components/explore/collection";
 
+import ArtworkDetail from "./components/explore/Artworks";
+
 export default function App() {
   const { pathname } = useLocation();
-  useEffect(() => { // lỗi
-  window.scrollTo(0, 0);
-}, [pathname]);
+  useEffect(() => {
+    // lỗi
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>
@@ -24,6 +27,7 @@ export default function App() {
           <Route path="/exhibition" element={<Exhibition />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/explore/collection" element={<Collection />} />
+          <Route path="/explore/artworks/:id" element={<ArtworkDetail />} />
         </Routes>
       </main>
       <Footer />
