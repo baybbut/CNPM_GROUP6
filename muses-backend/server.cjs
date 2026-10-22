@@ -8,7 +8,10 @@ const express = require("express");
 const cors = require("cors");
 const sql = require("mssql");
 
+const { SUPPORTED, createTranslator } = require("./translation.cjs");
+const translator = createTranslator();
 const app = express();
+app.get("/api/translation/health", async (_req, res) => res.json(await translator.health()));
 const PORT = Number(process.env.PORT || 3001);
 
 // Cho trình duyệt lấy ảnh trong muses-react/tranh.
@@ -63,6 +66,7 @@ async function getArtworks(lang, id = null) {
 
         COALESCE(
           d.ShortDescription,
+          d.FullDescription,
           vi.ShortDescription
         ) AS shortDescription,
 
@@ -124,9 +128,9 @@ async function getArtworks(lang, id = null) {
 function validateLanguage(req, res, next) {
   const lang = req.query.lang || "vi";
 
-  if (!["vi", "en"].includes(lang)) {
+  if (!SUPPORTED.includes(lang)) {
     return res.status(400).json({
-      message: "Hiện hỗ trợ vi và en.",
+      message: "Hiện hỗ trợ vi, en, fr, ja, zh.",
     });
   }
 
@@ -192,7 +196,7 @@ app.get("/api/artworks/:id", validateLanguage, async (req, res) => {
       });
     }
 
-    res.json(artworks[0]);
+    res.json(await translator.artwork(artworks[0], req.artworkLanguage));
   } catch (err) {
     console.error("Lỗi lấy chi tiết tác phẩm:", err.message);
 

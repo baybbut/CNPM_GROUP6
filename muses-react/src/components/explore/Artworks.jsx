@@ -19,7 +19,7 @@ export function useArtworks(id) {
     const timeout = setTimeout(() => {
       timedOut = true;
       controller.abort();
-    }, 15000);
+    }, id ? 75000 : 15000);
     setState({ loading: true, data: null, error: null });
     fetchArtworks(lang, id, controller.signal)
       .then((data) => {

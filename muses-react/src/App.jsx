@@ -1,3 +1,6 @@
+import Scanner from "./components/Scanner/Scanner";
+import { useLang } from "./context/LangContext";
+import { CONTENT_LANGUAGES } from "./api/contentLanguages.mjs";
 import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header/Header";
@@ -11,7 +14,12 @@ import Collection from "./components/explore/collection";
 import ArtworkDetail from "./components/explore/ArtworkDetail";
 
 export default function App() {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, search } = useLocation();
+  const { setLang } = useLang();
+  useEffect(() => {
+    const code = new URLSearchParams(search).get("lang");
+    if (CONTENT_LANGUAGES.some((l) => l.code === code)) setLang(code);
+  }, [search, setLang]);
   useEffect(() => {
     if (hash) {
       document
@@ -27,6 +35,7 @@ export default function App() {
       <Header />
       <main>
         <Routes>
+          <Route path="/scan" element={<Scanner />} />
           <Route path="/" element={<Home />} />
           <Route path="/visit" element={<Visit />} />
           <Route path="/exhibition" element={<Exhibition />} />

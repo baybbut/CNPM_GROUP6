@@ -5,49 +5,8 @@ import lilies from "../../muses-react/tranh/THIEUNUBENHOAHUE.jpg";
 import spring from "../../muses-react/tranh/tranhsonmai/VUONXUANTRUNGNAMBAC.png";
 import seasons from "../../muses-react/tranh/tranhsonmai/GIAOMUA.jpg";
 import park from "../../muses-react/maps/MusesOutdoor.png";
-const paths = {
-  home: "m3 10 9-7 9 7v11h-6v-7H9v7H3z",
-  people:
-    "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M17 4a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-4",
-  chart: "M4 21V11h4v10 M10 21V3h4v18 M16 21V7h4v14",
-  image: "M3 3h18v18H3z M3 16l6-6 12 11 M15 7h.01",
-  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M3 22a9 9 0 0 1 18 0",
-  audio: "M3 14v-3a9 9 0 0 1 18 0v3 M3 12h4v9H3z M17 12h4v9h-4z",
-  calendar: "M3 5h18v16H3z M7 2v6 M17 2v6 M3 11h18",
-  pin: "M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z M12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6",
-  qr: "M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h2v2h-2z M21 15v6h-6",
-  map: "m3 6 6-3 6 3 6-3v16l-6 3-6-3-6 3z M9 3v16 M15 6v16",
-  settings:
-    "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M9 3h6l1 3 3 1 2 5-2 2-1 4-4 3-3-2-4-1-3-4 2-3 1-4z",
-  search: "M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M15 15l6 6",
-  bell: "M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M9 21h6",
-  arrow: "M4 12h16 M14 6l6 6-6 6",
-  plus: "M12 4v16 M4 12h16",
-  logout: "M9 3H3v18h6 M9 12h13 M17 7l5 5-5 5",
-  upload:
-    "M7 18H5a4 4 0 0 1-1-8 8 8 0 0 1 15-2 5 5 0 0 1 0 10h-2 M12 21V10 M8 14l4-4 4 4",
-  list: "M8 5h13 M8 12h13 M8 19h13 M3 5h.01 M3 12h.01 M3 19h.01",
-  museum:
-    "m2 8 10-6 10 6z M2 22h20 M4 19h16 M6 10v7 M10 10v7 M14 10v7 M18 10v7",
-  close: "m6 6 12 12 M6 18 18 6",
-};
-function Icon({ name, size = 22 }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={paths[name] || paths.list} />
-    </svg>
-  );
-}
+import Icon from "./Icons";
+import AdminPages, { useSavedState } from "./AdminPages";
 const initial = [
   {
     title: "Young Woman with Lilies",
@@ -89,16 +48,52 @@ const nav = [
   ["Settings", "settings"],
 ];
 function App() {
-  const [active, setActive] = useState("Overview"),
+  const [active, updateActive] = useState(() => {
+      try {
+        const page = decodeURIComponent(window.location.hash.slice(1));
+        return nav.some(([name, icon]) => name === page && icon)
+          ? page
+          : "Overview";
+      } catch {
+        return "Overview";
+      }
+    }),
     [search, setSearch] = useState(""),
     [range, setRange] = useState(7),
     [month, setMonth] = useState(new Date(2026, 9, 1)),
     [day, setDay] = useState(22),
     [modal, setModal] = useState(null),
     [notice, setNotice] = useState(""),
-    [rows, setRows] = useState(initial),
+    [rows, setRows] = useSavedState("muses-admin-artworks", initial),
     [collapsed, setCollapsed] = useState(false),
     [notifications, setNotifications] = useState(false);
+  const [preferences, setPreferences] = useSavedState("muses-admin-settings", {
+    name: "Anh Thư",
+    email: "anhthu@muses.example",
+    language: "English",
+    digest: true,
+    review: true,
+    visits: false,
+  });
+  function setActive(page) {
+    updateActive(page);
+    window.location.hash = encodeURIComponent(page);
+  }
+  useEffect(() => {
+    const route = () => {
+      try {
+        const page = decodeURIComponent(window.location.hash.slice(1));
+        updateActive(
+          nav.some(([name, icon]) => name === page && icon) ? page : "Overview",
+        );
+        setSearch("");
+      } catch {
+        updateActive("Overview");
+      }
+    };
+    window.addEventListener("hashchange", route);
+    return () => window.removeEventListener("hashchange", route);
+  }, []);
   useEffect(() => {
     if (!modal) return;
     const previous = document.activeElement;
@@ -153,7 +148,12 @@ function App() {
   return (
     <div className={`shell ${collapsed ? "collapsed" : ""}`}>
       <aside className="sidebar">
-        <a className="brand" href="#" onClick={() => setActive("Overview")}>
+        <a
+          className="brand"
+          aria-label="Muses overview"
+          href="#"
+          onClick={() => setActive("Overview")}
+        >
           <Icon name="museum" size={35} />
           <span>MUSES</span>
         </a>
@@ -169,6 +169,8 @@ function App() {
             icon ? (
               <button
                 key={label}
+                aria-label={label}
+                aria-current={active === label ? "page" : undefined}
                 className={`nav-item ${active === label ? "selected" : ""}`}
                 onClick={() => {
                   setActive(label);
@@ -186,13 +188,23 @@ function App() {
           )}
         </nav>
         <div className="account">
-          <div className="avatar">AT</div>
+          <div className="avatar">
+            {preferences.name
+              .split(" ")
+              .map((x) => x[0])
+              .slice(0, 2)
+              .join("")}
+          </div>
           <div>
-            <strong>Anh Thư</strong>
+            <strong>{preferences.name}</strong>
             <small>Administrator</small>
           </div>
         </div>
-        <button className="signout" onClick={() => open("signout", "Sign out")}>
+        <button
+          className="signout"
+          aria-label="Sign out"
+          onClick={() => open("signout", "Sign out")}
+        >
           <Icon name="logout" />
           <span>Sign out</span>
         </button>
@@ -203,8 +215,17 @@ function App() {
             <Icon name="search" />
           </div>
           <input
-            aria-label="Search artworks or artists"
-            placeholder="Search artworks, artists..."
+            aria-label={`Search ${active.toLowerCase()}`}
+            disabled={["Reports", "Museum Info & Maps", "Settings"].includes(
+              active,
+            )}
+            placeholder={
+              ["Reports", "Museum Info & Maps", "Settings"].includes(active)
+                ? "Muses workspace"
+                : active === "Overview"
+                  ? "Search artworks, artists..."
+                  : `Search ${active.toLowerCase()}...`
+            }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -227,7 +248,7 @@ function App() {
                 <button
                   onClick={() => {
                     setNotifications(false);
-                    open("review", "Review content");
+                    setActive("Languages & Audio");
                   }}
                 >
                   Review content →
@@ -237,437 +258,480 @@ function App() {
           </div>
           <button
             className="date-button"
-            onClick={() =>
+            onClick={() => {
+              if (active !== "Overview") {
+                setActive("Exhibitions & Events");
+                return;
+              }
               document
                 .querySelector(".calendar")
-                .scrollIntoView({ behavior: "smooth" })
-            }
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             <Icon name="calendar" />
             {monthLabel}
             <span>⌄</span>
           </button>
         </header>
-        <div className="dashboard">
-          <main>
-            <div className="greeting">
-              <div>
-                <h1>
-                  {active === "Overview" ? "Good morning, Anh Thư" : active}
-                </h1>
-                <p>
-                  {active === "Overview"
-                    ? "Manage the Muses visitor experience."
-                    : "Your museum, thoughtfully managed."}
-                </p>
-              </div>
-              <div className="greeting-actions">
-                <span className="demo">
-                  <i /> DEMO DATA
-                </span>
-                <button
-                  className="primary"
-                  onClick={() => open("artwork", "Add artwork")}
-                >
-                  <Icon name="plus" />
-                  Add artwork
-                </button>
-              </div>
-            </div>
-            <div className="stats">
-              {[
-                ["Artworks", 32, "In the collection", "image", "yellow"],
-                ["Online sessions", 128, "Today", "chart", "pink"],
-                ["Museum check-ins", 46, "Today", "pin", "green"],
-                ["Audio plays", 215, "Today", "audio", "blue"],
-              ].map(([label, n, sub, icon, color]) => (
-                <button
-                  className={`stat ${color}`}
-                  key={label}
-                  onClick={() => open("metric", label)}
-                >
-                  <span className="stat-decoration">
-                    {color === "yellow"
-                      ? "+"
-                      : color === "pink"
-                        ? "♥"
-                        : color === "green"
-                          ? "◢"
-                          : "✹"}
-                  </span>
-                  <Icon name={icon} size={29} />
-                  <span className="stat-label">{label}</span>
-                  <strong>
-                    {n + (label === "Artworks" ? rows.length - 3 : 0)}
-                  </strong>
-                  <small>{sub}</small>
-                  <span className="round-arrow">
-                    <Icon name="arrow" size={19} />
-                  </span>
-                </button>
-              ))}
-            </div>
-            <section className="activity">
-              <div className="section-heading">
-                <h2>Visitor activity</h2>
-                <div className="tabs">
-                  {[7, 30].map((n) => (
-                    <button
-                      className={range === n ? "on" : ""}
-                      key={n}
-                      onClick={() => setRange(n)}
-                    >
-                      Last {n} days
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="chart-legend">
-                <span>
-                  <i />
-                  Online sessions
-                </span>
-                <span>
-                  <i />
-                  Museum check-ins
-                </span>
-              </div>
-              <div className="chart">
-                <svg
-                  viewBox="0 0 760 170"
-                  role="img"
-                  aria-label={`Visitor activity for the last ${range} days`}
-                >
-                  <defs>
-                    <linearGradient id="pinkFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop stopColor="#ed2990" stopOpacity=".19" />
-                      <stop offset="1" stopColor="#ed2990" stopOpacity="0" />
-                    </linearGradient>
-                    <linearGradient id="blueFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop stopColor="#2877dd" stopOpacity=".22" />
-                      <stop offset="1" stopColor="#2877dd" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  {[20, 55, 90, 125].map((y, i) => (
-                    <g key={y}>
-                      <line
-                        x1="35"
-                        x2="745"
-                        y1={y}
-                        y2={y}
-                        stroke="#9f8597"
-                        strokeDasharray="4 3"
-                        opacity=".35"
-                      />
-                      <text x="7" y={y + 4}>
-                        {300 - i * 100}
-                      </text>
-                    </g>
-                  ))}
-                  {[35, 148, 261, 374, 487, 600, 713].map((x) => (
-                    <line
-                      key={x}
-                      x1={x}
-                      x2={x}
-                      y1="20"
-                      y2="128"
-                      stroke="#9f8597"
-                      strokeDasharray="4 3"
-                      opacity=".4"
-                    />
-                  ))}
-                  <path
-                    d={
-                      range === 7
-                        ? "M35 74 Q90 69 148 66 T261 54 T374 70 T487 52 T600 31 T713 61 L713 128H35Z"
-                        : "M35 92 Q90 50 148 62 T261 30 T374 55 T487 33 T600 49 T713 25 L713 128H35Z"
-                    }
-                    fill="url(#pinkFill)"
-                    stroke="#ed2990"
-                    strokeWidth="1.6"
-                  />
-                  <path
-                    d={
-                      range === 7
-                        ? "M35 103 Q90 99 148 95 T261 100 T374 107 T487 89 T600 72 T713 96 L713 128H35Z"
-                        : "M35 110 Q90 80 148 87 T261 65 T374 99 T487 70 T600 78 T713 54 L713 128H35Z"
-                    }
-                    fill="url(#blueFill)"
-                    stroke="#2877dd"
-                    strokeWidth="1.6"
-                  />
-                  {range === 7 &&
-                    [74, 66, 54, 70, 52, 31, 61].map((y, i) => (
-                      <g key={i}>
-                        <circle
-                          cx={35 + i * 113}
-                          cy={y}
-                          r="4"
-                          fill="#ed2990"
-                          stroke="#fac2e2"
-                        />
-                        <circle
-                          cx={35 + i * 113}
-                          cy={[103, 95, 100, 107, 89, 72, 96][i]}
-                          r="4"
-                          fill="#2877dd"
-                          stroke="#fac2e2"
-                        />
-                      </g>
-                    ))}
-                  {[0, 1, 2, 3, 4, 5, 6].map((n) => (
-                    <text key={n} x={35 + n * 113} y="151" textAnchor="middle">
-                      {range === 7
-                        ? `${16 + n} Oct`
-                        : new Date(2026, 8, 23 + n * 5).toLocaleDateString(
-                            "en-GB",
-                            { day: "numeric", month: "short" },
-                          )}
-                    </text>
-                  ))}
-                </svg>
-              </div>
-            </section>
-            <section className="recent">
-              <div className="section-heading">
-                <h2>
-                  {active === "Overview"
-                    ? "Recent artworks"
-                    : active === "Artworks"
-                      ? "Artwork collection"
-                      : `${active} workspace`}
-                </h2>
-                <button
-                  className="text-button"
-                  onClick={() => {
-                    setActive("Artworks");
-                    toast("Showing the full artwork collection");
-                  }}
-                >
-                  View all <Icon name="arrow" size={18} />
-                </button>
-              </div>
-              <div className="table-scroll">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Artwork</th>
-                      <th>Artist</th>
-                      <th>Content</th>
-                      <th>Status</th>
-                      <th />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows
-                      .filter((r) =>
-                        (r.title + " " + r.artist)
-                          .toLowerCase()
-                          .includes(search.toLowerCase()),
-                      )
-                      .map((r, i) => (
-                        <tr key={i}>
-                          <td>
-                            <div className="artwork-cell">
-                              <img src={r.img} alt={r.title} />
-                              <strong>{r.title}</strong>
-                            </div>
-                          </td>
-                          <td>{r.artist}</td>
-                          <td
-                            className={
-                              r.content.startsWith("Missing") ? "missing" : ""
-                            }
-                          >
-                            {r.content}
-                          </td>
-                          <td>
-                            <span
-                              className={`status ${r.status.toLowerCase()}`}
-                            >
-                              <i />
-                              {r.status}
-                            </span>
-                          </td>
-                          <td>
-                            <button
-                              className="more"
-                              aria-label={`Manage ${r.title}`}
-                              onClick={() => open("detail", r.title)}
-                            >
-                              ⋮
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-                {!rows.some((r) =>
-                  (r.title + " " + r.artist)
-                    .toLowerCase()
-                    .includes(search.toLowerCase()),
-                ) && (
-                  <p className="empty">
-                    No artworks found. Try another title or artist.
-                  </p>
-                )}
-              </div>
-              <p className="table-note">
-                Manage images, translations and audio for each artwork.
-              </p>
-            </section>
-          </main>
-          <aside className="right-column">
-            <section className="calendar">
-              <div className="section-heading">
-                <h2>{monthLabel}</h2>
+        {active === "Overview" ? (
+          <div className="dashboard">
+            <main>
+              <div className="greeting">
                 <div>
+                  <h1>
+                    {active === "Overview"
+                      ? `Good morning, ${preferences.name}`
+                      : active}
+                  </h1>
+                  <p>
+                    {active === "Overview"
+                      ? "Manage the Muses visitor experience."
+                      : "Your museum, thoughtfully managed."}
+                  </p>
+                </div>
+                <div className="greeting-actions">
+                  <span className="demo">
+                    <i /> DEMO DATA
+                  </span>
                   <button
-                    aria-label="Previous month"
-                    onClick={() =>
-                      setMonth(
-                        new Date(month.getFullYear(), month.getMonth() - 1, 1),
-                      )
-                    }
+                    className="primary"
+                    onClick={() => open("artwork", "Add artwork")}
                   >
-                    ‹
-                  </button>
-                  <button
-                    aria-label="Next month"
-                    onClick={() =>
-                      setMonth(
-                        new Date(month.getFullYear(), month.getMonth() + 1, 1),
-                      )
-                    }
-                  >
-                    →
+                    <Icon name="plus" />
+                    Add artwork
                   </button>
                 </div>
               </div>
-              <div className="calendar-grid">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-                  <span className="weekday" key={d}>
-                    {d}
-                  </span>
+              <div className="stats">
+                {[
+                  ["Artworks", 32, "In the collection", "image", "yellow"],
+                  ["Online sessions", 128, "Today", "chart", "pink"],
+                  ["Museum check-ins", 46, "Today", "pin", "green"],
+                  ["Audio plays", 215, "Today", "audio", "blue"],
+                ].map(([label, n, sub, icon, color]) => (
+                  <button
+                    className={`stat ${color}`}
+                    key={label}
+                    onClick={() =>
+                      setActive(
+                        label === "Artworks"
+                          ? "Artworks"
+                          : label === "Museum check-ins"
+                            ? "Visitors"
+                            : label === "Audio plays"
+                              ? "Languages & Audio"
+                              : "Reports",
+                      )
+                    }
+                  >
+                    <span className="stat-decoration">
+                      {color === "yellow"
+                        ? "+"
+                        : color === "pink"
+                          ? "♥"
+                          : color === "green"
+                            ? "◢"
+                            : "✹"}
+                    </span>
+                    <Icon name={icon} size={29} />
+                    <span className="stat-label">{label}</span>
+                    <strong>
+                      {n + (label === "Artworks" ? rows.length - 3 : 0)}
+                    </strong>
+                    <small>{sub}</small>
+                    <span className="round-arrow">
+                      <Icon name="arrow" size={19} />
+                    </span>
+                  </button>
                 ))}
-                {Array.from(
-                  { length: Math.ceil((offset + count) / 7) * 7 },
-                  (_, i) => {
-                    let d = i - offset + 1;
-                    let muted = d < 1 || d > count;
-                    let display =
-                      d < 1
-                        ? new Date(
-                            month.getFullYear(),
-                            month.getMonth(),
-                            0,
-                          ).getDate() + d
-                        : d > count
-                          ? d - count
-                          : d;
-                    return (
-                      <button
-                        key={i}
-                        className={`${muted ? "muted" : ""} ${!muted && day === d ? "today" : ""}`}
-                        onClick={() => !muted && setDay(d)}
-                      >
-                        {display}
-                      </button>
-                    );
-                  },
-                )}
               </div>
-            </section>
-            <section className="actions-needed">
-              <h2>
-                <Icon name="list" />
-                Action needed
-              </h2>
-              {[
-                ["3", "artworks missing audio", "audio", "pink"],
-                ["5", "translations to review", "list", "peach"],
-                ["2", "artworks missing images", "image", "green"],
-              ].map(([n, t, icon, color]) => (
-                <button
-                  className="action-row"
-                  key={t}
-                  onClick={() => open("review", t)}
-                >
-                  <span className={`action-icon ${color}`}>
-                    <Icon name={icon} size={18} />
+              <section className="activity">
+                <div className="section-heading">
+                  <h2>Visitor activity</h2>
+                  <div className="tabs">
+                    {[7, 30].map((n) => (
+                      <button
+                        className={range === n ? "on" : ""}
+                        key={n}
+                        onClick={() => setRange(n)}
+                      >
+                        Last {n} days
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="chart-legend">
+                  <span>
+                    <i />
+                    Online sessions
                   </span>
                   <span>
-                    <b>{n}</b> {t}
+                    <i />
+                    Museum check-ins
                   </span>
-                  <span className="tiny-arrow">→</span>
-                </button>
-              ))}
-            </section>
-            <section className="outdoor">
-              <div className="section-heading">
-                <h2>
-                  <Icon name="map" />
-                  Outdoor exhibit points
-                </h2>
-                <button
-                  className="round-arrow"
-                  aria-label="Open outdoor exhibit points"
-                  onClick={() => open("gps", "Manage outdoor points")}
-                >
-                  <Icon name="arrow" size={18} />
-                </button>
-              </div>
-              <div className="points-summary">
-                <span>Σ</span>
-                <div>
-                  <strong>6 / 8 points active</strong>
-                  <small>Coordinates · Radius · Artworks</small>
                 </div>
-              </div>
-              <div className="map">
-                <img src={park} alt="Museum grounds map" />
-                {[
-                  [27, 32],
-                  [77, 25],
-                  [53, 70],
-                ].map(([x, y], i) => (
-                  <button
-                    key={i}
-                    style={{ left: x + "%", top: y + "%" }}
-                    aria-label={`Exhibit point ${i + 1}`}
-                    onClick={() => open("gps", `Exhibit point ${i + 1}`)}
+                <div className="chart">
+                  <svg
+                    viewBox="0 0 760 170"
+                    role="img"
+                    aria-label={`Visitor activity for the last ${range} days`}
                   >
-                    <Icon name="pin" size={27} />
+                    <defs>
+                      <linearGradient id="pinkFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop stopColor="#ed2990" stopOpacity=".19" />
+                        <stop offset="1" stopColor="#ed2990" stopOpacity="0" />
+                      </linearGradient>
+                      <linearGradient id="blueFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop stopColor="#2877dd" stopOpacity=".22" />
+                        <stop offset="1" stopColor="#2877dd" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    {[20, 55, 90, 125].map((y, i) => (
+                      <g key={y}>
+                        <line
+                          x1="35"
+                          x2="745"
+                          y1={y}
+                          y2={y}
+                          stroke="#9f8597"
+                          strokeDasharray="4 3"
+                          opacity=".35"
+                        />
+                        <text x="7" y={y + 4}>
+                          {300 - i * 100}
+                        </text>
+                      </g>
+                    ))}
+                    {[35, 148, 261, 374, 487, 600, 713].map((x) => (
+                      <line
+                        key={x}
+                        x1={x}
+                        x2={x}
+                        y1="20"
+                        y2="128"
+                        stroke="#9f8597"
+                        strokeDasharray="4 3"
+                        opacity=".4"
+                      />
+                    ))}
+                    <path
+                      d={
+                        range === 7
+                          ? "M35 74 Q90 69 148 66 T261 54 T374 70 T487 52 T600 31 T713 61 L713 128H35Z"
+                          : "M35 92 Q90 50 148 62 T261 30 T374 55 T487 33 T600 49 T713 25 L713 128H35Z"
+                      }
+                      fill="url(#pinkFill)"
+                      stroke="#ed2990"
+                      strokeWidth="1.6"
+                    />
+                    <path
+                      d={
+                        range === 7
+                          ? "M35 103 Q90 99 148 95 T261 100 T374 107 T487 89 T600 72 T713 96 L713 128H35Z"
+                          : "M35 110 Q90 80 148 87 T261 65 T374 99 T487 70 T600 78 T713 54 L713 128H35Z"
+                      }
+                      fill="url(#blueFill)"
+                      stroke="#2877dd"
+                      strokeWidth="1.6"
+                    />
+                    {range === 7 &&
+                      [74, 66, 54, 70, 52, 31, 61].map((y, i) => (
+                        <g key={i}>
+                          <circle
+                            cx={35 + i * 113}
+                            cy={y}
+                            r="4"
+                            fill="#ed2990"
+                            stroke="#fac2e2"
+                          />
+                          <circle
+                            cx={35 + i * 113}
+                            cy={[103, 95, 100, 107, 89, 72, 96][i]}
+                            r="4"
+                            fill="#2877dd"
+                            stroke="#fac2e2"
+                          />
+                        </g>
+                      ))}
+                    {[0, 1, 2, 3, 4, 5, 6].map((n) => (
+                      <text
+                        key={n}
+                        x={35 + n * 113}
+                        y="151"
+                        textAnchor="middle"
+                      >
+                        {range === 7
+                          ? `${16 + n} Oct`
+                          : new Date(2026, 8, 23 + n * 5).toLocaleDateString(
+                              "en-GB",
+                              { day: "numeric", month: "short" },
+                            )}
+                      </text>
+                    ))}
+                  </svg>
+                </div>
+              </section>
+              <section className="recent">
+                <div className="section-heading">
+                  <h2>
+                    {active === "Overview"
+                      ? "Recent artworks"
+                      : active === "Artworks"
+                        ? "Artwork collection"
+                        : `${active} workspace`}
+                  </h2>
+                  <button
+                    className="text-button"
+                    onClick={() => {
+                      setActive("Artworks");
+                      toast("Showing the full artwork collection");
+                    }}
+                  >
+                    View all <Icon name="arrow" size={18} />
+                  </button>
+                </div>
+                <div className="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Artwork</th>
+                        <th>Artist</th>
+                        <th>Content</th>
+                        <th>Status</th>
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows
+                        .filter((r) =>
+                          (r.title + " " + r.artist)
+                            .toLowerCase()
+                            .includes(search.toLowerCase()),
+                        )
+                        .map((r, i) => (
+                          <tr key={i}>
+                            <td>
+                              <div className="artwork-cell">
+                                <img src={r.img} alt={r.title} />
+                                <strong>{r.title}</strong>
+                              </div>
+                            </td>
+                            <td>{r.artist}</td>
+                            <td
+                              className={
+                                r.content.startsWith("Missing") ? "missing" : ""
+                              }
+                            >
+                              {r.content}
+                            </td>
+                            <td>
+                              <span
+                                className={`status ${r.status.toLowerCase()}`}
+                              >
+                                <i />
+                                {r.status}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                className="more"
+                                aria-label={`Manage ${r.title}`}
+                                onClick={() => open("detail", r.title)}
+                              >
+                                ⋮
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                  {!rows.some((r) =>
+                    (r.title + " " + r.artist)
+                      .toLowerCase()
+                      .includes(search.toLowerCase()),
+                  ) && (
+                    <p className="empty">
+                      No artworks found. Try another title or artist.
+                    </p>
+                  )}
+                </div>
+                <p className="table-note">
+                  Manage images, translations and audio for each artwork.
+                </p>
+              </section>
+            </main>
+            <aside className="right-column">
+              <section className="calendar">
+                <div className="section-heading">
+                  <h2>{monthLabel}</h2>
+                  <div>
+                    <button
+                      aria-label="Previous month"
+                      onClick={() =>
+                        setMonth(
+                          new Date(
+                            month.getFullYear(),
+                            month.getMonth() - 1,
+                            1,
+                          ),
+                        )
+                      }
+                    >
+                      ‹
+                    </button>
+                    <button
+                      aria-label="Next month"
+                      onClick={() =>
+                        setMonth(
+                          new Date(
+                            month.getFullYear(),
+                            month.getMonth() + 1,
+                            1,
+                          ),
+                        )
+                      }
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+                <div className="calendar-grid">
+                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                    (d) => (
+                      <span className="weekday" key={d}>
+                        {d}
+                      </span>
+                    ),
+                  )}
+                  {Array.from(
+                    { length: Math.ceil((offset + count) / 7) * 7 },
+                    (_, i) => {
+                      let d = i - offset + 1;
+                      let muted = d < 1 || d > count;
+                      let display =
+                        d < 1
+                          ? new Date(
+                              month.getFullYear(),
+                              month.getMonth(),
+                              0,
+                            ).getDate() + d
+                          : d > count
+                            ? d - count
+                            : d;
+                      return (
+                        <button
+                          key={i}
+                          className={`${muted ? "muted" : ""} ${!muted && day === d ? "today" : ""}`}
+                          onClick={() => !muted && setDay(d)}
+                        >
+                          {display}
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+              </section>
+              <section className="actions-needed">
+                <h2>
+                  <Icon name="list" />
+                  Action needed
+                </h2>
+                {[
+                  ["3", "artworks missing audio", "audio", "pink"],
+                  ["5", "translations to review", "list", "peach"],
+                  ["2", "artworks missing images", "image", "green"],
+                ].map(([n, t, icon, color]) => (
+                  <button
+                    className="action-row"
+                    key={t}
+                    onClick={() => open("review", t)}
+                  >
+                    <span className={`action-icon ${color}`}>
+                      <Icon name={icon} size={18} />
+                    </span>
+                    <span>
+                      <b>{n}</b> {t}
+                    </span>
+                    <span className="tiny-arrow">→</span>
                   </button>
                 ))}
-                <span className="compass">
-                  ▲<small>N</small>
-                </span>
-              </div>
-              <button
-                className="manage"
-                onClick={() => open("gps", "Manage GPS")}
-              >
-                Manage GPS
-              </button>
-            </section>
-            <section className="quick">
-              <h2>
-                <span>ϟ</span>Quick actions
-              </h2>
-              <div>
-                <button onClick={() => open("qr", "Create QR check-in")}>
-                  <Icon name="qr" />
-                  Create QR check-in
+              </section>
+              <section className="outdoor">
+                <div className="section-heading">
+                  <h2>
+                    <Icon name="map" />
+                    Outdoor exhibit points
+                  </h2>
+                  <button
+                    className="round-arrow"
+                    aria-label="Open outdoor exhibit points"
+                    onClick={() => open("gps", "Manage outdoor points")}
+                  >
+                    <Icon name="arrow" size={18} />
+                  </button>
+                </div>
+                <div className="points-summary">
+                  <span>Σ</span>
+                  <div>
+                    <strong>6 / 8 points active</strong>
+                    <small>Coordinates · Radius · Artworks</small>
+                  </div>
+                </div>
+                <div className="map">
+                  <img src={park} alt="Museum grounds map" />
+                  {[
+                    [27, 32],
+                    [77, 25],
+                    [53, 70],
+                  ].map(([x, y], i) => (
+                    <button
+                      key={i}
+                      style={{ left: x + "%", top: y + "%" }}
+                      aria-label={`Exhibit point ${i + 1}`}
+                      onClick={() => open("gps", `Exhibit point ${i + 1}`)}
+                    >
+                      <Icon name="pin" size={27} />
+                    </button>
+                  ))}
+                  <span className="compass">
+                    ▲<small>N</small>
+                  </span>
+                </div>
+                <button
+                  className="manage"
+                  onClick={() => setActive("Outdoor Points · GPS")}
+                >
+                  Manage GPS
                 </button>
-                <button onClick={() => open("upload", "Upload audio")}>
-                  <Icon name="upload" />
-                  Upload audio
-                </button>
-              </div>
-            </section>
-          </aside>
-        </div>
+              </section>
+              <section className="quick">
+                <h2>
+                  <span>ϟ</span>Quick actions
+                </h2>
+                <div>
+                  <button onClick={() => setActive("QR Check-in")}>
+                    <Icon name="qr" />
+                    Create QR check-in
+                  </button>
+                  <button onClick={() => setActive("Languages & Audio")}>
+                    <Icon name="upload" />
+                    Upload audio
+                  </button>
+                </div>
+              </section>
+            </aside>
+          </div>
+        ) : (
+          <AdminPages
+            page={active}
+            search={search}
+            rows={rows}
+            setRows={setRows}
+            toast={toast}
+            preferences={preferences}
+            setPreferences={setPreferences}
+          />
+        )}
         <footer className="page-footer">
           MUSES ADMIN <span>A little art. A lot of possibility.</span>
         </footer>

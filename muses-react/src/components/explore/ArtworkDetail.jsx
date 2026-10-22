@@ -1,9 +1,17 @@
+import { useSearchParams } from "react-router-dom";
+import { useLang } from "../../context/LangContext";
+import {
+  CONTENT_LANGUAGES,
+  contentLanguage,
+} from "../../api/contentLanguages.mjs";
+import ArtworkQR from "../Scanner/ArtworkQR";
 import { useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useArtworks, ArtworkImage, RequestState } from "./Artworks";
 import { mediaUrl } from "../../api/artworks";
 import indoorMap from "../../../maps/Mapindoormain.png";
 import "./artwork-detail.css";
+import Narration from "../Narration/Narration";
 import { SvgIcon } from "../Icons";
 
 function RelatedArtworks({ artwork, vi }) {
@@ -87,10 +95,33 @@ function RelatedArtworks({ artwork, vi }) {
 
 export default function ArtworkDetail() {
   const { id } = useParams();
+  const { lang, setLang } = useLang();
+  const [query, setQuery] = useSearchParams();
   const state = useArtworks(id);
   const { data: artwork, loading, error, vi } = state;
   return (
     <div className="artwork-detail-page">
+      <div className="detail-language-bar" style={{ padding: "100px 5% 0" }}>
+        <label>
+          {vi ? "Ngôn ngữ nội dung" : "Content language"}
+          <select
+            value={contentLanguage(lang)}
+            onChange={(e) => {
+              setLang(e.target.value);
+              const next = new URLSearchParams(query);
+              next.set("lang", e.target.value);
+              setQuery(next, { replace: true });
+            }}
+          >
+            {CONTENT_LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <ArtworkQR id={id} language={contentLanguage(lang)} vi={vi} />
+      </div>
       <RequestState {...state} />
       {!loading && !error && artwork && (
         <>
@@ -138,6 +169,9 @@ export default function ArtworkDetail() {
                     <h2>{vi ? "Nghe thuyết minh" : "Audio guide"}</h2>
                     <audio
                       controls
+                      onPlay={() =>
+                        window.dispatchEvent(new Event("muses-audio-play"))
+                      }
                       preload="none"
                       src={mediaUrl(artwork.audioUrl)}
                       key={`${id}-${artwork.audioUrl}`}
@@ -149,20 +183,37 @@ export default function ArtworkDetail() {
             <div className="detail-editorial">
               <section aria-labelledby="description-title">
                 <h2 id="description-title">{vi ? "MÔ TẢ" : "DESCRIPTION"}</h2>
-                <p>
-                  {artwork.description ||
-                    (vi
+                {artwork.description ? (
+                  <Narration
+                    key={`${id}-${artwork.descriptionLanguage || (vi ? "vi" : "en")}`}
+                    text={artwork.description}
+                    language={artwork.descriptionLanguage || (vi ? "vi" : "en")}
+                    vi={vi}
+                  />
+                ) : (
+                  <p>
+                    {vi
                       ? "Mô tả tác phẩm đang được cập nhật."
-                      : "The description of this artwork is being prepared.")}
-                </p>
-                {artwork.descriptionLanguage &&
-                  artwork.descriptionLanguage !== (vi ? "vi" : "en") && (
-                    <small className="detail-language-note">
-                      {vi
-                        ? "Hiển thị nội dung bằng ngôn ngữ hiện có."
-                        : "The available Vietnamese description is shown while the translation is prepared."}
-                    </small>
-                  )}
+                      : "The description of this artwork is being prepared."}
+                  </p>
+                )}
+                {artwork.translationSource === "automatic" && (
+                  <p className="detail-translation-status">
+                    {vi
+                      ? "Bản dịch tự động"
+                      : "Automatic translation"}
+                  </p>
+                )}
+                {artwork.translationStatus === "unavailable" && (
+                  <p className="detail-translation-status" role="status">
+                    {vi
+                      ? "Chưa có bản dịch. Đang hiển thị bản gốc."
+                      : "Translation unavailable. Showing the original."}{" "}
+                    <button onClick={state.retry}>
+                      {vi ? "Thử lại" : "Retry"}
+                    </button>
+                  </p>
+                )}
               </section>
               <section aria-labelledby="history-title">
                 <h2 id="history-title">{vi ? "LỊCH SỬ" : "HISTORY"}</h2>

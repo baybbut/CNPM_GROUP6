@@ -104,3 +104,15 @@ Dải 5 ảnh cuộn ngang; ảnh gần tâm khung nhất được nâng lên, �
 ## Quy tắc hiển thị ảnh và icon
 
 Ảnh trong Highlight, Welcome, Explore, bộ sưu tập, chi tiết và banner dùng cover: phủ kín khung, giữ tỉ lệ và cắt phần dư ở giữa ảnh. Icon dùng contain để không bị cắt. Component `Icons.jsx` dùng file trong `muses-react/icon` cho các biểu tượng tương ứng (vé, tìm kiếm, lịch, tiện ích, mạng xã hội, breadcrumb, dropdown). Mũi tên điều hướng giữ vector vì thư mục icon không có asset mũi tên tương ứng. Icon có kích thước cố định và object-fit contain. Không đổi dữ liệu hay đường dẫn ảnh trong DB.
+
+## Đọc văn bản và chạy chữ theo giọng đọc
+
+Trên trang chi tiết tác phẩm, mục Mô tả có nút **Đọc văn bản**, **Tạm dừng / Tiếp tục**, **Dừng**, chọn giọng và tốc độ. Văn bản đang đọc được tô sáng và tự cuộn trong khung; có thể tắt tự cuộn. Ngôn ngữ giọng đọc dựa trên ngôn ngữ mô tả thực tế (`descriptionLanguage`), kể cả khi API fallback tiếng Việt.
+
+Tính năng dùng Web Speech API của trình duyệt, không cần API key, migration hoặc dịch vụ TTS backend. Giọng Việt/Anh phụ thuộc trình duyệt và giọng đã cài trên thiết bị. Trình duyệt không hỗ trợ hoặc phát thất bại sẽ hiện thông báo, vẫn giữ văn bản để đọc. Theo câu/đoạn dựa trên sự kiện bắt đầu và kết thúc giọng đọc; theo từ dựa trên `boundary` khi giọng có hỗ trợ, không dùng bộ đếm thời gian ước lượng.
+
+Điều hướng sang tác phẩm khác hoặc đóng cửa sổ nghe thử sẽ dừng giọng đọc. Phát audio có sẵn sẽ dừng TTS để tránh chồng tiếng. Audio thu sẵn chưa có timestamp/transcript alignment, nên tính năng tô sáng chỉ áp dụng cho giọng TTS từ văn bản. Không tạo hay lưu file MP3.
+
+Trong admin **Languages & Audio**, lưu mô tả rồi bấm **Read aloud** ở cột Translation để nghe thử cùng kiểu chạy chữ. Bản dịch admin hiện vẫn chỉ lưu localStorage, chưa cập nhật database.
+
+Kiểm tra thuật toán tách câu và vị trí từ: `npm --prefix muses-react test`. Cloud đã kiểm tra sự kiện điều khiển và highlight bằng speech engine mô phỏng; cloud không có giọng cài sẵn nên chưa xác nhận âm thanh phát qua loa trên thiết bị thật.
