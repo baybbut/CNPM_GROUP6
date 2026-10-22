@@ -3,19 +3,18 @@ import { HIGHLIGHTS } from "../../data/data";
 import Art from "../Art/Art";
 import "./Highlight.css";
 
+import { useHomeImages } from "../../context/HomeImagesContext";
+
 export default function Highlight() {
   const { t } = useLang();
+  const images = useHomeImages(HIGHLIGHTS, "highlight");
 
   return (
     <section className="highlight">
       <h2 className="title">{t("highlight")}</h2>
 
       <div className="hl-stage">
-        <svg
-          className="hl-arrows"
-          viewBox="0 0 734 376"
-          aria-hidden="true"
-        >
+        <svg className="hl-arrows" viewBox="0 0 734 376" aria-hidden="true">
           <defs>
             <marker
               id="hl-head"
@@ -48,7 +47,7 @@ export default function Highlight() {
           </g>
         </svg>
 
-        {HIGHLIGHTS.map((h) => (
+        {images.map((h) => (
           <Art
             key={h.id}
             item={h}
@@ -63,7 +62,7 @@ export default function Highlight() {
           />
         ))}
 
-        {HIGHLIGHTS.map((h) => (
+        {images.map((h) => (
           <span key={h.id} className={`date d-${h.cls}`}>
             {h.date}
           </span>

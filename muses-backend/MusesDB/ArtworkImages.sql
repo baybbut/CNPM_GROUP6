@@ -51,15 +51,15 @@ VALUES
     ),
     (
         N'Kết nạp đảng ở Điện Biên Phủ',
-        N'/images/tranh/KETNAPDANGODIENBIENPHU.jpeg'
+        N'/images/tranh/tranhsonmai/KETNAPDANGODIENBIENPHU.jpeg'
     ),
     (
         N'Xuân Hồ Gươm',
-        N'/images/tranh/XUANHOGUOM.jpeg'
+        N'/images/tranh/tranhsonmai/XUANHOGUOM.jpeg'
     ),
     (
         N'Điệu múa cổ',
-        N'/images/tranh/DIEUMUACO.jpg'
+        N'/images/tranh/tranhsonmai/DIEUMUACO.jpg'
     ),
     (
         N'Thiếu nữ bên hoa huệ',
@@ -75,7 +75,7 @@ VALUES
     ),
     (
         N'Hòa nhạc trong gia đình ở Huế',
-        N'/images/tranh/HOANH ACTRONGGIADINHOHUE.jpg'
+        N'/images/tranh/HOANHACTRONGGIADINHOHUE.jpg'
     ),
     (
         N'Hà Nội vào thu',
@@ -84,12 +84,20 @@ VALUES
     (
         N'Xuân về hội tụ',
         N'/images/tranh/XUANVEHOITU.jpg'
-    );
-
--- Sửa đường dẫn hòa nhạc về đúng tên file, không có dấu cách.
-UPDATE @ImageMap
-SET ImageURL = N'/images/tranh/HOANHACTRONGGIADINHOHUE.jpg'
-WHERE ArtworkName = N'Hòa nhạc trong gia đình ở Huế';
+    ),
+    (N'Thiếu nữ bên đầm sen', N'/images/tranh/tranhsonmai/THIEUNUBENDAMSEN.jpg'),
+    (N'Thành đồng tổ quốc', N'/images/tranh/tranhsonmai/THANHDONGTOQUOC.png'),
+    (N'Trường Ca Phố', N'/images/tranh/tranhsonmai/TRUONGCAPHO.jpg'),
+    (N'Văn Xương Đạo Lộ', N'/images/tranh/tranhsonmai/VANXUONGDAOLO.jpg'),
+    (N'Trên cánh đồng', N'/images/tranh/TRENCANHDONG.jpg'),
+    (N'Phong cảnh mùa đông', N'/images/tranh/PHONGCANHMUADONG.jpg'),
+    (N'Cánh cửa chạm rồng', N'/images/tranh/Dieukhac/CANHCUACHAMRONG.png'),
+    (N'Đợi anh về', N'/images/tranh/Dieukhac/DOIANHVE.png'),
+    (N'Cuộc sống và tình yêu', N'/images/tranh/Dieukhac/CUOCSONGVATINHYEU.png'),
+    (N'Không gian số 4', N'/images/tranh/Dieukhac/KHONGGIANSO4.png'),
+    (N'Hưng Đạo Vương khán bình thư', N'/images/tranh/Dieukhac/HUNGDAO.png'),
+    (N'Tiên tắm đầm sen', N'/images/tranh/Dieukhac/TIENTAMDAMSEN.png'),
+    (N'Tượng Quan Âm nghìn mắt nghìn tay', N'/images/tranh/Dieukhac/TUONGQUANAMNGHINMATNGHINTAY.jpg');
 
 -- Mỗi tên trong danh sách phải khớp đúng một tác phẩm.
 IF EXISTS (
@@ -114,6 +122,21 @@ BEGIN
         N'Có tên tác phẩm không khớp hoặc bị trùng. Chưa thêm ảnh.',
         1;
 END;
+
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+
+-- Repair only the known legacy seed paths. Preserve custom images and primary choices.
+UPDATE i
+SET ImageURL = m.ImageURL
+FROM dbo.ArtworkImages AS i
+JOIN dbo.Artworks AS a ON a.ArtworkID = i.ArtworkID
+JOIN @ImageMap AS m ON m.ArtworkName = a.ArtworkName
+WHERE
+    (m.ArtworkName = N'Kết nạp đảng ở Điện Biên Phủ' AND i.ImageURL = N'/images/tranh/KETNAPDANGODIENBIENPHU.jpeg') OR
+    (m.ArtworkName = N'Xuân Hồ Gươm' AND i.ImageURL = N'/images/tranh/XUANHOGUOM.jpeg') OR
+    (m.ArtworkName = N'Điệu múa cổ' AND i.ImageURL = N'/images/tranh/DIEUMUACO.jpg') OR
+    (m.ArtworkName = N'Hòa nhạc trong gia đình ở Huế' AND i.ImageURL = N'/images/tranh/HOANH ACTRONGGIADINHOHUE.jpg');
 
 -- Thêm ảnh chưa có.
 -- Nếu tác phẩm đã có ảnh chính, ảnh mới được thêm là ảnh phụ.
@@ -148,6 +171,8 @@ WHERE NOT EXISTS (
     WHERE i.ArtworkID = a.ArtworkID
       AND i.ImageURL = m.ImageURL
 );
+
+COMMIT TRANSACTION;
 
 -- Kiểm tra những ảnh trong danh sách đã được gắn.
 SELECT

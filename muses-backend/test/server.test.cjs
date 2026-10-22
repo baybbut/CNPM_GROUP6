@@ -24,6 +24,16 @@ app.locals.pool = {
       },
       async query(sql) {
         calls.push({ ...values });
+        if (sql.includes("dbo.SiteImages"))
+          return {
+            recordset: [
+              {
+                slot: "home.highlight.h4",
+                imageUrl: "/images/tranh/tranhsonmai/GIAOMUA.jpg",
+                artworkId: 1,
+              },
+            ],
+          };
         if (sql.includes("DB_NAME()"))
           return { recordset: [{ databaseName: "MusesMuseumDB" }] };
         return { recordset: values.id === 999 ? [] : [artwork] };
@@ -99,4 +109,16 @@ test("database failure returns an error response, not sample data", async () => 
   } finally {
     app.locals.pool = pool;
   }
+});
+
+test("homepage images expose stable placement keys", async () => {
+  const response = await fetch(`${origin}/api/site-images`);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), [
+    {
+      slot: "home.highlight.h4",
+      imageUrl: "/images/tranh/tranhsonmai/GIAOMUA.jpg",
+      artworkId: 1,
+    },
+  ]);
 });

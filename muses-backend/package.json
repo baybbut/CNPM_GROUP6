@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.cjs",
     "dev": "node --watch server.cjs",
-    "test": "node --test"
+    "test": "node --test",
+    "images:check": "node scripts/check-images.cjs"
   },
   "keywords": [],
   "author": "",

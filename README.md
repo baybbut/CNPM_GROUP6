@@ -88,3 +88,7 @@ npm test
 ```
 
 Test API sử dụng database adapter giả để kiểm tra contract, validation, lỗi DB, CORS và phục vụ ảnh; không thay thế kiểm thử SQL Server thật. Build web/admin: `npm run build` trong folder tương ứng. Mobile bundle Android đã export được trên bản gộp; chưa kiểm thử thiết bị. Admin vẫn dùng dữ liệu demo và chưa nối API quản trị.
+
+## Đối chiếu ảnh database
+
+Xem [hướng dẫn và bảng ánh xạ 32 ảnh](muses-backend/MusesDB/README.md). Với database hiện có, chạy lần lượt `ArtworkImages.sql` và `HomeImages.sql`, không chạy lại script tạo/xóa database. Sau khi backend chạy, dùng `npm run images:check` trong `muses-backend` để kiểm tra từng ảnh trả về từ API.

@@ -3,8 +3,11 @@ import TicketIcon from "../../../icon/ticketW.png";
 import { InfoIcon } from "../Icons";
 import "./Hero.css";
 
+import { useHomeImage } from "../../context/HomeImagesContext";
+
 export default function Hero() {
   const { t } = useLang();
+  const image = useHomeImage("home.hero");
   return (
     <section className="hero">
       <svg width="0" height="0" aria-hidden="true">
@@ -12,19 +15,28 @@ export default function Hero() {
           <path d="M0,0.05 Q0.5,0.25 1,0.05 L1,0.95 Q0.5,0.8 0,0.95 Z" />
         </clipPath>
       </svg>
-      <div className="hero-img" />
+      <div
+        className="hero-img"
+        style={image ? { backgroundImage: `url("${image}")` } : undefined}
+      />
       <div className="welcome-bar">
         <div className="welcome-text">
           <strong>{t("welcome")}</strong>
-          <span>{t("openToday")}<br />{t("hours")}</span>
+          <span>
+            {t("openToday")}
+            <br />
+            {t("hours")}
+          </span>
         </div>
         <div className="welcome-actions">
           <button className="btn btn-brown">
             <img src={TicketIcon} alt="" className="ticket-icon" />
-             {t("bookTicket")}</button>
+            {t("bookTicket")}
+          </button>
           <button className="btn btn-grey">
             <InfoIcon />
-            {t("prepare")}</button>
+            {t("prepare")}
+          </button>
         </div>
       </div>
     </section>

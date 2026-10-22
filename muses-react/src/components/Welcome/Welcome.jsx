@@ -4,8 +4,11 @@ import { GALLERY } from "../../data/data";
 import Art from "../Art/Art";
 import "./Welcome.css";
 
+import { useHomeImages } from "../../context/HomeImagesContext";
+
 export default function Welcome() {
   const { t } = useLang();
+  const images = useHomeImages(GALLERY, "welcome");
 
   const galleryRef = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -23,7 +26,7 @@ export default function Welcome() {
       },
       {
         threshold: 0.1,
-      }
+      },
     );
 
     observer.observe(gallery);
@@ -36,7 +39,7 @@ export default function Welcome() {
       <h2 className="title light">{t("welcomeTitle")}</h2>
 
       <div className="gallery" ref={galleryRef}>
-        {GALLERY.map((g, index) => (
+        {images.map((g, index) => (
           <Art
             key={g.id}
             item={g}
@@ -47,9 +50,7 @@ export default function Welcome() {
         ))}
       </div>
 
-      <button className="btn btn-white">
-        {t("exploreBtn")}
-      </button>
+      <button className="btn btn-white">{t("exploreBtn")}</button>
     </section>
   );
 }

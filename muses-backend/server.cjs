@@ -201,6 +201,22 @@ app.get("/api/artworks/:id", validateLanguage, async (req, res) => {
   }
 });
 
+// Stable homepage placement keys, independent of artwork ordering and language.
+app.get("/api/site-images", async (_req, res) => {
+  try {
+    const result = await app.locals.pool.request().query(`
+      SELECT s.SlotKey AS slot, s.ImageURL AS imageUrl, s.ArtworkID AS artworkId
+      FROM dbo.SiteImages AS s
+      WHERE s.SlotKey LIKE 'home.%'
+      ORDER BY s.SlotKey;
+    `);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Lỗi cấu hình ảnh trang chủ:", err.message);
+    res.status(503).json({ message: "Chưa tải được cấu hình ảnh trang chủ." });
+  }
+});
+
 // Production: serve the built visitor website and API on the same origin.
 app.use("/api", (_req, res) =>
   res.status(404).json({ message: "API not found." }),
