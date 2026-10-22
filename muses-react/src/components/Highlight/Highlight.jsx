@@ -1,14 +1,69 @@
+
+import { useEffect, useState } from "react";
 import { useLang } from "../../context/LangContext";
+import { getArtworks } from "../../api";
 import { HIGHLIGHTS } from "../../data/data";
 import Art from "../Art/Art";
 import "./Highlight.css";
 
 export default function Highlight() {
   const { t } = useLang();
+  const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadArtworks() {
+      try {
+        const lang = "vi";
+        const data = await getArtworks(lang);
+
+        if (!cancelled) {
+          setArtworks(data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || "Không tải được tác phẩm");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadArtworks();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const highlightedArtworks = HIGHLIGHTS.map((highlight, index) => {
+    const artwork = artworks[index];
+
+    return {
+      ...highlight,
+      title: artwork?.title || highlight.title,
+      imageUrl: artwork?.imageUrl || null,
+    };
+  });
 
   return (
     <section className="highlight">
       <h2 className="title">{t("highlight")}</h2>
+
+      {error && (
+        <p role="status">
+          Chưa tải được dữ liệu database; đang dùng thông tin có sẵn.
+        </p>
+      )}
+
+      {loading && (
+        <p role="status">Đang tải dữ liệu tác phẩm...</p>
+      )}
 
       <div className="hl-stage">
         <svg
@@ -48,22 +103,20 @@ export default function Highlight() {
           </g>
         </svg>
 
-        {HIGHLIGHTS.map((h) => (
+        {highlightedArtworks.map((h) => (
           <Art
             key={h.id}
-            item={h}
+            item={{
+              ...h,
+              img: h.img,
+              color: h.color || "#e8e0d3",
+            }}
             flip
-            flipTitle={
-              typeof h.title === "string"
-                ? h.title
-                : typeof h.name === "string"
-                  ? h.name
-                  : ""
-            }
+            flipTitle={h.title}
           />
         ))}
 
-        {HIGHLIGHTS.map((h) => (
+        {highlightedArtworks.map((h) => (
           <span key={h.id} className={`date d-${h.cls}`}>
             {h.date}
           </span>

@@ -21,12 +21,12 @@ export const HIGHLIGHTS = [
 ];
 
 export const GALLERY = [
-  { id: 1, img: img5,  cls: "g1" },
-  { id: 2, img: img6,  cls: "g2" },
-  { id: 3, img: img7,  cls: "g3" },
-  { id: 4, img: img8,  cls: "g4" },
-  { id: 5, img: img9,  cls: "g5" },
-  { id: 6, img: img10,  cls: "g6" },
+  { id: 1, artworkId: 25, img: img5, cls: "g1" },
+  { id: 2, artworkId: 20, img: img6, cls: "g2" },
+  { id: 3, artworkId: 17, img: img7, cls: "g3" },
+  { id: 4, artworkId: 19, img: img8, cls: "g4" },
+  { id: 5, artworkId: 13, img: img9, cls: "g5" },
+  { id: 6, artworkId: 10, img: img10, cls: "g6" },
 ];
 
 export const NEWS = [{ id: 1, textKey: "newsText" }];
