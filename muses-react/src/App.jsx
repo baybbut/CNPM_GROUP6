@@ -1,21 +1,30 @@
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header/Header";
-import Hero from "./components/Hero/Hero";
-import Highlight from "./components/Highlight/Highlight";
-import News from "./components/News/News";
-import Welcome from "./components/Welcome/Welcome";
-import Prepare from "./components/Prepare/Prepare";
 import Footer from "./components/Footer/Footer";
+import Home from "./components/Home/Home";
+import Visit from "./components/visit/visit";
+import Exhibition from "./components/exhibition/exhibition";
+import Explore from "./components/explore/explore";
+import Collection from "./components/explore/collection";
 
 export default function App() {
+  const { pathname } = useLocation();
+  useEffect(() => { // lỗi
+  window.scrollTo(0, 0);
+}, [pathname]);
+
   return (
     <>
       <Header />
       <main>
-        <Hero />
-        <Highlight />
-        <News />
-        <Welcome />
-        <Prepare />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/visit" element={<Visit />} />
+          <Route path="/exhibition" element={<Exhibition />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/explore/collection" element={<Collection />} />
+        </Routes>
       </main>
       <Footer />
     </>
