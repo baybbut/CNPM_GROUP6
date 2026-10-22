@@ -17,6 +17,7 @@ INSERT INTO @Slots VALUES
 ('home.highlight.h2','/images/tranh/NHAPHO18.jpg',NULL),
 ('home.highlight.h3','/images/tranh/tranhsonmai/SONMAI.jpg',NULL),
 ('home.highlight.h4','/images/tranh/tranhsonmai/GIAOMUA.jpg',N'Giao Mùa'),
+('home.highlight.h5','/images/tranh/EMTHUY.jpeg',N'Em Thúy'),
 ('home.news','/images/tranh/tranhsonmai/NHUNGDUATRETRAU.jpg',N'Những đứa trẻ trâu'),
 ('home.welcome.g1','/images/tranh/XUANVEHOITU.jpg',N'Xuân về hội tụ'),
 ('home.welcome.g2','/images/tranh/EMTHUY.jpeg',N'Em Thúy'),

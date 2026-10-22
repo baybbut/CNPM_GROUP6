@@ -33,10 +33,10 @@ const homeSQL = fs.readFileSync(
   path.join(__dirname, "../MusesDB/HomeImages.sql"),
   "utf8",
 );
-test("13 homepage placements preserve the original images and have real files", () => {
+test("14 homepage placements preserve the original images and have real files", () => {
   const rows = [...homeSQL.matchAll(/\('(home\.[^']+)','(\/images\/[^']+)'/g)];
-  assert.equal(rows.length, 13);
-  assert.equal(new Set(rows.map((r) => r[1])).size, 13);
+  assert.equal(rows.length, 14);
+  assert.equal(new Set(rows.map((r) => r[1])).size, 14);
   for (const [, slot, url] of rows)
     assert.ok(
       fs.existsSync(
@@ -46,7 +46,7 @@ test("13 homepage placements preserve the original images and have real files", 
     );
   assert.equal(
     rows.filter((r) => r[1].startsWith("home.highlight.")).length,
-    4,
+    5,
   );
   assert.equal(rows.filter((r) => r[1].startsWith("home.welcome.")).length, 6);
   assert.match(homeSQL, /WHERE NOT EXISTS/);

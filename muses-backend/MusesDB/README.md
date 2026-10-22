@@ -59,14 +59,14 @@ DB lưu đường dẫn `/images/tranh/...`, không lưu đường dẫn ổ đ�
 
 Các đường dẫn có phân biệt chữ hoa/thường trên Linux. Kiểm tra 32 file bằng `npm test` trong `muses-backend`. Database trên máy người dùng cần tự chạy script; chưa được thay đổi từ cloud.
 
-## Giữ đúng 13 vị trí ảnh trang chủ
+## Giữ đúng 14 vị trí ảnh trang chủ
 
 Sau `ArtworkImages.sql`, chạy thêm `HomeImages.sql` trong SQL client. Script tạo bảng `SiteImages` nếu chưa có và chỉ thêm slot còn thiếu, không ghi đè lựa chọn ảnh đã sửa. Không chạy lại script tạo database.
 
 `GET /api/site-images` trả các khóa ổn định; web gắn ảnh theo khóa, không theo thứ tự kết quả:
 
 - `home.hero`: banner đầu trang.
-- `home.highlight.h1` đến `h4`: đúng 4 ô Highlight cũ.
+- `home.highlight.h1` đến `h5`: 5 ô Highlight (ô thứ 5 là Em Thúy).
 - `home.news`: ảnh News.
 - `home.welcome.g1` đến `g6`: đúng 6 ô Welcome cũ.
 - `home.prepare`: nền Prepare.
@@ -82,3 +82,5 @@ WHERE SlotKey = 'home.highlight.h4';
 ```
 
 Refresh trang chủ sau khi đổi DB. Web kiểm tra ảnh tải được trước khi thay vào vị trí; DB/API lỗi, thiếu slot hoặc ảnh 404 thì giữ ảnh gốc để bố cục không hỏng. Chạy `npm run images:check` để phát hiện lỗi dù web đã dùng ảnh dự phòng. Ba poster Highlight đầu chưa có tác phẩm tương ứng trong seed nên giữ `ArtworkID=NULL`, vẫn lấy đúng URL ảnh từ DB, không tạo tác phẩm giả.
+
+Highlight mới hiển thị 5 ảnh dạng carousel, ảnh ở giữa nâng lên. Nếu đã seed 13 slot trước đây, chạy lại `HomeImages.sql` để thêm `home.highlight.h5`; script không ghi đè 13 lựa chọn ảnh đang có. Khi chưa seed slot mới, web vẫn hiển thị ảnh Em Thúy có sẵn làm dự phòng.

@@ -96,3 +96,7 @@ Xem [hướng dẫn và bảng ánh xạ 32 ảnh](muses-backend/MusesDB/README.
 ## Trang chi tiết tác phẩm
 
 Từ `/explore/collection`, bấm một tác phẩm để mở `/explore/artworks/:id`. Trang chi tiết dùng ảnh, tiêu đề, mô tả ngắn/đầy đủ, chất liệu, năm, kích thước và audio từ API; tác phẩm cùng nghệ sĩ được đối chiếu bằng `artistId` (fallback tên với API cũ), không bao gồm tác phẩm đang xem. Nút bản đồ dẫn tới `/visit#directions`. DB hiện chưa có trường lịch sử riêng, phần Lịch sử hiển thị trạng thái đang cập nhật thay vì suy diễn nội dung. Không cần chạy migration cho thay đổi giao diện này.
+
+## Highlight trên Home
+
+Dải 5 ảnh cuộn ngang; ảnh gần tâm khung nhất được nâng lên, ảnh rời tâm trở về vị trí cũ. Dùng mũi tên, bấm ảnh, phím trái/phải/Home/End hoặc vuốt trên điện thoại. Hiệu ứng tôn trọng thiết lập giảm chuyển động. Chạy lại `HomeImages.sql` để bổ sung slot DB `home.highlight.h5`, không cần tạo lại database.
