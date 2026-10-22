@@ -24,7 +24,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   min-height: 0;
   max-height: 680px;
 }
@@ -164,7 +164,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.25s;
 }
 .detail-related-card:hover img {
@@ -215,7 +215,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 .detail-map-link:after {
   content: "";

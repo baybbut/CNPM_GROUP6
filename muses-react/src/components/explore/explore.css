@@ -1,5 +1,5 @@
 .xp{padding-top:80px;background:var(--cream)}
-.xp-pic{background-size:contain;background-position:center;background-repeat:no-repeat}
+.xp-pic{background-size:cover;background-position:center;background-repeat:no-repeat}
 
 /* HERO: muốn dùng ảnh thật, điền HERO_IMG trong exploreData.js */
 .xp-hero{height:61vw;min-height:320px;max-height:840px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 4.5% 9%;

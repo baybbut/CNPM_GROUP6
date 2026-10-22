@@ -103,4 +103,4 @@ Dải 5 ảnh cuộn ngang; ảnh gần tâm khung nhất được nâng lên, �
 
 ## Quy tắc hiển thị ảnh và icon
 
-Ảnh tác phẩm trong Highlight, Welcome, bộ sưu tập và chi tiết dùng chế độ contain để giữ đúng tỉ lệ, không cắt nội dung. Bản đồ hiển thị trọn ảnh; ảnh Hero/banner phủ khung với cover. Component `Icons.jsx` dùng file trong `muses-react/icon` cho các biểu tượng tương ứng (vé, tìm kiếm, lịch, tiện ích, mạng xã hội, breadcrumb, dropdown). Mũi tên điều hướng giữ vector vì thư mục icon không có asset mũi tên tương ứng. Icon có kích thước cố định và object-fit contain. Không đổi dữ liệu hay đường dẫn ảnh trong DB.
+Ảnh trong Highlight, Welcome, Explore, bộ sưu tập, chi tiết và banner dùng cover: phủ kín khung, giữ tỉ lệ và cắt phần dư ở giữa ảnh. Icon dùng contain để không bị cắt. Component `Icons.jsx` dùng file trong `muses-react/icon` cho các biểu tượng tương ứng (vé, tìm kiếm, lịch, tiện ích, mạng xã hội, breadcrumb, dropdown). Mũi tên điều hướng giữ vector vì thư mục icon không có asset mũi tên tương ứng. Icon có kích thước cố định và object-fit contain. Không đổi dữ liệu hay đường dẫn ảnh trong DB.

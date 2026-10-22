@@ -48,7 +48,7 @@
 .ex-card{padding:0 1%}
 .ex-card h4{font-family:var(--serif);font-weight:400;font-size:clamp(16px,1.9vw,24px);letter-spacing:.14em;margin:22px 0 14px}
 .ex-card p{font-size:14px;letter-spacing:.05em}
-.ex-pic{background-size:contain;background-position:center;background-repeat:no-repeat}
+.ex-pic{background-size:cover;background-position:center;background-repeat:no-repeat}
 .ex-card .ex-pic{aspect-ratio:438 / 253}
 .ex-card.big .ex-pic{aspect-ratio:864 / 293}
 .ex-imgbox{position:relative}

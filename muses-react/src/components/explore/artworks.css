@@ -81,12 +81,12 @@
   background: #dfdccb;
   overflow: hidden;
 }
-.aw-image img {
+.aw-image > img {
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.3s;
-  padding: 15px;
+  padding: 0;
 }
 .aw-card:hover img {
   transform: scale(1.035);
@@ -209,12 +209,12 @@
   background: #dfdccb;
   align-self: start;
 }
-.aw-detail-image img {
+.aw-detail-image > img {
   display: block;
   width: 100%;
   max-height: 760px;
-  object-fit: contain;
-  padding: 25px;
+  object-fit: cover;
+  padding: 0;
 }
 .aw-detail-text h1 {
   font:
@@ -300,8 +300,8 @@
     bottom: 5px;
     left: 5px;
   }
-  .aw-image img {
-    padding: 8px;
+  .aw-image > img {
+    padding: 0;
   }
   .aw-detail {
     grid-template-columns: 1fr;
@@ -327,8 +327,8 @@
   .aw-loader {
     animation: none;
   }
-  .aw-image img {
+  .aw-image > img {
     transition: none;
   }
 }
-.aw-link{display:inline-flex;align-items:center;gap:8px}.aw-image,.aw-detail-image{min-width:0}.aw-image img{max-width:100%;max-height:100%}
+.aw-link{display:inline-flex;align-items:center;gap:8px}.aw-image,.aw-detail-image{min-width:0}.aw-image > img{max-width:100%;max-height:100%}
