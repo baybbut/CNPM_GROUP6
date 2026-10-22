@@ -69,8 +69,8 @@ export default function Scanner() {
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       setError(
         vi
-          ? "Camera cần HTTPS hoặc localhost. Bạn có thể tải ảnh QR hoặc dán mã bên dưới."
-          : "Camera access needs HTTPS or localhost. Upload a QR image or paste its link below.",
+          ? "Chưa thể mở camera. Bạn có thể tải ảnh QR hoặc dán mã bên dưới."
+          : "Camera unavailable. Upload a QR image or paste its link below.",
       );
       return;
     }
@@ -222,11 +222,6 @@ export default function Scanner() {
               <input type="file" accept="image/*" onChange={upload} />
             </label>
           </div>
-          <p className="scan-private">
-            {vi
-              ? "Camera chỉ bật khi bạn bấm quét; hình ảnh được xử lý trong trình duyệt."
-              : "Camera starts only when requested. Images are decoded in your browser."}
-          </p>
         </section>
         <aside className="scan-options">
           <h2>
@@ -245,11 +240,6 @@ export default function Scanner() {
               ))}
             </select>
           </label>
-          <p>
-            {vi
-              ? "Ưu tiên bản dịch đã lưu của tác phẩm. Nếu chưa có, web sẽ dịch tự động qua Docker."
-              : "Saved artwork translations are used first. Missing translations are generated automatically through Docker."}
-          </p>
           <div className="scan-divider" />
           <form
             onSubmit={(e) => {

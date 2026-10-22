@@ -100,11 +100,6 @@ export default function ArtworkQR({ id, language, vi }) {
                 {vi ? "Tải ảnh QR" : "Download QR"}
               </a>
             )}
-            <p>
-              {vi
-                ? "QR localhost chỉ mở được trên máy đang chạy web. Điện thoại cần địa chỉ website truy cập được."
-                : "A localhost link works only on this computer. Phones need a reachable website address."}
-            </p>
           </section>
         </div>
       )}

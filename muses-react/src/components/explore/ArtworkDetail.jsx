@@ -200,15 +200,15 @@ export default function ArtworkDetail() {
                 {artwork.translationSource === "automatic" && (
                   <p className="detail-translation-status">
                     {vi
-                      ? "Bản dịch tự động · có thể có sai sót."
-                      : "Automatic translation · may contain inaccuracies."}
+                      ? "Bản dịch tự động"
+                      : "Automatic translation"}
                   </p>
                 )}
                 {artwork.translationStatus === "unavailable" && (
                   <p className="detail-translation-status" role="status">
                     {vi
-                      ? "Chưa dịch được nội dung. Đang hiển thị bản gốc; kiểm tra dịch vụ Docker rồi thử lại."
-                      : "Translation is unavailable. Showing the original; check the Docker translation service and retry."}{" "}
+                      ? "Chưa có bản dịch. Đang hiển thị bản gốc."
+                      : "Translation unavailable. Showing the original."}{" "}
                     <button onClick={state.retry}>
                       {vi ? "Thử lại" : "Retry"}
                     </button>
