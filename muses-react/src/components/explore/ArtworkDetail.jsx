@@ -1,3 +1,10 @@
+import { useSearchParams } from "react-router-dom";
+import { useLang } from "../../context/LangContext";
+import {
+  CONTENT_LANGUAGES,
+  contentLanguage,
+} from "../../api/contentLanguages.mjs";
+import ArtworkQR from "../Scanner/ArtworkQR";
 import { useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useArtworks, ArtworkImage, RequestState } from "./Artworks";
@@ -88,10 +95,33 @@ function RelatedArtworks({ artwork, vi }) {
 
 export default function ArtworkDetail() {
   const { id } = useParams();
+  const { lang, setLang } = useLang();
+  const [query, setQuery] = useSearchParams();
   const state = useArtworks(id);
   const { data: artwork, loading, error, vi } = state;
   return (
     <div className="artwork-detail-page">
+      <div className="detail-language-bar" style={{ padding: "100px 5% 0" }}>
+        <label>
+          {vi ? "Ngôn ngữ nội dung" : "Content language"}
+          <select
+            value={contentLanguage(lang)}
+            onChange={(e) => {
+              setLang(e.target.value);
+              const next = new URLSearchParams(query);
+              next.set("lang", e.target.value);
+              setQuery(next, { replace: true });
+            }}
+          >
+            {CONTENT_LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <ArtworkQR id={id} language={contentLanguage(lang)} vi={vi} />
+      </div>
       <RequestState {...state} />
       {!loading && !error && artwork && (
         <>
@@ -167,14 +197,23 @@ export default function ArtworkDetail() {
                       : "The description of this artwork is being prepared."}
                   </p>
                 )}
-                {artwork.descriptionLanguage &&
-                  artwork.descriptionLanguage !== (vi ? "vi" : "en") && (
-                    <small className="detail-language-note">
-                      {vi
-                        ? "Hiển thị nội dung bằng ngôn ngữ hiện có."
-                        : "The available Vietnamese description is shown while the translation is prepared."}
-                    </small>
-                  )}
+                {artwork.translationSource === "automatic" && (
+                  <p className="detail-translation-status">
+                    {vi
+                      ? "Bản dịch tự động · có thể có sai sót."
+                      : "Automatic translation · may contain inaccuracies."}
+                  </p>
+                )}
+                {artwork.translationStatus === "unavailable" && (
+                  <p className="detail-translation-status" role="status">
+                    {vi
+                      ? "Chưa dịch được nội dung. Đang hiển thị bản gốc; kiểm tra dịch vụ Docker rồi thử lại."
+                      : "Translation is unavailable. Showing the original; check the Docker translation service and retry."}{" "}
+                    <button onClick={state.retry}>
+                      {vi ? "Thử lại" : "Retry"}
+                    </button>
+                  </p>
+                )}
               </section>
               <section aria-labelledby="history-title">
                 <h2 id="history-title">{vi ? "LỊCH SỬ" : "HISTORY"}</h2>

@@ -63,10 +63,17 @@ test("list and detail return artwork API data and bind language and id", async (
   assert.equal((await detail.json()).id, 1);
   assert.deepEqual(calls.at(-1), { lang: "vi", id: 1 });
 });
+test("all five content languages bind safely", async () => {
+  for (const lang of ["vi", "en", "fr", "ja", "zh"]) {
+    const response = await fetch(`${origin}/api/artworks?lang=${lang}`);
+    assert.equal(response.status, 200);
+    assert.equal(calls.at(-1).lang, lang);
+  }
+});
 test("invalid language and IDs are rejected before querying the database", async () => {
   const count = calls.length;
   for (const route of [
-    "/api/artworks?lang=fr",
+    "/api/artworks?lang=xx",
     "/api/artworks/0",
     "/api/artworks/abc",
     "/api/artworks/2147483648",

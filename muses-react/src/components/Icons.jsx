@@ -91,6 +91,21 @@ export function SvgIcon({
   style,
   direction,
 }) {
+  if (kind === "qr")
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        aria-hidden="true"
+      >
+        <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h4v4h-7zM21 13v2M13 21v-3" />
+        <path d="M6 6h1v1H6zM17 6h1v1h-1zM6 17h1v1H6z" />
+      </svg>
+    );
   // No arrow file exists in icon/: retain a simple directional vector.
   if (kind === "arrow")
     return (

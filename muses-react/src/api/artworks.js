@@ -1,3 +1,4 @@
+import { contentLanguage } from "./contentLanguages.mjs";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
 export function mediaUrl(value) {
@@ -11,7 +12,7 @@ export function mediaUrl(value) {
 }
 
 export async function fetchArtworks(lang, id, signal) {
-  const language = lang === "vi" ? "vi" : "en";
+  const language = contentLanguage(lang);
   const response = await fetch(
     `${base}/api/artworks${id ? `/${encodeURIComponent(id)}` : ""}?lang=${language}`,
     { signal },
