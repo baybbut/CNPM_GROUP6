@@ -80,7 +80,11 @@ export default function Scanner() {
       const { BrowserQRCodeReader } = await import("@zxing/browser");
       if (generation !== run.current) return;
       const media = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
       if (generation !== run.current) {
@@ -92,8 +96,26 @@ export default function Scanner() {
       const session = await reader.decodeFromStream(
         media,
         video.current,
-        (result) => {
-          if (result) open(result.getText(), generation);
+        (result, scanError) => {
+          if (generation !== run.current) return;
+          if (result) {
+            open(result.getText(), generation);
+          } else if (
+            scanError &&
+            ![
+              "NotFoundException",
+              "ChecksumException",
+              "FormatException",
+            ].includes(scanError.name)
+          ) {
+            // Unexpected decoder failures stop ZXing's loop; don't leave a frozen scanning state.
+            stop();
+            setError(
+              vi
+                ? "Quá trình quét bị gián đoạn. Hãy thử lại hoặc chọn ảnh QR."
+                : "Scanning was interrupted. Try again or upload a QR image.",
+            );
+          }
         },
       );
       if (generation !== run.current) {
@@ -222,6 +244,11 @@ export default function Scanner() {
               <input type="file" accept="image/*" onChange={upload} />
             </label>
           </div>
+          {error && (
+            <p className="scan-error" role="alert">
+              {error}
+            </p>
+          )}
         </section>
         <aside className="scan-options">
           <h2>
@@ -275,11 +302,6 @@ export default function Scanner() {
           </Link>
         </aside>
       </div>
-      {error && (
-        <p className="scan-error" role="alert">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
