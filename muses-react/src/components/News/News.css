@@ -18,3 +18,4 @@
   .news{grid-template-columns:1fr;gap:40px}
   .news-img{width:85%}
 }
+.news-img{background-size:contain;background-repeat:no-repeat;background-color:var(--sand);background-position:center}

@@ -10,3 +10,4 @@
 @media (max-width:900px){
   .f-cols{padding-inline-start:0;gap:40px}
 }
+.footer .social{border:0}.footer .social img{display:block;width:36px;height:36px;object-fit:contain}.footer .to-top{display:grid;place-items:center}

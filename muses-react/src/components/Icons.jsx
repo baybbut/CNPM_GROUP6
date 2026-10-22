@@ -8,39 +8,37 @@ import earImage from "../../icon/ear.png";
 import toiletImage from "../../icon/toilet.png";
 import earPhoneImage from "../../icon/earphones.png";
 import giftImage from "../../icon/gift.png";
-import eye from "../../icon/eye.png";
+import eyeImage from "../../icon/eye.png";
 import twoFace from "../../icon/two.png";
 import babyImage from "../../icon/baby.png";
-import searchImageWhite from "../../icon/searchW.png";
-import searchImageBlack from  "../../icon/search.png";
+import searchWhite from "../../icon/searchW.png";
+import searchBlack from "../../icon/search.png";
+import ticketWhite from "../../icon/ticketW.png";
+import ticketBlack from "../../icon/ticketB.png";
+import calendar from "../../icon/date-calendar.png";
+import calendarBlack from "../../icon/date-calendar-mobile.png";
+import logo from "../../icon/logo.png";
+import logoWhite from "../../icon/logow.png";
+import down from "../../icon/down.png";
+import home from "../../icon/home.png";
+import homeWhite from "../../icon/homeW.png";
+import photo from "../../icon/photoB.png";
+import photoWhite from "../../icon/photoW.png";
+import explore from "../../icon/exploreB.png";
+import exploreWhite from "../../icon/exploreW.png";
+import pin from "../../icon/pinB.png";
+import pinWhite from "../../icon/pinW.png";
+import facebook from "../../icon/social (1).png";
+import instagram from "../../icon/instagram.png";
+import twitter from "../../icon/twitter.png";
+import people from "../../icon/people.png";
+import reading from "../../icon/reading.png";
+import menu from "../../icon/menuB.png";
+import menuWhite from "../../icon/menuW.png";
 
-
-export const TicketIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4v0a2 2 0 0 0 0-4V6H3z" />
-  </svg>
-);
-export const InfoIcon = () => (
-  <img
-    src={infoImage}
-    alt=""
-    width={20}
-    height={20}
-    style={{ objectFit: "contain" }}
-  />
-);
-
-  export const SearchIcon = ({ light = false }) => (
-  <img
-    src={light ? searchImageWhite : searchImageBlack}
-    alt=""
-    className="search-icon"
-  />
-);
-
-
-const ICON_IMAGES = { // gọi hình
+const icons = {
   info: infoSignImage,
+  information: infoImage,
   wifi: wifiImage,
   hanger: cloakRoomImage,
   cloakroom: cloakRoomImage,
@@ -51,31 +49,106 @@ const ICON_IMAGES = { // gọi hình
   ear: earImage,
   toilet: toiletImage,
   gift: giftImage,
-  eye: eye,
+  eye: eyeImage,
   stroller: babyImage,
   bulb: twoFace,
+  search: searchBlack,
+  ticket: ticketBlack,
+  calendar: calendarBlack,
+  leaf: logo,
+  logo,
+  chevron: down,
+  chevronRight: down,
+  home,
+  photo,
+  explore,
+  pin,
+  facebook,
+  instagram,
+  twitter,
+  people,
+  reading,
+  menu,
+};
+const whiteIcons = {
+  search: searchWhite,
+  ticket: ticketWhite,
+  calendar,
+  leaf: logoWhite,
+  logo: logoWhite,
+  home: homeWhite,
+  photo: photoWhite,
+  explore: exploreWhite,
+  pin: pinWhite,
+  menu: menuWhite,
 };
 
-export const SvgIcon = ({ kind, size = 24 }) => {
-  const image = ICON_IMAGES[kind];
-
-
-  if (!image) {
-  console.warn("Chưa có ảnh cho icon:", kind);
-  return null;
-}
-
+export function SvgIcon({
+  kind,
+  size = 24,
+  light = false,
+  className = "",
+  style,
+  direction,
+}) {
+  // No arrow file exists in icon/: retain a simple directional vector.
+  if (kind === "arrow")
+    return (
+      <svg
+        className={`asset-icon ${className}`}
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        aria-hidden="true"
+        style={{
+          transform:
+            direction === "left"
+              ? "rotate(180deg)"
+              : direction === "up"
+                ? "rotate(-90deg)"
+                : undefined,
+          ...style,
+        }}
+      >
+        <path d="M3 12h18m-6-5 6 5-6 5" />
+      </svg>
+    );
+  const image = (light && whiteIcons[kind]) || icons[kind];
+  if (!image) return null;
   return (
     <img
+      className={`asset-icon ${className}`}
       src={image}
       alt=""
+      aria-hidden="true"
       width={size}
       height={size}
       style={{
-        display: "block",
+        display: "inline-block",
         objectFit: "contain",
         flexShrink: 0,
+        verticalAlign: "middle",
+        transform: kind === "chevronRight" ? "rotate(-90deg)" : undefined,
+        ...style,
       }}
     />
   );
-};
+}
+export const TicketIcon = ({ light = true, ...props }) => (
+  <SvgIcon kind="ticket" size={20} light={light} {...props} />
+);
+export const InfoIcon = (props) => (
+  <SvgIcon kind="information" size={20} {...props} />
+);
+export const SearchIcon = ({ light = false, ...props }) => (
+  <SvgIcon
+    kind="search"
+    size={20}
+    light={light}
+    className="search-icon"
+    {...props}
+  />
+);

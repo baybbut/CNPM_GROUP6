@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { fetchArtworks, mediaUrl } from "../../api/artworks";
 import "./artworks.css";
+import { SvgIcon } from "../Icons";
 
 export function useArtworks(id) {
   const { lang } = useLang();
@@ -56,7 +57,7 @@ export function ArtworkImage({ artwork }) {
     />
   ) : (
     <div className="aw-no-image" role="img" aria-label={artwork.title}>
-      <span>◇</span>
+      <SvgIcon kind="photo" size={48} />
       <small>MUSES COLLECTION</small>
     </div>
   );
@@ -129,7 +130,8 @@ export function ArtworkCollection({ compact = false }) {
         </div>
         {compact && (
           <Link className="aw-link" to="/explore/collection">
-            {vi ? "Xem bộ sưu tập" : "Explore collection"} ↗
+            {vi ? "Xem bộ sưu tập" : "Explore collection"}{" "}
+            <SvgIcon kind="arrow" size={20} />
           </Link>
         )}
       </div>
@@ -196,7 +198,7 @@ export function ArtworkCollection({ compact = false }) {
                     <span>{a.artist}</span>
                     {a.creationPeriod && <small>{a.creationPeriod}</small>}
                     <span className="aw-card-arrow" aria-hidden="true">
-                      ↗
+                      <SvgIcon kind="arrow" size={20} />
                     </span>
                   </div>
                 </Link>

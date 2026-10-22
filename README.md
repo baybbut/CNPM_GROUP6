@@ -100,3 +100,7 @@ Từ `/explore/collection`, bấm một tác phẩm để mở `/explore/artwork
 ## Highlight trên Home
 
 Dải 5 ảnh cuộn ngang; ảnh gần tâm khung nhất được nâng lên, ảnh rời tâm trở về vị trí cũ. Dùng mũi tên, bấm ảnh, phím trái/phải/Home/End hoặc vuốt trên điện thoại. Hiệu ứng tôn trọng thiết lập giảm chuyển động. Chạy lại `HomeImages.sql` để bổ sung slot DB `home.highlight.h5`, không cần tạo lại database.
+
+## Quy tắc hiển thị ảnh và icon
+
+Ảnh tác phẩm trong Highlight, Welcome, bộ sưu tập và chi tiết dùng chế độ contain để giữ đúng tỉ lệ, không cắt nội dung. Bản đồ hiển thị trọn ảnh; ảnh Hero/banner phủ khung với cover. Component `Icons.jsx` dùng file trong `muses-react/icon` cho các biểu tượng tương ứng (vé, tìm kiếm, lịch, tiện ích, mạng xã hội, breadcrumb, dropdown). Mũi tên điều hướng giữ vector vì thư mục icon không có asset mũi tên tương ứng. Icon có kích thước cố định và object-fit contain. Không đổi dữ liệu hay đường dẫn ảnh trong DB.

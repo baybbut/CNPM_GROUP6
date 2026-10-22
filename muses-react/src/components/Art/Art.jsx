@@ -12,7 +12,7 @@ export default function Art({
   const [flipped, setFlipped] = useState(false);
 
   const background = item.img
-    ? `center / cover no-repeat url("${item.img}")`
+    ? `center / contain no-repeat url("${item.img}")`
     : item.color;
 
   const className = [

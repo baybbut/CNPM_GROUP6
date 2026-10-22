@@ -13,7 +13,7 @@ const Pic = ({ src, color = "#8a6a4a", className = "" }) => (
   <div className={`v-pic ${className}`}
     style={src ? { backgroundImage: `url("${src}")` } : { background: color }} />
 );
-const More = ({ children }) => <a className="v-link" href="#">{children} <span>→</span></a>;
+const More = ({ children }) => <a className="v-link" href="#">{children} <SvgIcon kind="arrow" size={18}/></a>;
 
 // click để scroll đến phần tương ứng
 const VISIT_MENU = [

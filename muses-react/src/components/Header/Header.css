@@ -172,3 +172,4 @@
   .header .nav-right .btn{padding:8px 10px;font-size:12px;gap:5px}
   .header .lang-toggle{font-size:11px;gap:3px}
 }
+.header.light .lang-arrow{filter:invert(1)}

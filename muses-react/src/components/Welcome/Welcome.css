@@ -27,18 +27,6 @@
   aspect-ratio: 616 / 328;
   margin-bottom: 16px;
 
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 82%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 82%,
-    transparent 100%
-  );
 }
 
 /* Giữ tranh ở đúng tọa độ trong gallery */

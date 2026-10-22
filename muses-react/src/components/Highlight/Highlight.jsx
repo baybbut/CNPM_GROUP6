@@ -3,6 +3,7 @@ import { useLang } from "../../context/LangContext";
 import { HIGHLIGHTS } from "../../data/data";
 import { useHomeImages } from "../../context/HomeImagesContext";
 import "./Highlight.css";
+import { SvgIcon } from "../Icons";
 
 export default function Highlight() {
   const { t, lang } = useLang();
@@ -136,7 +137,7 @@ export default function Highlight() {
           aria-label={lang === "vi" ? "Ảnh trước" : "Previous highlight"}
           onClick={() => moveTo(activeRef.current - 1)}
         >
-          <span aria-hidden="true">⟵</span>
+          <SvgIcon kind="arrow" direction="left" size={36} />
         </button>
         <p className="hl-sr-only" aria-live="polite">
           {(active % count) + 1} / {count}: {images[active % count]?.title}
@@ -146,7 +147,7 @@ export default function Highlight() {
           aria-label={lang === "vi" ? "Ảnh tiếp theo" : "Next highlight"}
           onClick={() => moveTo(activeRef.current + 1)}
         >
-          <span aria-hidden="true">⟶</span>
+          <SvgIcon kind="arrow" size={36} />
         </button>
       </div>
     </section>

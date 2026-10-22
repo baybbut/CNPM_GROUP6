@@ -4,6 +4,7 @@ import { useArtworks, ArtworkImage, RequestState } from "./Artworks";
 import { mediaUrl } from "../../api/artworks";
 import indoorMap from "../../../maps/Mapindoormain.png";
 import "./artwork-detail.css";
+import { SvgIcon } from "../Icons";
 
 function RelatedArtworks({ artwork, vi }) {
   const state = useArtworks();
@@ -57,7 +58,7 @@ function RelatedArtworks({ artwork, vi }) {
                   })
                 }
               >
-                ⟵
+                <SvgIcon kind="arrow" direction="left" size={32} />
               </button>
               <button
                 type="button"
@@ -69,7 +70,7 @@ function RelatedArtworks({ artwork, vi }) {
                   })
                 }
               >
-                ⟶
+                <SvgIcon kind="arrow" size={32} />
               </button>
             </div>
           </>
@@ -100,7 +101,8 @@ export default function ArtworkDetail() {
               </div>
               <div className="detail-summary">
                 <Link className="detail-back" to="/explore/collection">
-                  ← {vi ? "Bộ sưu tập" : "The collection"}
+                  <SvgIcon kind="arrow" direction="left" size={17} />{" "}
+                  {vi ? "Bộ sưu tập" : "The collection"}
                 </Link>
                 <h1>{artwork.title}</h1>
                 <p className="detail-short-description">
@@ -189,7 +191,9 @@ export default function ArtworkDetail() {
                   ? "BẢN ĐỒ TƯƠNG TÁC CỦA BẢO TÀNG"
                   : "INTERACTIVE MAPS OF THE MUSEUM"}
               </span>
-              <i aria-hidden="true">↗</i>
+              <i aria-hidden="true">
+                <SvgIcon kind="arrow" size={24} />
+              </i>
             </Link>
           </section>
         </>
