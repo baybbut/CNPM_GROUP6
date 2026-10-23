@@ -45,6 +45,9 @@ export default function Header() {
           <SvgIcon kind="qr" size={22} />
           <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
         </NavLink>
+        <Link to="/account" className="account-nav">
+          {lang === "vi" ? "Tài khoản" : "Account"}
+        </Link>
         <LangSwitcher />
         <button className="btn btn-brown">
           <TicketIcon /> {t("ticket")}

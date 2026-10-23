@@ -6,7 +6,7 @@ export default function ArtworkQR({ id, language, vi }) {
     [error, setError] = useState(false);
   const dialog = useRef(null),
     trigger = useRef(null);
-  const url = `${window.location.origin}/explore/artworks/${id}?lang=${language}`;
+  const url = `${window.location.origin}/explore/artworks/${id}?lang=${language}&source=qr`;
   useEffect(() => {
     if (!open) return;
     let active = true;

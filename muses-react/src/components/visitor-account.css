@@ -1,0 +1,53 @@
+.visitor-account {
+  padding: 135px 6% 90px;
+  min-height: 75vh;
+  background: var(--cream);
+}
+.visitor-account > section {
+  max-width: 440px;
+  margin: auto;
+}
+.visitor-account h1 {
+  font: 40px var(--serif);
+  margin: 20px 0 30px;
+}
+.visitor-account label {
+  display: block;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.visitor-account input {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  margin-top: 9px;
+  border: 1px solid #988a6e;
+  border-radius: 9px;
+  background: #fffdf166;
+  font: inherit;
+}
+.account-primary {
+  background: #3c3022;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  margin: 10px 0 25px;
+}
+.visitor-account [role="status"] {
+  margin-top: 24px;
+  line-height: 1.7;
+}
+.account-nav {
+  font-size: 11px;
+}
+.visitor-account button:disabled {
+  opacity: 0.5;
+}
+@media (max-width: 1000px) {
+  .account-nav {
+    font-size: 10px;
+  }
+  .header .nav-right {
+    gap: 10px;
+  }
+}

@@ -1,3 +1,5 @@
+import ActivityTracker from "./components/ActivityTracker";
+import VisitorAccount from "./components/VisitorAccount";
 import NewsArticle, { NewsIndex } from "./components/News/NewsPage";
 import Scanner from "./components/Scanner/Scanner";
 import { useLang } from "./context/LangContext";
@@ -33,9 +35,11 @@ export default function App() {
 
   return (
     <>
+      <ActivityTracker />
       <Header />
       <main>
         <Routes>
+          <Route path="/account" element={<VisitorAccount />} />
           <Route path="/news" element={<NewsIndex />} />
           <Route path="/news/:slug" element={<NewsArticle />} />
           <Route path="/scan" element={<Scanner />} />

@@ -1,6 +1,6 @@
 # MUSES Admin Workspace
 
-Ứng dụng React/Vite riêng trong `muses-admin/`, phát triển trên nhánh **`muses/admin`**. Giữ nền kem, sidebar đen và bảng màu pastel của dashboard ban đầu.
+Ứng dụng React/Vite riêng trong `muses-admin/`, đã tích hợp trên nhánh **`develop`**. Giữ nền kem, sidebar đen và bảng màu pastel của dashboard ban đầu.
 
 ```bash
 cd muses-admin
@@ -12,15 +12,15 @@ Build: `npm run build`. Preview bản build: `npm run preview -- --port 4174`.
 
 ## Các trang
 
-- **Overview**: dashboard ban đầu, đi tới các workspace từ sidebar và quick actions.
-- **Visitors**: danh sách/chi tiết lượt tham quan, lọc ngày, ghi check-in/check-out và số người.
-- **Reports**: đổi khoảng báo cáo, biểu đồ demo, xuất CSV thực tế.
+- **Overview**: lượng truy cập, tài khoản đăng nhập, giờ cao điểm và tham gia tại từng điểm đọc từ API thật.
+- **Visitors**: thiết bị, phiên truy cập gần đây và tài khoản khách; lọc theo khoảng ngày.
+- **Reports**: biểu đồ giờ cao điểm, hoạt động theo ngày và xuất CSV từ số liệu DB.
 - **Artworks**: lưới/danh sách, tìm kiếm, lọc trạng thái, thêm/sửa/xóa và chọn ảnh cục bộ.
 - **Artists & Categories**: thêm/sửa nghệ sĩ và thể loại; đổi tên cập nhật các tác phẩm liên quan trong workspace.
 - **Languages & Audio**: mô tả Việt/Anh, trạng thái duyệt, chọn audio cục bộ và nghe thử.
 - **Exhibitions & Events**: tạo/sửa triển lãm, workshop, tour; lọc loại và kiểm tra ngày kết thúc.
 - **Outdoor Points · GPS**: cấu hình tên, tọa độ, bán kính và trạng thái các điểm. Marker trên bản đồ là vị trí minh họa, không phải phép chiếu GPS thật.
-- **QR Check-in**: tạo mã QR thật từ URL bằng `qrcode`, tải PNG và quản lý danh sách điểm. Mã mở URL đã nhập; chưa có API ghi nhận lượt quét. Điện thoại cần URL truy cập được, không dùng localhost của máy phát triển. Tắt điểm ở danh sách demo không vô hiệu hóa mã đã xuất.
+- **QR Check-in**: thống kê điểm đọc, chọn tác phẩm thật và tạo QR có mã điểm để ghi nhận hoạt động.
 - **Museum Info & Maps**: thông tin liên hệ, giờ hoạt động, xem/tải bản đồ từng tầng.
 - **Staff & Permissions**: quản lý hồ sơ/role demo và xem mô hình quyền. Không tạo tài khoản thật, không gửi email, không thực thi phân quyền.
 - **Settings**: lưu tên hiển thị, email, tùy chọn thông báo. Tên hiển thị cập nhật sidebar/dashboard; ngôn ngữ là preference, UI hiện vẫn bằng tiếng Anh.
@@ -29,9 +29,11 @@ Build: `npm run build`. Preview bản build: `npm run preview -- --port 4174`.
 
 ## Dữ liệu và giới hạn
 
-Đây là **frontend tương tác**, chưa kết nối API quản trị, SQL Server, xác thực hay xuất bản nội dung. Tất cả thay đổi nằm trong `localStorage` với prefix `muses-admin-`, không thay đổi dữ liệu website khách tham quan.
+**Overview, Visitors, Reports, QR Check-in** kết nối SQL Server qua backend; API báo cáo yêu cầu tài khoản Admin. Khách có thể đăng ký/đăng nhập tại `/account` trên website khách. Xem [hướng dẫn cập nhật database và kiểm thử](../docs/ADMIN-ANALYTICS.md).
 
-Ảnh upload tối đa 600 KB và audio tối đa 700 KB để phù hợp giới hạn browser storage. Nếu storage đầy/không khả dụng, trang hiển thị cảnh báo; dữ liệu mới có thể chỉ còn trong tab hiện tại. Không có upload lên server. Báo cáo dùng dữ liệu demo; chọn khoảng thời gian thay đổi bộ số liệu và file CSV tương ứng.
+Các trang quản lý nội dung còn lại vẫn là workspace localStorage với prefix `muses-admin-`, chưa xuất bản thay đổi sang DB. Staff & Permissions vẫn là danh sách demo; tài khoản quản trị thật được tạo bằng `npm run admin:create` trong backend.
+
+Ảnh upload tối đa 600 KB và audio tối đa 700 KB để phù hợp giới hạn browser storage ở workspace nội dung. Chưa có upload media lên server.
 
 Ảnh/bản đồ dùng chung từ `../muses-react/`; giữ hai folder cạnh nhau. Cài dependencies sau khi pull vì app bổ sung thư viện `qrcode`.
 
@@ -43,7 +45,7 @@ Build: `npm run build`. Preview bản build: `npm run preview -- --port 4174`.
 - `src/pages.css`: responsive và style các workspace mới.
 - `src/Icons.jsx`, `src/assets.js`: icon và ảnh dùng chung.
 
-Đã kiểm tra build production; mở đủ 11 trang mới trên desktop và mobile 390px; tạo artwork và giữ qua refresh; tìm kiếm; check-in/check-out; đổi khoảng báo cáo và tải CSV; thêm nghệ sĩ; lưu bản dịch; validation ngày sự kiện; lưu điểm GPS; tạo/tải QR PNG; thêm staff demo; đổi tên profile cập nhật sidebar. Chưa kiểm thử API quản trị vì backend hiện chỉ cung cấp API đọc artwork.
+Đã kiểm tra build production; mở đủ 11 trang mới trên desktop và mobile 390px; tạo artwork và giữ qua refresh; tìm kiếm; check-in/check-out; đổi khoảng báo cáo và tải CSV; thêm nghệ sĩ; lưu bản dịch; validation ngày sự kiện; lưu điểm GPS; tạo/tải QR PNG; thêm staff demo; đổi tên profile cập nhật sidebar. Bản thống kê mới đã được kiểm tra API và luồng trình duyệt bằng adapter dữ liệu thử nghiệm; cần chạy migration và kiểm thử với SQL Server trên máy triển khai.
 
 ### Nghe thử văn bản
 

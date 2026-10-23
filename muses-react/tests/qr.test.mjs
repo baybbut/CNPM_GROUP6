@@ -26,3 +26,17 @@ test("reject invalid QR and never follow external hosts", () => {
     "/explore/artworks/1",
   );
 });
+
+test("reading point metadata survives decoding without following external hosts", () => {
+  const result = parseArtworkQR(
+    "https://example.org/explore/artworks/12?lang=vi&source=qr&point=garden-01",
+  );
+  assert.equal(result.id, 12);
+  assert.equal(result.point, "garden-01");
+  assert.equal(result.lang, "vi");
+  assert.equal(
+    parseArtworkQR("https://example.org/explore/artworks/12?point=../bad")
+      .point,
+    undefined,
+  );
+});

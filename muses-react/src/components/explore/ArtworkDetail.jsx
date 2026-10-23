@@ -1,3 +1,4 @@
+import { trackAudio } from "../../api/activity.mjs";
 import { useSearchParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import {
@@ -169,9 +170,16 @@ export default function ArtworkDetail() {
                     <h2>{vi ? "Nghe thuyết minh" : "Audio guide"}</h2>
                     <audio
                       controls
-                      onPlay={() =>
-                        window.dispatchEvent(new Event("muses-audio-play"))
-                      }
+                      onPlay={(event) => {
+                        window.dispatchEvent(new Event("muses-audio-play"));
+                        if (!event.currentTarget.dataset.counted) {
+                          trackAudio(contentLanguage(lang));
+                          event.currentTarget.dataset.counted = "true";
+                        }
+                      }}
+                      onEnded={(event) => {
+                        delete event.currentTarget.dataset.counted;
+                      }}
                       preload="none"
                       src={mediaUrl(artwork.audioUrl)}
                       key={`${id}-${artwork.audioUrl}`}

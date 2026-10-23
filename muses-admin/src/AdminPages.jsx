@@ -1,15 +1,13 @@
+import Analytics from "./pages/Analytics";
 import React, { useState, useEffect } from "react";
 import { Empty } from "./pages/shared";
 import "./pages.css";
 export { useSavedState } from "./pages/shared";
 import Artworks from "./pages/Artworks";
-import Visitors from "./pages/Visitors";
-import Reports from "./pages/Reports";
 import Artists from "./pages/Artists";
 import Languages from "./pages/Languages";
 import Events from "./pages/Events";
 import Outdoor from "./pages/Outdoor";
-import Checkin from "./pages/Checkin";
 import Museum from "./pages/Museum";
 import Staff from "./pages/Staff";
 import Settings from "./pages/Settings";
@@ -32,18 +30,28 @@ export default function AdminPages({
   const props = { search, rows, setRows, toast, preferences, setPreferences };
   const pages = {
     Artworks: Artworks,
-    Visitors: Visitors,
-    Reports: Reports,
     "Artists & Categories": Artists,
     "Languages & Audio": Languages,
     "Exhibitions & Events": Events,
     "Outdoor Points · GPS": Outdoor,
-    "QR Check-in": Checkin,
     "Museum Info & Maps": Museum,
     "Staff & Permissions": Staff,
     Settings: Settings,
   };
   const Page = pages[page];
+  if (page === "Visitors" || page === "Reports" || page === "QR Check-in")
+    return (
+      <Analytics
+        mode={
+          page === "Visitors"
+            ? "visitors"
+            : page === "QR Check-in"
+              ? "points"
+              : "reports"
+        }
+        search={search}
+      />
+    );
   return (
     <div className="pg-workspace">
       {storageError && (

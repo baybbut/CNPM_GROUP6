@@ -7,7 +7,9 @@
     "start": "node server.cjs",
     "dev": "node --watch server.cjs",
     "test": "node --test",
-    "images:check": "node scripts/check-images.cjs"
+    "images:check": "node scripts/check-images.cjs",
+    "db:migrate": "node scripts/migrate-activity.cjs",
+    "admin:create": "node scripts/create-admin.cjs"
   },
   "keywords": [],
   "author": "",

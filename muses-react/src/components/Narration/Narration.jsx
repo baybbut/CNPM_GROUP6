@@ -1,3 +1,4 @@
+import { trackAudio } from "../../api/activity.mjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SvgIcon } from "../Icons";
 import { speechSegments, spokenWord } from "./speechText.mjs";
@@ -109,6 +110,7 @@ export default function Narration({
     setWord(null);
     setStatus("playing");
     const voice = selectedVoice;
+    let counted = false;
     function speak(index) {
       if (generation !== run.current) return;
       if (index >= segments.length) {
@@ -126,6 +128,10 @@ export default function Narration({
       current.current = utterance;
       utterance.onstart = () => {
         if (generation === run.current) {
+          if (!counted) {
+            counted = true;
+            trackAudio(lang);
+          }
           setSentence(index);
           setWord(null);
           setStatus("playing");

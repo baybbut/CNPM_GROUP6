@@ -6,6 +6,7 @@ require("dotenv").config({
 
 const express = require("express");
 const cors = require("cors");
+const { attachActivityRoutes } = require("./activity.cjs");
 const sql = require("mssql");
 
 const { SUPPORTED, createTranslator } = require("./translation.cjs");
@@ -25,7 +26,14 @@ const allowedOrigins = (
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use("/api", express.json({ limit: "16kb" }));
+attachActivityRoutes(app, sql);
+app.use("/api", (err, _req, res, next) => {
+  if (err.type === "entity.parse.failed") return res.status(400).json({ message: "Nội dung gửi lên không hợp lệ." });
+  if (err.status === 413) return res.status(413).json({ message: "Nội dung gửi lên quá lớn." });
+  next(err);
+});
 
 const dbConfig = {
   server: process.env.DB_SERVER || "localhost",
@@ -263,4 +271,4 @@ async function startServer() {
 }
 
 if (require.main === module) startServer();
-module.exports = { app, startServer };
+module.exports = { app, startServer, dbConfig };

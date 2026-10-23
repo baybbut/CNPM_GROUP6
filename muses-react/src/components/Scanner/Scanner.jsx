@@ -60,7 +60,9 @@ export default function Scanner() {
     run.current++;
     release();
     setLang(selectedRef.current);
-    navigate(`/explore/artworks/${parsed.id}?lang=${selectedRef.current}`);
+    navigate(
+      `/explore/artworks/${parsed.id}?lang=${selectedRef.current}&source=qr${parsed.point ? `&point=${encodeURIComponent(parsed.point)}` : ""}`,
+    );
   }
   async function camera() {
     stop();
