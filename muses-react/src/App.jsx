@@ -1,3 +1,4 @@
+import NewsArticle, { NewsIndex } from "./components/News/NewsPage";
 import Scanner from "./components/Scanner/Scanner";
 import { useLang } from "./context/LangContext";
 import { CONTENT_LANGUAGES } from "./api/contentLanguages.mjs";
@@ -35,6 +36,8 @@ export default function App() {
       <Header />
       <main>
         <Routes>
+          <Route path="/news" element={<NewsIndex />} />
+          <Route path="/news/:slug" element={<NewsArticle />} />
           <Route path="/scan" element={<Scanner />} />
           <Route path="/" element={<Home />} />
           <Route path="/visit" element={<Visit />} />

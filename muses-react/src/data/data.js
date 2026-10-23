@@ -57,6 +57,5 @@ export const GALLERY = [
   { id: 6, img: img10, cls: "g6" },
 ];
 
-export const NEWS = [{ id: 1, textKey: "newsText" }];
 export const ABOUT_LINKS = ["rules", "exhibitionLink"];
 export const CONTACT_LINKS = ["goods"];
