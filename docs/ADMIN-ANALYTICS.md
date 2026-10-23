@@ -10,12 +10,14 @@ Các mục Overview, Visitors, Reports và QR Check-in lấy dữ liệu từ ba
 
 ```sh
 npm ci
-npm run db:migrate
+npm run db:setup
 npm run admin:create
 npm start
 ```
 
-`db:migrate` tạo các bảng AuthSessions, AuthLoginEvents, AnalyticsSessions, AnalyticsEvents nếu chưa có. Script không xóa dữ liệu cũ và không reset DB.
+`db:setup` hỏi tài khoản SQL quản trị (thường là `sa`) và mật khẩu SQL đó; mật khẩu không hiển thị, không được lưu vào file. Script dùng kết nối quản trị riêng để tạo các bảng AuthSessions, AuthLoginEvents, AnalyticsSessions, AnalyticsEvents nếu chưa có. Script không xóa dữ liệu cũ và không reset DB. Sau đó script cấp đúng quyền đọc/ghi cần thiết cho tài khoản `DB_USER` hiện tại, không cấp `db_owner` hay quyền tạo bảng cho tài khoản ứng dụng. Giữ nguyên `.env`.
+
+Nếu tài khoản ứng dụng đã có đủ quyền tạo bảng và đọc/ghi các bảng thống kê, vẫn có thể dùng `npm run db:migrate`. Lỗi `CREATE TABLE permission denied` được xử lý bằng `npm run db:setup`; không đổi tài khoản ứng dụng thành `sa` chỉ để chạy web.
 
 `admin:create` hỏi tên, email và mật khẩu riêng của bạn. Mật khẩu được băm bằng scrypt; script không ghi đè tài khoản có email đã tồn tại. Dùng tài khoản mới này đăng nhập tại Overview/Reports. Các tài khoản mẫu có PasswordHash giữ chỗ trong script SQL cũ không phải tài khoản đăng nhập thật.
 

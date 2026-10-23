@@ -9,7 +9,8 @@
     "test": "node --test",
     "images:check": "node scripts/check-images.cjs",
     "db:migrate": "node scripts/migrate-activity.cjs",
-    "admin:create": "node scripts/create-admin.cjs"
+    "admin:create": "node scripts/create-admin.cjs",
+    "db:setup": "node scripts/setup-activity.cjs"
   },
   "keywords": [],
   "author": "",
