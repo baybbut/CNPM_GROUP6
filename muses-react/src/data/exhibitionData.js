@@ -52,6 +52,8 @@ export const EVENTS = [
       {
         id: 1,
         date: "1 October 2026 - 1 November 2026",
+        startDate: "2026-10-01",
+        endDate: "2026-11-01",
         tag: "WORKSHOP",
         title: "WORKSHOP MAKING FLOWER",
         note: "20/10 Woman Day",
@@ -62,6 +64,8 @@ export const EVENTS = [
       {
         id: 2,
         date: "9 October 2026 - 9 November 2026",
+        startDate: "2026-10-09",
+        endDate: "2026-11-09",
         tag: "WORKSHOP",
         title: "WORKSHOP PAINTING CANVAS",
         note: "Try on now",
@@ -80,6 +84,9 @@ export const TOURS = [
       {
         id: 1,
         date: "MONDAY , TUESDAY, THURSDAY",
+        startDate: "2026-10-01",
+        endDate: "2026-10-31",
+        weekdays: [1, 2, 4],
         tag: "GUIDE TOUR",
         audience: "Students",
         icon: "reading",
@@ -92,6 +99,9 @@ export const TOURS = [
       {
         id: 2,
         date: "FRIDAY, SATUREDAY, SUNDAY",
+        startDate: "2026-10-01",
+        endDate: "2026-10-31",
+        weekdays: [5, 6, 0],
         tag: "WORKSHOP",
         age: "6+",
         audience: "Family",

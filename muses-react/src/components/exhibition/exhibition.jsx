@@ -1,3 +1,5 @@
+import DateFilter from "./DateFilter";
+import { matchesEventDate } from "./eventDates.mjs";
 import { useState } from "react";
 import { useLang } from "../../context/LangContext";
 import { SvgIcon } from "../Icons";
@@ -56,25 +58,26 @@ export default function Exhibition() {
 }
 
 function ExhibitionContent() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const hero = useHomeImage(EXHIBITION_HERO.slot, EXHIBITION_HERO.img);
   const [tab, setTab] = useState("exhibition");
-  const [month, setMonth] = useState("all");
+  const [date, setDate] = useState("");
   const [type, setType] = useState("all");
 
   const changeTab = (k) => {
     setTab(k);
-    setMonth("all");
+    setDate("");
     setType("all");
   };
 
   const source = tab === "events" ? EVENTS : TOURS;
   const types = [...new Set(source.flatMap((g) => g.items.map((i) => i.tag)))];
   const groups = source
-    .filter((g) => month === "all" || g.month === month)
     .map((g) => ({
       ...g,
-      items: g.items.filter((i) => type === "all" || i.tag === type),
+      items: g.items.filter(
+        (i) => (type === "all" || i.tag === type) && matchesEventDate(i, date),
+      ),
     }))
     .filter((g) => g.items.length);
 
@@ -149,21 +152,12 @@ function ExhibitionContent() {
         {tab !== "exhibition" && (
           <>
             <div className="ex-filter">
-              <label className="ex-dates">
-                <SvgIcon kind="calendar" size={30} />
-                <select
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="all">{t("ALL DATES")}</option>
-                  {source.map((g) => (
-                    <option key={g.month} value={g.month}>
-                      {g.month}
-                    </option>
-                  ))}
-                </select>
-                <SvgIcon kind="chevron" size={18} />
-              </label>
+              <DateFilter
+                value={date}
+                onChange={setDate}
+                vi={lang === "vi"}
+                allLabel={t("ALL DATES")}
+              />
               <span className="ex-gap" />
               <label className="ex-type">
                 <select value={type} onChange={(e) => setType(e.target.value)}>
@@ -178,9 +172,33 @@ function ExhibitionContent() {
               </label>
             </div>
 
+            {!groups.length && (
+              <p className="ex-empty" role="status">
+                {lang === "vi"
+                  ? "Không có lịch phù hợp với lựa chọn của bạn."
+                  : "No events match your selection."}{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDate("");
+                    setType("all");
+                  }}
+                >
+                  {lang === "vi" ? "Xóa bộ lọc" : "Clear filters"}
+                </button>
+              </p>
+            )}
             {groups.map((g) => (
               <section key={g.month} className="ex-month">
-                <h3>{g.month}</h3>
+                <h3>
+                  {date
+                    ? new Intl.DateTimeFormat(lang, {
+                        month: "long",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      }).format(new Date(`${date}T12:00:00Z`))
+                    : g.month}
+                </h3>
                 {g.items.map((i) => (
                   <article key={i.id} className="ex-row">
                     <strong className="ex-date">{i.date}</strong>

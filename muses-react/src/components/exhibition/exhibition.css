@@ -315,3 +315,110 @@
   object-fit: cover;
   object-position: center;
 }
+
+.ex-dates {
+  padding: 0;
+  min-width: 0;
+  position: relative;
+}
+.ex-date-trigger {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  min-height: 94px;
+  padding: 20px 36px;
+  text-align: left;
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.ex-date-trigger > span {
+  flex: 1;
+  white-space: nowrap;
+}
+.ex-date-picker {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 5;
+  width: 320px;
+  max-width: calc(100vw - 44px);
+  padding: 22px;
+  border: 1px solid #8a8069;
+  border-radius: 12px;
+  background: #f7f3df;
+  box-shadow: 0 12px 30px #30281726;
+}
+.ex-date-picker > label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.ex-date-picker > input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #a3987c;
+  border-radius: 6px;
+  background: #fffdf5;
+  font: inherit;
+  color: #29251f;
+  color-scheme: light;
+}
+.ex-date-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+.ex-date-actions button,
+.ex-empty button {
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ex-date-actions button:last-child {
+  padding: 7px 16px;
+  background: #393023;
+  color: white;
+  border-radius: 20px;
+  text-decoration: none;
+}
+.ex-empty {
+  padding: 30px 0;
+  line-height: 1.8;
+  font-size: 14px;
+}
+.ex-empty button {
+  margin-left: 12px;
+}
+@media (max-width: 900px) {
+  .ex-dates {
+    padding: 0;
+  }
+  .ex-date-trigger {
+    padding: 20px;
+    gap: 10px;
+  }
+  .ex-date-picker {
+    width: 290px;
+  }
+}
+@media (max-width: 600px) {
+  .ex-date-trigger {
+    padding: 16px 12px;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .ex-date-trigger > .asset-icon:first-child {
+    width: 24px;
+    height: 24px;
+  }
+  .ex-date-trigger > .asset-icon:last-child {
+    width: 16px;
+    height: 16px;
+  }
+}
