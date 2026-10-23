@@ -18,6 +18,7 @@ const PORT = Number(process.env.PORT || 3001);
 const tranhDirectory = path.join(__dirname, "..", "muses-react", "tranh");
 
 app.use("/images/tranh", express.static(tranhDirectory));
+app.use("/images/background", express.static(path.join(__dirname, "..", "muses-react", "background")));
 const allowedOrigins = (
   process.env.CORS_ORIGINS || "http://localhost:5173,http://localhost:5174"
 )
@@ -212,7 +213,7 @@ app.get("/api/site-images", async (_req, res) => {
     const result = await app.locals.pool.request().query(`
       SELECT s.SlotKey AS slot, s.ImageURL AS imageUrl, s.ArtworkID AS artworkId
       FROM dbo.SiteImages AS s
-      WHERE s.SlotKey LIKE 'home.%'
+      WHERE s.SlotKey LIKE 'home.%' OR s.SlotKey LIKE 'exhibition.%'
       ORDER BY s.SlotKey;
     `);
     res.json(result.recordset);

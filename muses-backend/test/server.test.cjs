@@ -90,9 +90,11 @@ test("missing artwork and unknown API or image do not return the SPA shell", asy
     assert.equal((await fetch(origin + route)).status, 404);
 });
 test("real artwork image is served", async () => {
-  const r = await fetch(`${origin}${artwork.imageUrl}`);
-  assert.equal(r.status, 200);
-  assert.match(r.headers.get("content-type"), /image/);
+  for (const imageUrl of [artwork.imageUrl, "/images/background/muses4.jpg"]) {
+    const r = await fetch(`${origin}${imageUrl}`);
+    assert.equal(r.status, 200);
+    assert.match(r.headers.get("content-type"), /image/);
+  }
 });
 test("configured local frontend can access the API", async () => {
   const r = await fetch(`${origin}/api/artworks`, {

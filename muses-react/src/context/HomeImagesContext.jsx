@@ -20,7 +20,9 @@ export function HomeImagesProvider({ children }) {
           if (
             !src ||
             typeof row.slot !== "string" ||
-            !row.slot.startsWith("home.")
+            !["home.", "exhibition."].some((prefix) =>
+              row.slot.startsWith(prefix),
+            )
           )
             continue;
           const image = new Image();
