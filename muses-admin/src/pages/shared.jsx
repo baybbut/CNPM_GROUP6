@@ -95,12 +95,14 @@ export function Panel({ title, subtitle, children, action, className = "" }) {
 }
 export function Modal({ title, children, onClose }) {
   const ref = useRef(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     const old = document.activeElement;
     const first = ref.current?.querySelector("input,select,textarea,button");
     first?.focus();
     const key = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeRef.current();
       if (e.key === "Tab") {
         const nodes = [
           ...ref.current.querySelectorAll(

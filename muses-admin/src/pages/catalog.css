@@ -1,0 +1,152 @@
+.catalog-auth {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  background: #f8f3e5;
+  color: #1c1d18;
+  padding: 25px;
+}
+.catalog-auth-card {
+  max-width: 480px;
+  width: min(100%, 480px);
+  border: 1px solid #d0c8b4;
+  border-radius: 22px;
+  padding: 35px;
+  background: #fffaf0;
+}
+.catalog-auth-card h1 {
+  font:
+    34px Georgia,
+    serif;
+}
+.catalog-auth form,
+.catalog-auth label {
+  display: grid;
+  gap: 12px;
+}
+.catalog-auth form {
+  gap: 22px;
+}
+.catalog-auth input {
+  padding: 12px;
+  border: 1px solid #c8bfa9;
+  border-radius: 7px;
+  min-width: 0;
+  width: 100%;
+}
+.catalog-auth button {
+  padding: 13px;
+  border-radius: 24px;
+  border: 0;
+}
+.catalog-auth [role="alert"],
+.catalog-admin [role="alert"] {
+  color: #a6303d;
+}
+.catalog-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.catalog-tabs button {
+  padding: 10px 20px;
+  border: 1px solid #b5aa92;
+  border-radius: 20px;
+  background: transparent;
+}
+.catalog-tabs button[aria-pressed="true"] {
+  background: #f4b7d9;
+  border-color: #f4b7d9;
+}
+.catalog-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.catalog-admin table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.catalog-admin td,
+.catalog-admin th {
+  text-align: left;
+  padding: 15px 12px;
+  border-bottom: 1px solid #e0dacb;
+  overflow-wrap: anywhere;
+  max-width: 340px;
+  min-width: 110px;
+}
+.catalog-admin td button {
+  padding: 7px 14px;
+  border: 1px solid #c7bea8;
+  border-radius: 18px;
+  background: #f8f3e5;
+  margin: 3px;
+}
+.catalog-admin th {
+  background: #ece7d9;
+}
+.catalog-demo-badge {
+  display: block;
+  color: #86652d;
+  font-size: 12px;
+  margin-top: 5px;
+}
+.catalog-form fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.catalog-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #c9c2b1;
+  border-radius: 8px;
+  background: #fffdf7;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+.catalog-form input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+}
+.catalog-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.catalog-form-actions button {
+  padding: 11px 20px;
+  border: 1px solid #d2c8b0;
+  border-radius: 24px;
+}
+.catalog-admin .pg-panel {
+  min-width: 0;
+}
+.catalog-form [role="alert"] {
+  position: sticky;
+  bottom: 0;
+  background: #fff4e4;
+  padding: 12px;
+}
+.catalog-admin .pg-stat strong {
+  font-size: 36px;
+}
+@media (max-width: 500px) {
+  .catalog-auth {
+    padding: 15px;
+  }
+  .catalog-auth-card {
+    padding: 20px;
+  }
+  .catalog-admin .pg-heading {
+    display: block;
+  }
+  .catalog-admin .pg-heading button {
+    margin-top: 15px;
+  }
+}
