@@ -9,13 +9,14 @@ const {
   verifyPassword,
   validateActivity,
   reportRange,
+  reportHours,
 } = require("../activity.cjs");
 let server, origin, adminCookie, visitorCookie;
 const users = [],
   sessions = new Map(),
   events = new Map(),
   logins = [];
-let lastInputs;
+let lastInputs, lastReportQuery;
 before(async () => {
   users.push(
     {
@@ -81,7 +82,8 @@ before(async () => {
             if (inputs.kind !== "heartbeat") events.set(inputs.event, inputs);
             return { recordset: [{ result: "OK" }] };
           }
-          if (query.includes("MIN(OccurredAt)"))
+          if (query.includes("MIN(OccurredAt)")) {
+            lastReportQuery = query;
             return {
               recordsets: [
                 [
@@ -106,6 +108,7 @@ before(async () => {
                 [{ trackingSince: null }],
               ],
             };
+          }
           throw Error("Unexpected database query");
         },
       };
@@ -253,4 +256,50 @@ test("registration cannot choose its role and wrong password is rejected", async
     ).status,
     401,
   );
+});
+
+test("hour reports bind Vietnam daily windows and preserve live counters", async () => {
+  assert.deepEqual(reportHours({}), { fromHour: 0, toHour: 24 });
+  assert.deepEqual(reportHours({ fromHour: "23", toHour: "24" }), {
+    fromHour: 23,
+    toHour: 24,
+  });
+  for (const q of [
+    { fromHour: "24", toHour: "24" },
+    { fromHour: "9", toHour: "9" },
+    { fromHour: "18", toHour: "8" },
+    { fromHour: "-1" },
+    { toHour: "25" },
+    { fromHour: "9.5" },
+    { fromHour: "0;DROP TABLE x" },
+  ])
+    assert.throws(() => reportHours(q));
+  const response = await fetch(
+    origin +
+      "/api/admin/analytics?from=2026-10-01&to=2026-10-02&fromHour=9&toHour=17",
+    { headers: { Cookie: adminCookie } },
+  );
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.equal(data.fromHour, 9);
+  assert.equal(data.toHour, 17);
+  assert.equal(lastInputs.fromHour, 9);
+  assert.equal(lastInputs.toHour, 17);
+  assert.equal(lastInputs.allHours, false);
+  assert.equal(lastInputs.start.toISOString(), "2026-09-30T17:00:00.000Z");
+  assert.match(
+    lastReportQuery,
+    /DATEPART\(hour,DATEADD\(minute,420,e.OccurredAt\)\)>=@fromHour/,
+  );
+  assert.match(lastReportQuery, /sx.SessionID=s.SessionID/);
+  assert.match(lastReportQuery, /OccurredAt\)\)<@toHour/);
+  assert.match(
+    lastReportQuery,
+    /LastSeenAt>=DATEADD\(minute,-5,SYSUTCDATETIME\(\)\)/,
+  );
+  const bad = await fetch(
+    origin + "/api/admin/analytics?fromHour=22&toHour=3",
+    { headers: { Cookie: adminCookie } },
+  );
+  assert.equal(bad.status, 400);
 });

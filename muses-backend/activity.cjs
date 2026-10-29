@@ -43,6 +43,23 @@ function reportRange(query) {
     end: new Date(+new Date(`${to}T00:00:00Z`) + 86400000 - 420 * 60000),
   };
 }
+function reportHours(query) {
+  const from = query.fromHour === undefined ? "0" : query.fromHour;
+  const to = query.toHour === undefined ? "24" : query.toHour;
+  if (!/^\d{1,2}$/.test(String(from)) || !/^\d{1,2}$/.test(String(to)))
+    throw Error("INVALID_HOURS");
+  const fromHour = Number(from),
+    toHour = Number(to);
+  if (
+    fromHour < 0 ||
+    fromHour > 23 ||
+    toHour < 1 ||
+    toHour > 24 ||
+    fromHour >= toHour
+  )
+    throw Error("INVALID_HOURS");
+  return { fromHour, toHour };
+}
 function validateActivity(body) {
   if (
     !body ||
@@ -279,33 +296,47 @@ function attachActivityRoutes(app, sql) {
         return res
           .status(403)
           .json({ message: "Tài khoản không có quyền xem thống kê." });
-      let range;
+      let range, hourRange;
       try {
         range = reportRange(req.query);
+        hourRange = reportHours(req.query);
       } catch {
         return res
           .status(400)
-          .json({ message: "Chọn khoảng ngày hợp lệ, tối đa 366 ngày." });
+          .json({
+            message:
+              "Chọn khoảng ngày hợp lệ (tối đa 366 ngày) và khung giờ từ 00:00 đến 24:00, giờ kết thúc lớn hơn giờ bắt đầu.",
+          });
       }
+      const hourWindow = (alias) =>
+        `DATEPART(hour,DATEADD(minute,420,${alias}.OccurredAt))>=@fromHour AND DATEPART(hour,DATEADD(minute,420,${alias}.OccurredAt))<@toHour`;
+      const sessionHours = `@allHours=1 OR EXISTS(SELECT 1 FROM dbo.AnalyticsEvents sx WHERE sx.SessionID=s.SessionID AND sx.OccurredAt>=@start AND sx.OccurredAt<@end AND ${hourWindow("sx")})`;
       const result = await request()
+        .input("fromHour", sql.Int, hourRange.fromHour)
+        .input("toHour", sql.Int, hourRange.toHour)
+        .input(
+          "allHours",
+          sql.Bit,
+          hourRange.fromHour === 0 && hourRange.toHour === 24,
+        )
         .input("start", sql.DateTime2, range.start)
         .input("end", sql.DateTime2, range.end).query(`
     SELECT COUNT(*) AS sessions,COUNT(DISTINCT VisitorID) AS visitors,(SELECT COUNT(DISTINCT VisitorID) FROM dbo.AnalyticsSessions WHERE LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME())) AS activeVisitors,
       (SELECT COUNT(DISTINCT s.UserID) FROM dbo.AnalyticsSessions s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME()) AND u.Role='Visitor') AS activeLoggedIn
-    FROM dbo.AnalyticsSessions WHERE LastSeenAt>=@start AND StartedAt<@end;
-    SELECT COUNT(*) AS logins,COUNT(DISTINCT s.UserID) AS loggedInUsers FROM dbo.AuthLoginEvents s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LoggedAt>=@start AND s.LoggedAt<@end AND u.Role='Visitor';
-    SELECT COUNT(CASE WHEN Kind='qr_scan' THEN 1 END) AS qrScans,COUNT(CASE WHEN Kind='audio_play' THEN 1 END) AS audioPlays FROM dbo.AnalyticsEvents WHERE OccurredAt>=@start AND OccurredAt<@end;
+    FROM dbo.AnalyticsSessions s WHERE s.LastSeenAt>=@start AND s.StartedAt<@end AND (${sessionHours});
+    SELECT COUNT(*) AS logins,COUNT(DISTINCT s.UserID) AS loggedInUsers FROM dbo.AuthLoginEvents s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LoggedAt>=@start AND s.LoggedAt<@end AND DATEPART(hour,DATEADD(minute,420,s.LoggedAt))>=@fromHour AND DATEPART(hour,DATEADD(minute,420,s.LoggedAt))<@toHour AND u.Role='Visitor';
+    SELECT COUNT(CASE WHEN Kind='qr_scan' THEN 1 END) AS qrScans,COUNT(CASE WHEN Kind='audio_play' THEN 1 END) AS audioPlays FROM dbo.AnalyticsEvents e WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND ${hourWindow("e")};
     SELECT CONVERT(VARCHAR(10),DATEADD(minute,420,e.OccurredAt),23) AS day,COUNT(DISTINCT s.VisitorID) AS visitors,COUNT(DISTINCT e.SessionID) AS sessions,
       COUNT(CASE WHEN e.Kind='qr_scan' THEN 1 END) AS qrScans,COUNT(CASE WHEN e.Kind='audio_play' THEN 1 END) AS audioPlays
-    FROM dbo.AnalyticsEvents e JOIN dbo.AnalyticsSessions s ON s.SessionID=e.SessionID WHERE e.OccurredAt>=@start AND e.OccurredAt<@end GROUP BY CONVERT(VARCHAR(10),DATEADD(minute,420,e.OccurredAt),23) ORDER BY day;
+    FROM dbo.AnalyticsEvents e JOIN dbo.AnalyticsSessions s ON s.SessionID=e.SessionID WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND ${hourWindow("e")} GROUP BY CONVERT(VARCHAR(10),DATEADD(minute,420,e.OccurredAt),23) ORDER BY day;
     SELECT DATEPART(hour,DATEADD(minute,420,e.OccurredAt)) AS hour,COUNT(DISTINCT s.VisitorID) AS visitors,COUNT(*) AS interactions
-    FROM dbo.AnalyticsEvents e JOIN dbo.AnalyticsSessions s ON s.SessionID=e.SessionID WHERE e.OccurredAt>=@start AND e.OccurredAt<@end GROUP BY DATEPART(hour,DATEADD(minute,420,e.OccurredAt)) ORDER BY hour;
+    FROM dbo.AnalyticsEvents e JOIN dbo.AnalyticsSessions s ON s.SessionID=e.SessionID WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND ${hourWindow("e")} GROUP BY DATEPART(hour,DATEADD(minute,420,e.OccurredAt)) ORDER BY hour;
     SELECT e.PointKey AS point,CASE WHEN COUNT(DISTINCT e.ArtworkID)=1 THEN MIN(e.ArtworkID) END AS artworkId,CASE WHEN COUNT(DISTINCT e.ArtworkID)>1 THEN CONCAT(COUNT(DISTINCT e.ArtworkID),N' tác phẩm') ELSE MAX(a.ArtworkName) END AS title,COUNT(DISTINCT CASE WHEN e.Kind IN('qr_scan','audio_play') THEN s.VisitorID END) AS participants,COUNT(DISTINCT CASE WHEN e.Kind IN('qr_scan','audio_play') THEN e.UserID END) AS signedInParticipants,
       COUNT(DISTINCT s.VisitorID) AS viewers,COUNT(CASE WHEN e.Kind='qr_scan' THEN 1 END) AS qrScans,COUNT(CASE WHEN e.Kind='audio_play' THEN 1 END) AS audioPlays
     FROM dbo.AnalyticsEvents e JOIN dbo.AnalyticsSessions s ON s.SessionID=e.SessionID LEFT JOIN dbo.Artworks a ON a.ArtworkID=e.ArtworkID
-    WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND e.PointKey IS NOT NULL GROUP BY e.PointKey ORDER BY participants DESC,viewers DESC;
+    WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND ${hourWindow("e")} AND e.PointKey IS NOT NULL GROUP BY e.PointKey ORDER BY participants DESC,viewers DESC;
     SELECT TOP(100) s.SessionID AS id,CASE WHEN u.Role='Visitor' THEN u.FullName END AS name,s.StartedAt AS startedAt,s.LastSeenAt AS lastSeenAt,CASE WHEN s.LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME()) THEN 1 ELSE 0 END AS active
-    FROM dbo.AnalyticsSessions s LEFT JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LastSeenAt>=@start AND s.StartedAt<@end ORDER BY s.LastSeenAt DESC;
+    FROM dbo.AnalyticsSessions s LEFT JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LastSeenAt>=@start AND s.StartedAt<@end AND (${sessionHours}) ORDER BY s.LastSeenAt DESC;
     SELECT MIN(OccurredAt) AS trackingSince FROM dbo.AnalyticsEvents;
   `);
       const [summary, logins, plays, daily, hours, points, recent, since] =
@@ -315,6 +346,8 @@ function attachActivityRoutes(app, sql) {
         from: range.from,
         to: range.to,
         timeZone: "Asia/Ho_Chi_Minh",
+        fromHour: hourRange.fromHour,
+        toHour: hourRange.toHour,
         updatedAt: new Date().toISOString(),
         summary: { ...summary[0], ...logins[0], ...plays[0] },
         daily,
@@ -335,4 +368,5 @@ module.exports = {
   verifyPassword,
   validateActivity,
   reportRange,
+  reportHours,
 };
