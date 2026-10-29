@@ -52,6 +52,6 @@ Nếu backend khác cổng 3001, cấu hình `API_PROXY_TARGET` trong file `.env
 
 Có thể đặt `COOKIE_SECURE=true` trong backend khi triển khai HTTPS. Cookie đăng nhập có HttpOnly, SameSite=Lax và hạn 12 giờ. API báo cáo kiểm tra quyền quản trị; cookie/mật khẩu không được lưu trong localStorage.
 
-## Bố cục Overview và Visitors
+## Overview và quản lý QR
 
-Overview được rút gọn còn 5 chỉ số tổng quan và biểu đồ giờ đông nhất; nút Xem khách truy cập/Xem báo cáo đưa tới phần chi tiết. Visitors chỉ có danh sách phiên, ngày bắt đầu/hoạt động cuối, mã phiên và trạng thái, với tìm kiếm không dấu, lọc đang hoạt động/đã rời. Danh sách lấy tối đa 100 phiên mới nhất trong kỳ; không hiển thị như toàn bộ khách lịch sử. CSV của Visitors chỉ xuất các phiên khớp tìm kiếm và bộ lọc, không lẫn dữ liệu giờ/điểm đọc. Ba ô tài khoản đã được bỏ khỏi UI theo yêu cầu; các định nghĩa ở trên mô tả dữ liệu API cũ, không có nghĩa các ô đó còn hiển thị. Không cần migration DB cho thay đổi bố cục này.
+Visitors đã gộp vào Overview: 5 số liệu tổng quan, biểu đồ giờ cao điểm và danh sách phiên có tìm kiếm/lọc trạng thái/xuất CSV. `#Visitors` cũ mở Overview. Menu QR Check-in đổi thành Quản lý QR, quản lý mã tác phẩm thực sự dùng trên web (tên, bật/tắt, xem/tải, lượt mở), theo [hướng dẫn QR](QR-MANAGEMENT.md). Thống kê chi tiết theo giờ/ngày/điểm đọc vẫn ở Reports. Phần cấu hình QR cần chạy lại `db:catalog` để thêm các cột trạng thái; việc gộp trang không thay đổi cách đếm khách. Các hướng dẫn tạo QR điểm đọc và menu cũ phía trên là mô tả phiên bản trước.

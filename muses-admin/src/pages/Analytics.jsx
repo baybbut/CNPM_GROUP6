@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import QRCode from "qrcode";
-import { Header, Panel, Stats, Modal, Field, download, csv } from "./shared";
+import { Header, Panel, Stats, Field, download, csv } from "./shared";
 import "./analytics.css";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 async function api(path, body, signal) {
@@ -43,7 +42,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
     [error, setError] = useState(""),
     [loading, setLoading] = useState(false),
     [attempt, setAttempt] = useState(0),
-    [qr, setQr] = useState(false),
     [visitorStatus, setVisitorStatus] = useState("all");
   useEffect(() => {
     let live = true;
@@ -170,9 +168,9 @@ export default function Analytics({ mode = "overview", search = "" }) {
   const pointRows = (data?.points || []).filter((row) =>
     `${row.point} ${row.title}`.toLowerCase().includes(search.toLowerCase()),
   );
-  const isOverview = mode === "overview",
-    isVisitors = mode === "visitors";
-  const showDetails = !isOverview && !isVisitors;
+  const isOverview = mode === "overview";
+  const showDetails = !isOverview;
+  const showVisitors = isOverview;
   const fold = (value) =>
     String(value)
       .normalize("NFD")
@@ -182,7 +180,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
   const recentRows = (data?.recent || []).filter(
     (row) =>
       fold(`${row.id} ${row.name || "Khách"}`).includes(fold(search.trim())) &&
-      (!isVisitors ||
+      (!showVisitors ||
         visitorStatus === "all" ||
         (visitorStatus === "active" ? Boolean(row.active) : !row.active)),
   );
@@ -196,12 +194,12 @@ export default function Analytics({ mode = "overview", search = "" }) {
   const peak = data?.peakHours.length
     ? data.peakHours.map(hourLabel).join(", ")
     : "Chưa có dữ liệu";
-  function exportData() {
+  function exportData(visitorsOnly = false) {
     const rows = [
       ["Từ ngày", from, "Đến ngày", to],
       ["Múi giờ", "Asia/Ho_Chi_Minh"],
       [],
-      ...(isVisitors
+      ...(visitorsOnly
         ? [
             ["Mã phiên", "Khách", "Bắt đầu", "Hoạt động cuối", "Trạng thái"],
             ...recentRows.map((row) => [
@@ -250,7 +248,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
           ]),
     ];
     download(
-      isVisitors ? "muses-visitors.csv" : "muses-statistics.csv",
+      visitorsOnly ? "muses-visitors.csv" : "muses-statistics.csv",
       "\uFEFF" +
         csv(
           rows.map((row) =>
@@ -266,48 +264,26 @@ export default function Analytics({ mode = "overview", search = "" }) {
   return (
     <div className="pg-workspace analytics">
       <Header
-        title={
-          mode === "visitors"
-            ? "Khách truy cập"
-            : mode === "reports"
-              ? "Báo cáo hoạt động"
-              : mode === "points"
-                ? "Điểm đọc & QR"
-                : `Xin chào, ${user.name}`
-        }
+        title={isOverview ? `Xin chào, ${user.name}` : "Báo cáo hoạt động"}
         description={
-          isVisitors
-            ? "Tra cứu các phiên truy cập và trạng thái hoạt động của khách."
-            : isOverview
-              ? "Tổng quan lượng truy cập, tương tác và khung giờ đông nhất."
-              : "Theo dõi hoạt động trên website và tại các điểm đọc."
+          isOverview
+            ? "Tổng quan lượng truy cập, tương tác và các phiên gần đây."
+            : "Theo dõi hoạt động trên website và tại các điểm đọc."
         }
         action={
           <div className="analytics-actions">
             {isOverview ? (
-              <>
-                <a className="secondary" href="#Visitors">
-                  Xem khách truy cập
-                </a>
-                <a className="primary" href="#Reports">
-                  Xem báo cáo
-                </a>
-              </>
+              <a className="primary" href="#Reports">
+                Xem báo cáo
+              </a>
             ) : (
-              <>
-                {mode === "points" && (
-                  <button className="secondary" onClick={() => setQr(true)}>
-                    Tạo QR điểm đọc
-                  </button>
-                )}
-                <button
-                  className="primary"
-                  disabled={!data}
-                  onClick={exportData}
-                >
-                  Xuất CSV
-                </button>
-              </>
+              <button
+                className="primary"
+                disabled={!data}
+                onClick={() => exportData(false)}
+              >
+                Xuất CSV
+              </button>
             )}
           </div>
         }
@@ -369,83 +345,79 @@ export default function Analytics({ mode = "overview", search = "" }) {
           <button onClick={() => setAttempt((n) => n + 1)}>Thử lại</button>
         </p>
       )}
-      {!isVisitors && (
-        <Stats
-          items={[
-            [
-              "Khách đang hoạt động",
-              s?.activeVisitors ?? "—",
-              "Trong 5 phút gần nhất",
-              "green",
-              "people",
-            ],
-            [
-              "Thiết bị truy cập",
-              s?.visitors ?? "—",
-              "Thiết bị khác nhau trong kỳ",
-              "pink",
-              "people",
-            ],
-            [
-              "Phiên truy cập",
-              s?.sessions ?? "—",
-              "Phiên trong kỳ",
-              "yellow",
-              "chart",
-            ],
-            [
-              "Lượt mở QR",
-              s?.qrScans ?? "—",
-              "Mở trang tác phẩm từ QR",
-              "green",
-              "qr",
-            ],
-            [
-              "Lượt bắt đầu nghe",
-              s?.audioPlays ?? "—",
-              "Không tính tạm dừng / tiếp tục",
-              "blue",
-              "audio",
-            ],
-          ]}
-        />
-      )}
+      <Stats
+        items={[
+          [
+            "Khách đang hoạt động",
+            s?.activeVisitors ?? "—",
+            "Trong 5 phút gần nhất",
+            "green",
+            "people",
+          ],
+          [
+            "Thiết bị truy cập",
+            s?.visitors ?? "—",
+            "Thiết bị khác nhau trong kỳ",
+            "pink",
+            "people",
+          ],
+          [
+            "Phiên truy cập",
+            s?.sessions ?? "—",
+            "Phiên trong kỳ",
+            "yellow",
+            "chart",
+          ],
+          [
+            "Lượt mở QR",
+            s?.qrScans ?? "—",
+            "Mở trang tác phẩm từ QR",
+            "green",
+            "qr",
+          ],
+          [
+            "Lượt bắt đầu nghe",
+            s?.audioPlays ?? "—",
+            "Không tính tạm dừng / tiếp tục",
+            "blue",
+            "audio",
+          ],
+        ]}
+      />
       {data && !data.trackingSince && (
         <p className="analytics-empty">
           Chưa ghi nhận hoạt động. Mở website hoặc quét QR điểm đọc để bắt đầu
           có số liệu.
         </p>
       )}
-      {!isVisitors && (
-        <Panel
-          title="Khung giờ đông nhất"
-          subtitle="Thiết bị có tương tác theo từng giờ · giờ Việt Nam"
-        >
-          <p className="analytics-peak">{data ? peak : "—"}</p>
-          <div className="analytics-chart-scroll">
-            <div
-              className="analytics-hours"
-              role="img"
-              aria-label="Số thiết bị truy cập theo từng giờ"
-            >
-              {hours.map((row) => (
-                <div
-                  key={row.hour}
-                  title={`${hourLabel(row.hour)}: ${row.visitors} thiết bị, ${row.interactions} tương tác`}
-                >
-                  <strong>{data ? row.visitors : "—"}</strong>
-                  <div>
-                    <span
-                      style={{ height: `${(row.visitors / maximum) * 100}%` }}
-                    />
-                  </div>
-                  <small>{row.hour}h</small>
+      <Panel
+        title="Khung giờ đông nhất"
+        subtitle="Thiết bị có tương tác theo từng giờ · giờ Việt Nam"
+      >
+        <p className="analytics-peak">{data ? peak : "—"}</p>
+        <div className="analytics-chart-scroll">
+          <div
+            className="analytics-hours"
+            role="img"
+            aria-label="Số thiết bị truy cập theo từng giờ"
+          >
+            {hours.map((row) => (
+              <div
+                key={row.hour}
+                title={`${hourLabel(row.hour)}: ${row.visitors} thiết bị, ${row.interactions} tương tác`}
+              >
+                <strong>{data ? row.visitors : "—"}</strong>
+                <div>
+                  <span
+                    style={{ height: `${(row.visitors / maximum) * 100}%` }}
+                  />
                 </div>
-              ))}
-            </div>
+                <small>{row.hour}h</small>
+              </div>
+            ))}
           </div>
-        </Panel>
-      )}
+        </div>
+      </Panel>
       {showDetails && (
         <Panel
           title="Tham gia tại từng điểm đọc"
@@ -491,227 +463,132 @@ export default function Analytics({ mode = "overview", search = "" }) {
           </div>
         </Panel>
       )}
-      {!isOverview && (
-        <div
-          className={
-            isVisitors ? "analytics-visitor-list" : "analytics-columns"
-          }
-        >
-          {showDetails && (
-            <Panel title="Hoạt động theo ngày">
-              <div className="pg-table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Ngày</th>
-                      <th>Phiên</th>
-                      <th>Thiết bị</th>
-                      <th>QR</th>
-                      <th>Nghe</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data?.daily.map((row) => (
-                      <tr key={row.day}>
-                        <td>{row.day.split("-").reverse().join("/")}</td>
-                        <td>{row.sessions}</td>
-                        <td>{row.visitors}</td>
-                        <td>{row.qrScans}</td>
-                        <td>{row.audioPlays}</td>
-                      </tr>
-                    ))}
-                    {!data?.daily.length && (
-                      <tr>
-                        <td colSpan={5}>Chưa có hoạt động.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </Panel>
-          )}
-          <Panel
-            title={
-              isVisitors ? "Danh sách phiên truy cập" : "Phiên truy cập gần đây"
-            }
-            subtitle="Tối đa 100 phiên mới nhất trong khoảng ngày đã chọn"
-          >
-            {isVisitors && (
-              <div className="analytics-visitor-tools">
-                <label>
-                  Trạng thái
-                  <select
-                    value={visitorStatus}
-                    onChange={(e) => setVisitorStatus(e.target.value)}
-                  >
-                    <option value="all">Tất cả</option>
-                    <option value="active">Đang hoạt động</option>
-                    <option value="inactive">Đã rời</option>
-                  </select>
-                </label>
-                <span role="status">
-                  Hiển thị {recentRows.length} / {data?.recent?.length || 0}{" "}
-                  phiên gần đây
-                </span>
-              </div>
-            )}
+      <div
+        className={
+          showVisitors ? "analytics-visitor-list" : "analytics-columns"
+        }
+      >
+        {showDetails && (
+          <Panel title="Hoạt động theo ngày">
             <div className="pg-table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Khách</th>
-                    {isVisitors && (
-                      <>
-                        <th>Mã phiên</th>
-                        <th>Bắt đầu</th>
-                      </>
-                    )}
-                    <th>Hoạt động cuối</th>
-                    <th>Trạng thái</th>
+                    <th>Ngày</th>
+                    <th>Phiên</th>
+                    <th>Thiết bị</th>
+                    <th>QR</th>
+                    <th>Nghe</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {recentRows.map((row) => (
-                    <tr key={row.id}>
-                      <td>{row.name || `Khách · ${row.id.slice(0, 8)}`}</td>
-                      {isVisitors && (
-                        <>
-                          <td>
-                            <code title={row.id}>{row.id.slice(0, 12)}</code>
-                          </td>
-                          <td>{clock(row.startedAt)}</td>
-                        </>
-                      )}
-                      <td>{clock(row.lastSeenAt)}</td>
-                      <td>{row.active ? "Đang hoạt động" : "Đã rời"}</td>
+                  {data?.daily.map((row) => (
+                    <tr key={row.day}>
+                      <td>{row.day.split("-").reverse().join("/")}</td>
+                      <td>{row.sessions}</td>
+                      <td>{row.visitors}</td>
+                      <td>{row.qrScans}</td>
+                      <td>{row.audioPlays}</td>
                     </tr>
                   ))}
-                  {!recentRows.length && (
+                  {!data?.daily.length && (
                     <tr>
-                      <td colSpan={isVisitors ? 5 : 3}>
-                        {loading
-                          ? "Đang tải phiên truy cập…"
-                          : error && !data
-                            ? "Chưa tải được phiên truy cập."
-                            : "Chưa có phiên phù hợp."}
-                      </td>
+                      <td colSpan={5}>Chưa có hoạt động.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
           </Panel>
-        </div>
-      )}
-      {!isOverview && (
-        <p className="analytics-caption">
-          {isVisitors
-            ? "Một khách có thể có nhiều phiên truy cập. Trạng thái đang hoạt động tính theo tương tác trong 5 phút gần nhất."
-            : "Một thiết bị có thể được nhiều người dùng chung. Số tham gia là thiết bị riêng biệt tại mỗi điểm, không xác nhận khách đã có mặt tại bảo tàng."}
-        </p>
-      )}
-      {qr && <PointQR onClose={() => setQr(false)} />}
+        )}
+        <Panel
+          title={
+            showVisitors ? "Danh sách phiên truy cập" : "Phiên truy cập gần đây"
+          }
+          subtitle="Tối đa 100 phiên mới nhất trong khoảng ngày đã chọn"
+          action={
+            showVisitors && (
+              <button
+                className="primary"
+                disabled={!data}
+                onClick={() => exportData(true)}
+              >
+                Xuất CSV phiên truy cập
+              </button>
+            )
+          }
+        >
+          {showVisitors && (
+            <div className="analytics-visitor-tools">
+              <label>
+                Trạng thái
+                <select
+                  value={visitorStatus}
+                  onChange={(e) => setVisitorStatus(e.target.value)}
+                >
+                  <option value="all">Tất cả</option>
+                  <option value="active">Đang hoạt động</option>
+                  <option value="inactive">Đã rời</option>
+                </select>
+              </label>
+              <span role="status">
+                Hiển thị {recentRows.length} / {data?.recent?.length || 0} phiên
+                gần đây
+              </span>
+            </div>
+          )}
+          <div className="pg-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Khách</th>
+                  {showVisitors && (
+                    <>
+                      <th>Mã phiên</th>
+                      <th>Bắt đầu</th>
+                    </>
+                  )}
+                  <th>Hoạt động cuối</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentRows.map((row) => (
+                  <tr key={row.id}>
+                    <td>{row.name || `Khách · ${row.id.slice(0, 8)}`}</td>
+                    {showVisitors && (
+                      <>
+                        <td>
+                          <code title={row.id}>{row.id.slice(0, 12)}</code>
+                        </td>
+                        <td>{clock(row.startedAt)}</td>
+                      </>
+                    )}
+                    <td>{clock(row.lastSeenAt)}</td>
+                    <td>{row.active ? "Đang hoạt động" : "Đã rời"}</td>
+                  </tr>
+                ))}
+                {!recentRows.length && (
+                  <tr>
+                    <td colSpan={showVisitors ? 5 : 3}>
+                      {loading
+                        ? "Đang tải phiên truy cập…"
+                        : error && !data
+                          ? "Chưa tải được phiên truy cập."
+                          : "Chưa có phiên phù hợp."}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      </div>
+      <p className="analytics-caption">
+        {showVisitors
+          ? "Một khách có thể có nhiều phiên truy cập. Trạng thái đang hoạt động tính theo tương tác trong 5 phút gần nhất."
+          : "Một thiết bị có thể được nhiều người dùng chung. Số tham gia là thiết bị riêng biệt tại mỗi điểm, không xác nhận khách đã có mặt tại bảo tàng."}
+      </p>
     </div>
-  );
-}
-function PointQR({ onClose }) {
-  const [rows, setRows] = useState([]),
-    [artwork, setArtwork] = useState(""),
-    [point, setPoint] = useState(""),
-    [image, setImage] = useState(""),
-    [error, setError] = useState("");
-  const defaultBase =
-    import.meta.env.VITE_VISITOR_BASE_URL ||
-    (import.meta.env.DEV
-      ? `${location.protocol}//${location.hostname}:5173`
-      : location.origin);
-  const [visitorBase, setVisitorBase] = useState(defaultBase);
-  let url = "";
-  try {
-    const target = new URL(`/explore/artworks/${artwork}`, visitorBase);
-    if (
-      ["http:", "https:"].includes(target.protocol) &&
-      !target.username &&
-      !target.password
-    ) {
-      target.searchParams.set("lang", "vi");
-      target.searchParams.set("source", "qr");
-      if (point) target.searchParams.set("point", point);
-      url = target.href;
-    }
-  } catch {}
-  useEffect(() => {
-    const controller = new AbortController();
-    api("/api/artworks?lang=vi", null, controller.signal)
-      .then((data) => {
-        setRows(data);
-        if (data[0]) setArtwork(String(data[0].id));
-      })
-      .catch((e) => {
-        if (!controller.signal.aborted) setError(e.message);
-      });
-    return () => controller.abort();
-  }, []);
-  useEffect(() => {
-    let live = true;
-    setImage("");
-    if (!artwork || !url || !point || !/^[\w:-]{1,80}$/.test(point)) return;
-    QRCode.toDataURL(url, { width: 600, margin: 4 })
-      .then((src) => {
-        if (live) setImage(src);
-      })
-      .catch(() => {
-        if (live) setError("Chưa tạo được QR.");
-      });
-    return () => {
-      live = false;
-    };
-  }, [artwork, url, point]);
-  return (
-    <Modal title="Tạo QR điểm đọc" onClose={onClose}>
-      <Field label="Địa chỉ website khách">
-        <input
-          type="url"
-          value={visitorBase}
-          onChange={(e) => setVisitorBase(e.target.value)}
-          required
-        />
-      </Field>
-      <Field label="Tác phẩm">
-        <select value={artwork} onChange={(e) => setArtwork(e.target.value)}>
-          {rows.map((row) => (
-            <option key={row.id} value={row.id}>
-              {row.title}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Mã điểm đọc">
-        <input
-          value={point}
-          onChange={(e) => setPoint(e.target.value)}
-          maxLength={80}
-          pattern="[a-zA-Z0-9:_-]+"
-          placeholder="san-vuon-01"
-        />
-      </Field>
-      <p>Dùng cùng mã điểm để xem thống kê chung tại vị trí đó.</p>
-      {point && !/^[a-zA-Z0-9:_-]{1,80}$/.test(point) && (
-        <p role="alert">
-          Mã điểm chỉ gồm chữ không dấu, số, dấu gạch ngang, gạch dưới hoặc dấu
-          hai chấm.
-        </p>
-      )}
-      {!url && <p role="alert">Nhập địa chỉ website hợp lệ.</p>}
-      {image && (
-        <>
-          <img className="analytics-qr" src={image} alt="QR điểm đọc" />
-          <a className="primary" href={image} download={`muses-${point}.png`}>
-            Tải QR
-          </a>
-        </>
-      )}
-      {error && <p role="alert">{error}</p>}
-    </Modal>
   );
 }

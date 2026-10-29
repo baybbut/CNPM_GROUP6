@@ -168,3 +168,33 @@
   font-size: 12px;
   white-space: nowrap;
 }
+.qr-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.qr-row-actions button {
+  border: 1px solid #b7ae97;
+  border-radius: 18px;
+  padding: 8px 12px;
+}
+.qr-row-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.qr-enabled {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qr-preview-url {
+  overflow-wrap: anywhere;
+}
+.qr-management td > strong,
+.qr-management td > small {
+  display: block;
+}
+.qr-management td > small {
+  margin-top: 6px;
+  color: #70685c;
+}

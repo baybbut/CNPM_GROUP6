@@ -16,9 +16,9 @@ Cập nhật DB bằng `npm --prefix muses-backend run db:catalog` từ gốc re
 - Museum Info & Maps: địa chỉ/tọa độ/nguồn, xác minh ghim; chặn ẩn bảo tàng còn lịch xác nhận hiện tại/tương lai.
 - Exhibitions & Events: lịch hiện vật tại bảo tàng, `[bắt đầu,kết thúc)`, nguồn/ngày kiểm chứng/người cập nhật; chống chồng lịch trong SQL transaction.
 - Artists & Categories: tác giả, chất liệu, thể loại; FK chặn xóa mục đang được dùng.
-- Overview: 5 chỉ số tổng quan và biểu đồ khung giờ đông nhất, kèm liên kết tới Visitors/Reports.
-- Visitors: danh sách tối đa 100 phiên gần đây trong kỳ, tìm theo tên/mã phiên, lọc đang hoạt động/đã rời và xuất CSV đúng danh sách đang lọc. Không lặp lại các biểu đồ của Overview.
-- Reports/QR Check-in: thống kê chi tiết theo ngày, giờ và điểm đọc; không phải đếm số người có mặt qua GPS.
+- Overview: số liệu tổng quan, biểu đồ giờ đông nhất và danh sách phiên truy cập, tìm kiếm/lọc trạng thái/xuất CSV trong cùng trang; không còn menu Visitors riêng.
+- Reports: thống kê chi tiết theo ngày, giờ và điểm đọc.
+- Quản lý QR: danh sách QR tác phẩm trên website, đổi tên, bật/tắt, xem/tải PNG và lượt mở; không phải bảng thống kê Check-in. Xem [hướng dẫn QR](../docs/QR-MANAGEMENT.md).
 
 Các component local demo cũ được giữ trong nguồn để tham khảo nhưng không còn là menu quản lý nội dung chính. Media dùng URL hợp lệ; chưa có dịch vụ upload file lên server.
 

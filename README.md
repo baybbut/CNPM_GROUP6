@@ -128,3 +128,5 @@ Bản đồ tương tác TP.HCM, định vị khách và vị trí trưng bày t
 Scan QR hiển thị danh sách tác phẩm; chọn tác phẩm để hiện popup QR, quét mở trang chi tiết: [hướng dẫn QR tác phẩm và thử trên điện thoại](docs/ARTWORK-QR.md).
 
 Trang Visit hoàn thiện và luồng chọn điểm đến/ngày sang Ticket: [hướng dẫn Visit](docs/VISIT.md).
+
+Overview đã gộp danh sách khách truy cập. Admin → Quản lý QR quản lý mã QR tác phẩm trên web: [cập nhật DB và sử dụng](docs/QR-MANAGEMENT.md).

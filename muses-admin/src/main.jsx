@@ -6,7 +6,6 @@ import Icon from "./Icons";
 import "./style.css";
 const nav = [
   ["Overview", "home"],
-  ["Visitors", "people"],
   ["Reports", "chart"],
   ["CONTENT"],
   ["Artworks", "image"],
@@ -14,12 +13,18 @@ const nav = [
   ["Languages & Audio", "audio"],
   ["Exhibitions & Events", "calendar"],
   ["VISITS"],
-  ["QR Check-in", "qr"],
+  ["QR Codes", "qr"],
   ["Museum Info & Maps", "map"],
 ];
 function currentPage() {
   try {
-    const value = decodeURIComponent(location.hash.slice(1));
+    const raw = decodeURIComponent(location.hash.slice(1));
+    const value =
+      raw === "Visitors"
+        ? "Overview"
+        : raw === "QR Check-in"
+          ? "QR Codes"
+          : raw;
     return nav.some(([name, icon]) => icon && name === value)
       ? value
       : "Overview";
@@ -79,13 +84,13 @@ function App() {
             icon ? (
               <button
                 key={name}
-                aria-label={name}
+                aria-label={name === "QR Codes" ? "Quản lý QR" : name}
                 aria-current={active === name ? "page" : undefined}
                 className={`nav-item ${active === name ? "selected" : ""}`}
                 onClick={() => navigate(name)}
               >
                 <Icon name={icon} />
-                <span>{name}</span>
+                <span>{name === "QR Codes" ? "Quản lý QR" : name}</span>
               </button>
             ) : (
               <div className="nav-label" key={name}>
@@ -120,14 +125,14 @@ function App() {
           </div>
           <input
             aria-label={`Search ${active.toLowerCase()}`}
-            disabled={active === "Reports" || active === "Overview"}
+            disabled={active === "Reports"}
             placeholder={
               active === "Reports"
                 ? "Muses reports"
                 : active === "Overview"
-                  ? "Muses overview"
-                  : active === "Visitors"
-                    ? "Tìm khách hoặc mã phiên…"
+                  ? "Tìm khách hoặc mã phiên…"
+                  : active === "QR Codes"
+                    ? "Tìm tác phẩm hoặc tên QR…"
                     : `Search ${active.toLowerCase()}…`
             }
             value={search}
