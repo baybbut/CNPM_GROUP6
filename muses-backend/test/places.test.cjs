@@ -79,7 +79,7 @@ test("provider failure tries backup, serves stale known data and backs off; part
   await get();
   assert.equal(calls, 3);
 });
-test("first-load outage is an honest error, not synthetic places", async () => {
+test("first-load outage supplies labelled real-world reference museums and backs off", async () => {
   let calls = 0;
   const get = createPlaceService({
     fetchImpl: async () => {
@@ -87,7 +87,17 @@ test("first-load outage is an honest error, not synthetic places", async () => {
       throw Error("network");
     },
   });
-  await assert.rejects(get(), /PLACES_UNAVAILABLE/);
-  await assert.rejects(get(), /PLACES_UNAVAILABLE/);
+  const fallback = await get();
+  assert.equal(fallback.sourceType, "reference");
+  assert.equal(fallback.fetchedAt, null);
+  assert.equal(fallback.items.length, 4);
+  assert.ok(fallback.items.some((p) => p.name.includes("Mỹ thuật")));
+  assert.ok(
+    fallback.items.every(
+      (p) =>
+        p.pinAccuracy === "approximate" && p.sourceUrl.startsWith("https://"),
+    ),
+  );
+  assert.deepEqual(await get(), fallback);
   assert.equal(calls, 2);
 });

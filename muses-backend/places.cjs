@@ -1,3 +1,4 @@
+const referencePlaces = require("../muses-react/src/data/hcmPlaces.json");
 // Public OSM venue discovery. Visitor coordinates never enter this endpoint.
 const QUERY =
   '[out:json][timeout:12];area["ISO3166-2"="VN-SG"]["boundary"="administrative"]->.city;(nwr["tourism"~"^(museum|gallery)$"](area.city);nwr["amenity"="arts_centre"](area.city););out center tags;';
@@ -105,28 +106,38 @@ function createPlaceService({ fetchImpl = fetch, now = Date.now } = {}) {
               "Muses-Museum-Project/1.0 (OpenStreetMap venue directory)",
           },
           body: new URLSearchParams({ data: QUERY }),
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.timeout(15000),
         });
         if (!response.ok) throw Error("Map provider unavailable");
         const items = normalizePlaces(await response.json());
         if (!items.length) throw Error("Map provider returned no venues");
         cache = { items, fetchedAt: new Date(now()).toISOString() };
         retryAt = 0;
-        return { ...cache, stale: false };
+        return { ...cache, stale: false, sourceType: "osm" };
       } catch {
         /* Try the second public provider; never replace a good cache with a partial response. */
       }
     }
     retryAt = now() + 60000;
-    if (cache) return { ...cache, stale: true };
-    throw Error("PLACES_UNAVAILABLE");
+    if (cache) return { ...cache, stale: true, sourceType: "osm" };
+    return {
+      items: referencePlaces,
+      fetchedAt: null,
+      stale: true,
+      sourceType: "reference",
+    };
   }
   return async () => {
     if (cache && now() - Date.parse(cache.fetchedAt) < TTL)
-      return { ...cache, stale: false };
+      return { ...cache, stale: false, sourceType: "osm" };
     if (now() < retryAt) {
-      if (cache) return { ...cache, stale: true };
-      throw Error("PLACES_UNAVAILABLE");
+      if (cache) return { ...cache, stale: true, sourceType: "osm" };
+      return {
+        items: referencePlaces,
+        fetchedAt: null,
+        stale: true,
+        sourceType: "reference",
+      };
     }
     if (!pending)
       pending = refresh().finally(() => {
@@ -140,20 +151,22 @@ function attachPlaceRoutes(app, options) {
   app.get("/api/places/hcm", async (_req, res) => {
     try {
       const data = await getPlaces();
-      res
-        .set("Cache-Control", "public, max-age=300")
-        .json({
-          ...data,
-          attribution: "© OpenStreetMap contributors",
-          source: "https://www.openstreetmap.org/copyright",
-        });
+      res.set("Cache-Control", data.sourceType === "reference" ? "no-store" : "public, max-age=300").json({
+        ...data,
+        attribution:
+          data.sourceType === "reference"
+            ? null
+            : "© OpenStreetMap contributors",
+        source:
+          data.sourceType === "reference"
+            ? null
+            : "https://www.openstreetmap.org/copyright",
+      });
     } catch {
-      res
-        .status(503)
-        .json({
-          code: "PLACES_UNAVAILABLE",
-          message: "Chưa tải được địa điểm. Vui lòng thử lại sau.",
-        });
+      res.status(503).json({
+        code: "PLACES_UNAVAILABLE",
+        message: "Chưa tải được địa điểm. Vui lòng thử lại sau.",
+      });
     }
   });
 }
