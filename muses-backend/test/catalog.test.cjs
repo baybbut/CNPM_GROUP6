@@ -99,6 +99,8 @@ let server,
   conflict = false,
   requiredVi = false,
   hasSchedules = false;
+const transactions = [];
+let failInlineVi = false;
 const row = {
   id: 1,
   title: "Vietnamese title",
@@ -127,6 +129,19 @@ before(async () => {
       },
       async query(statement) {
         calls.push({ statement, values });
+        if (
+          statement.startsWith(
+            "SELECT LanguageID FROM dbo.Languages WHERE LanguageCode='vi'",
+          )
+        )
+          return { recordset: [{ LanguageID: 1 }] };
+        if (
+          statement.includes(
+            "UPDATE dbo.ArtworkDescriptions WITH(UPDLOCK,HOLDLOCK)",
+          ) &&
+          failInlineVi
+        )
+          throw Error("Forced inline save failure");
         if (statement.includes("AS contentLanguage"))
           return {
             recordset: values.id === 999 ? [] : [row],
@@ -156,12 +171,18 @@ before(async () => {
   app.locals.pool = {
     request,
     transaction() {
-      return {
+      const tx = {
         async begin() {},
-        async commit() {},
-        async rollback() {},
+        async commit() {
+          this.committed = true;
+        },
+        async rollback() {
+          this.rolledBack = true;
+        },
         request,
       };
+      transactions.push(tx);
+      return tx;
     },
   };
   attachCatalogRoutes(app, sql);
@@ -248,17 +269,25 @@ test("artworks and reviewed translations can be published without source fields"
   };
   assert.equal(R.artwork(input).source, null);
   assert.equal(R.artwork(input).imageSource, null);
-  assert.equal(R.translation({
-    artworkId: 1,
-    language: "vi",
-    title: "Tác phẩm",
-    description: "Mô tả đã duyệt.",
-    status: "Published",
-  }).source, null);
+  assert.equal(
+    R.translation({
+      artworkId: 1,
+      language: "vi",
+      title: "Tác phẩm",
+      description: "Mô tả đã duyệt.",
+      status: "Published",
+    }).source,
+    null,
+  );
   role = "Admin";
   calls = [];
-  assert.equal((await send("/api/admin/catalog/artworks/1", "PUT", input)).status, 200);
-  const update = calls.find(c => c.statement.startsWith("UPDATE dbo.Artworks SET ArtworkName="));
+  assert.equal(
+    (await send("/api/admin/catalog/artworks/1", "PUT", input)).status,
+    200,
+  );
+  const update = calls.find((c) =>
+    c.statement.startsWith("UPDATE dbo.Artworks SET ArtworkName="),
+  );
   assert.equal(update.values.source, null);
   assert.equal(update.values.imageSource, null);
 });
@@ -324,4 +353,105 @@ test("artworks are soft deleted; other referenced history cannot be hard deleted
       (await send(`/api/admin/catalog/${entity}/1`, "DELETE")).status,
       409,
     );
+});
+
+test("one artwork request saves Vietnamese content and publishes both new and existing artworks", async () => {
+  role = "Admin";
+  requiredVi = true;
+  const input = {
+    title: "Tác phẩm A",
+    artistId: 1,
+    categoryId: 1,
+    materialId: 1,
+    imageUrl: "/images/tranh/test.jpg",
+    descriptionVi: "Mô tả tiếng Việt đã duyệt.",
+    shortDescriptionVi: "Mô tả ngắn",
+    status: "Published",
+  };
+  for (const [path, method, status] of [
+    ["/api/admin/catalog/artworks", "POST", 201],
+    ["/api/admin/catalog/artworks/1", "PUT", 200],
+  ]) {
+    calls = [];
+    assert.equal((await send(path, method, input)).status, status);
+    assert.ok(
+      !calls.some((c) => c.statement.includes("SELECT d.DescriptionID FROM")),
+      "inline publishing does not require a prior separate translation action",
+    );
+    const write = calls.find((c) =>
+      c.statement.includes(
+        "UPDATE dbo.ArtworkDescriptions WITH(UPDLOCK,HOLDLOCK)",
+      ),
+    );
+    assert.equal(write.values.title, input.title);
+    assert.equal(write.values.description, input.descriptionVi);
+    assert.equal(write.values.artworkStatus, "Published");
+    assert.ok(
+      calls.findIndex((c) => c === write) <
+        calls.findIndex(
+          (c) =>
+            c.statement ===
+            "UPDATE dbo.Artworks SET PublicationStatus='Published' WHERE ArtworkID=@id",
+        ),
+      "publish only after saving Vietnamese",
+    );
+    assert.ok(!write.statement.includes("AudioURL="));
+    assert.ok(!write.statement.includes("InformationSource="));
+    assert.equal(transactions.at(-1).committed, true);
+  }
+  requiredVi = false;
+});
+test("incomplete Vietnamese text is allowed in drafts but blocks inline publication before writes", async () => {
+  role = "Admin";
+  const input = {
+    title: "Draft A",
+    artistId: 1,
+    categoryId: 1,
+    materialId: 1,
+    imageUrl: "/images/tranh/test.jpg",
+    descriptionVi: "",
+    status: "Published",
+  };
+  calls = [];
+  assert.equal(
+    (await send("/api/admin/catalog/artworks", "POST", input)).status,
+    400,
+  );
+  assert.equal(calls.length, 0);
+  assert.equal(
+    (
+      await send("/api/admin/catalog/artworks", "POST", {
+        ...input,
+        status: "Draft",
+      })
+    ).status,
+    201,
+  );
+  const write = calls.find((c) =>
+    c.statement.includes(
+      "UPDATE dbo.ArtworkDescriptions WITH(UPDLOCK,HOLDLOCK)",
+    ),
+  );
+  assert.equal(write.values.description, null);
+  assert.equal(write.values.artworkStatus, "Draft");
+});
+test("failure to save inline Vietnamese rolls back the artwork and image transaction", async () => {
+  role = "Admin";
+  failInlineVi = true;
+  try {
+    const response = await send("/api/admin/catalog/artworks", "POST", {
+      title: "A",
+      artistId: 1,
+      categoryId: 1,
+      materialId: 1,
+      imageUrl: "/images/tranh/test.jpg",
+      descriptionVi: "Mô tả",
+      status: "Published",
+    });
+    assert.equal(response.status, 503);
+    assert.equal(transactions.at(-1).rolledBack, true);
+    assert.ok(!transactions.at(-1).committed);
+  } finally {
+    failInlineVi = false;
+  }
 });

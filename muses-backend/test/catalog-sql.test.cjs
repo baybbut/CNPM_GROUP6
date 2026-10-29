@@ -46,7 +46,11 @@ test(
   CREATE TABLE ArtworkImages(ImageID INT IDENTITY PRIMARY KEY,ArtworkID INT REFERENCES Artworks(ArtworkID),ImageURL NVARCHAR(500),IsPrimary BIT,DisplayOrder INT);
   CREATE TABLE ArtworkDescriptions(DescriptionID INT IDENTITY PRIMARY KEY,ArtworkID INT REFERENCES Artworks(ArtworkID),LanguageID INT REFERENCES Languages(LanguageID),ShortDescription NVARCHAR(1000),FullDescription NVARCHAR(MAX),AudioURL NVARCHAR(500),UNIQUE(ArtworkID,LanguageID));`);
       for (let run = 0; run < 2; run++)
-        for (const file of ["ActivityAnalytics.sql", "Catalog.sql", "Tickets.sql"])
+        for (const file of [
+          "ActivityAnalytics.sql",
+          "Catalog.sql",
+          "Tickets.sql",
+        ])
           for (const batch of fs
             .readFileSync(path.join(__dirname, "../MusesDB", file), "utf8")
             .split(/^GO\s*$/im)
@@ -168,6 +172,74 @@ test(
         "PUT",
         { artworkId: id, language: "vi", status: "Draft" },
         409,
+      );
+      const inlineBody = {
+        ...body,
+        title: "Một form công bố",
+        descriptionVi: "Nội dung tiếng Việt lưu cùng tác phẩm.",
+        shortDescriptionVi: "Mô tả ngắn",
+        status: "Published",
+      };
+      const inlineId = (await add("artworks", inlineBody)).id;
+      assert.equal(
+        (await api(`/api/artworks/${inlineId}`)).description,
+        inlineBody.descriptionVi,
+      );
+      const adminInline = (await api("/api/admin/catalog/artworks")).find(
+        (row) => row.id === inlineId,
+      );
+      assert.equal(adminInline.descriptionVi, inlineBody.descriptionVi);
+      await pool
+        .request()
+        .input("id", sql.Int, inlineId)
+        .query(
+          "UPDATE dbo.ArtworkDescriptions SET AudioURL='https://example.org/original.mp3',InformationSource=N'Existing translation source' WHERE ArtworkID=@id;",
+        );
+      await api(`/api/admin/catalog/artworks/${inlineId}`, "PUT", {
+        ...inlineBody,
+        descriptionVi: "Mô tả chỉnh sửa.",
+      });
+      const preserved = await pool
+        .request()
+        .input("id", sql.Int, inlineId)
+        .query(
+          "SELECT AudioURL,InformationSource FROM dbo.ArtworkDescriptions WHERE ArtworkID=@id;",
+        );
+      assert.equal(
+        preserved.recordset[0].AudioURL,
+        "https://example.org/original.mp3",
+      );
+      assert.equal(
+        preserved.recordset[0].InformationSource,
+        "Existing translation source",
+      );
+      const countBefore = (
+        await pool
+          .request()
+          .query("SELECT COUNT(*) AS count FROM dbo.Artworks;")
+      ).recordset[0].count;
+      await pool
+        .request()
+        .query(
+          "CREATE TRIGGER dbo.ForceInlineFailure ON dbo.ArtworkDescriptions AFTER INSERT,UPDATE AS BEGIN THROW 51001,N'Forced inline test failure',1; END;",
+        );
+      try {
+        await api(
+          "/api/admin/catalog/artworks",
+          "POST",
+          { ...inlineBody, title: "Must roll back" },
+          503,
+        );
+      } finally {
+        await pool.request().query("DROP TRIGGER dbo.ForceInlineFailure;");
+      }
+      assert.equal(
+        (
+          await pool
+            .request()
+            .query("SELECT COUNT(*) AS count FROM dbo.Artworks;")
+        ).recordset[0].count,
+        countBefore,
       );
       const today = todayVN(),
         shift = (n) =>

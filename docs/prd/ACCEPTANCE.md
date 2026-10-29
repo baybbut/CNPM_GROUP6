@@ -9,27 +9,27 @@ Ngày thay đổi: 29/10/2026 (Asia/Ho_Chi_Minh). Nguồn: [PRD người dùng c
 - Có bài test SQL opt-in `npm run test:sql`, tạo DB dùng một lần, kiểm tra migration hai lần và hai yêu cầu xác nhận lịch đồng thời. Chưa chạy ở cloud vì không có SQL Server.
 - Chưa có kết quả thực tế trên Safari, giọng TTS thật của macOS/điện thoại, hiệu năng SQL 1000 tác phẩm, hay phục hồi backup thật. Không đánh dấu các mục này là PASS.
 
-Kiểm tra tự động hiện tại: backend 42 PASS + 1 bài SQL SKIP; web 14 PASS; browser fixture PASS. Hai app build production thành công trước kiểm tra cuối. Các kết quả này không xác nhận database trên máy người dùng.
+Kiểm tra tự động hiện tại: backend 53 PASS + 1 bài SQL SKIP; web 17 PASS; browser fixture PASS. Hai app build production thành công trước kiểm tra cuối. Các kết quả này không xác nhận database trên máy người dùng.
 
 ## Ma trận FR
 
-| FR   | Triển khai                                                                                     | Bằng chứng / giới hạn                                                        |
-| ---- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| FR01 | `/api/catalog/artworks`, lọc tên/tác giả/chất liệu/bảo tàng hiện tại, phân trang 12            | API tham số hóa; browser kết hợp bộ lọc/trang. Chờ SQL 1000 bản ghi          |
-| FR02 | Chi tiết chỉ công bố; tên dịch, ảnh, tác giả, năm, chất liệu, mô tả, nguồn/nguồn ảnh           | API guard; bản nháp trả 404; chờ live SQL                                    |
-| FR03 | vi/en/zh/ja/ko; bản dịch công bố hoặc tiếng Việt; requestedLanguage/contentLanguage/isFallback | Unit + browser fallback Hàn→Việt; không tự dịch                              |
-| FR04 | Web Speech; play/pause/resume/stop, chọn giọng/tốc độ, boundary highlighting                   | Test chọn giọng và browser sự kiện TTS giả lập; cần giọng thật trên thiết bị |
-| FR05 | Chỉ lịch Confirmed, public museum, [start,end) giờ Việt Nam; không suy từ owner                | Boundary unit; live SQL test có owner khác current                           |
-| FR06 | `/museums`, tìm tên, chi tiết và sắp xếp gần tôi                                               | Khoảng cách tính tại browser; GPS chỉ khi bấm nút                            |
-| FR07 | OSM embed ghim theo DB; địa chỉ/liên kết luôn có, retry khi lỗi/timeout                        | Browser hướng đích + bố cục; cần kiểm tra provider thật và chặn mạng         |
-| FR08 | Google Maps directions, destination=lat,lng của DB; không truyền vị trí khách                  | Unit URL + browser                                                           |
-| FR09 | Global Admin gate; API kiểm tra role bằng phiên cookie HttpOnly                                | API 401/403, auth tests; browser login form                                  |
-| FR10 | API/GUI tác phẩm thật; Draft/Published/Hidden (xóa mềm); vi/ảnh bắt buộc; nguồn tác phẩm/bản dịch/ảnh tùy chọn trước công bố            | API thiếu vi→409; browser lưu lỗi vẫn giữ form                               |
-| FR11 | UNIQUE artwork/language; trạng thái bản dịch, nhập/duyệt thủ công, nghe thử                    | API/DB constraint; live SQL test duplicate và draft→Published                |
-| FR12 | API/GUI bảo tàng thật; tọa độ/địa chỉ/nguồn/xác minh ghim; chặn ẩn khi có lịch                 | Unit tọa độ + API guard; chờ live SQL                                        |
-| FR13 | API/GUI lịch; ngày hợp lệ, nguồn/ngày xác minh/người sửa; SERIALIZABLE + locks                 | Unit/API adapter; race thật chỉ được nghiệm thu sau `test:sql`               |
-| FR14 | Tác giả/chất liệu/thể loại; chặn xóa đang dùng bằng FK                                         | Code + bài live SQL có test FK; chờ chạy thật                                |
-| FR15 | Logout xóa AuthSessions, cookie cũ không truy cập Admin                                        | API auth test; bài live SQL lặp kiểm tra                                     |
+| FR   | Triển khai                                                                                                                   | Bằng chứng / giới hạn                                                        |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| FR01 | `/api/catalog/artworks`, lọc tên/tác giả/chất liệu/bảo tàng hiện tại, phân trang 12                                          | API tham số hóa; browser kết hợp bộ lọc/trang. Chờ SQL 1000 bản ghi          |
+| FR02 | Chi tiết chỉ công bố; tên dịch, ảnh, tác giả, năm, chất liệu, mô tả, nguồn/nguồn ảnh                                         | API guard; bản nháp trả 404; chờ live SQL                                    |
+| FR03 | vi/en/zh/ja/ko; bản dịch công bố hoặc tiếng Việt; requestedLanguage/contentLanguage/isFallback                               | Unit + browser fallback Hàn→Việt; không tự dịch                              |
+| FR04 | Web Speech; play/pause/resume/stop, chọn giọng/tốc độ, boundary highlighting                                                 | Test chọn giọng và browser sự kiện TTS giả lập; cần giọng thật trên thiết bị |
+| FR05 | Chỉ lịch Confirmed, public museum, [start,end) giờ Việt Nam; không suy từ owner                                              | Boundary unit; live SQL test có owner khác current                           |
+| FR06 | `/museums`, tìm tên, chi tiết và sắp xếp gần tôi                                                                             | Khoảng cách tính tại browser; GPS chỉ khi bấm nút                            |
+| FR07 | OSM embed ghim theo DB; địa chỉ/liên kết luôn có, retry khi lỗi/timeout                                                      | Browser hướng đích + bố cục; cần kiểm tra provider thật và chặn mạng         |
+| FR08 | Google Maps directions, destination=lat,lng của DB; không truyền vị trí khách                                                | Unit URL + browser                                                           |
+| FR09 | Global Admin gate; API kiểm tra role bằng phiên cookie HttpOnly                                                              | API 401/403, auth tests; browser login form                                  |
+| FR10 | API/GUI tác phẩm thật; Draft/Published/Hidden (xóa mềm); vi/ảnh bắt buộc; nguồn tác phẩm/bản dịch/ảnh tùy chọn trước công bố | API thiếu vi→409; browser lưu lỗi vẫn giữ form                               |
+| FR11 | UNIQUE artwork/language; trạng thái bản dịch, nhập/duyệt thủ công, nghe thử                                                  | API/DB constraint; live SQL test duplicate và draft→Published                |
+| FR12 | API/GUI bảo tàng thật; tọa độ/địa chỉ/nguồn/xác minh ghim; chặn ẩn khi có lịch                                               | Unit tọa độ + API guard; chờ live SQL                                        |
+| FR13 | API/GUI lịch; ngày hợp lệ, nguồn/ngày xác minh/người sửa; SERIALIZABLE + locks                                               | Unit/API adapter; race thật chỉ được nghiệm thu sau `test:sql`               |
+| FR14 | Tác giả/chất liệu/thể loại; chặn xóa đang dùng bằng FK                                                                       | Code + bài live SQL có test FK; chờ chạy thật                                |
+| FR15 | Logout xóa AuthSessions, cookie cũ không truy cập Admin                                                                      | API auth test; bài live SQL lặp kiểm tra                                     |
 
 ## TC01–TC23 để nhóm nghiệm thu
 
@@ -85,3 +85,5 @@ Mỗi hàng cần ghi thêm **kết quả thực tế, tên người kiểm tra,
 Không tuyên bố hoàn thành nghiệm thu P0/NFR khi các kiểm tra SQL thật, thiết bị và dữ liệu thực chưa được nhóm ghi nhận.
 
 Thay đổi theo yêu cầu người dùng 29/10/2026: bỏ điều kiện bắt buộc nguồn thông tin tác phẩm, nguồn bản dịch và nguồn/quyền ảnh khi công bố. Giữ các trường để nhập bổ sung; không thay đổi nguồn xác nhận lịch trưng bày hoặc điều kiện công khai bảo tàng.
+
+Cập nhật UX 29/10/2026: Artworks nhập tên/mô tả tiếng Việt tại chỗ, tự điền bản cũ và lưu/công bố một lần. Điều kiện nội dung tiếng Việt vẫn được kiểm tra; API lưu tác phẩm/ảnh/bản tiếng Việt trong cùng transaction, giữ bản dịch khác và metadata audio/nguồn của bản Việt. Test API kiểm tra tạo/sửa/công bố, nháp chưa đủ nội dung và rollback; test browser kiểm tra không cần chuyển trang. Kiểm thử SQL opt-in bổ sung trigger gây lỗi để xác nhận rollback trên DB dùng một lần; vẫn cần chạy local SQL.

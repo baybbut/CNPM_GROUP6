@@ -2,7 +2,11 @@ const R = require("./catalog-rules.cjs");
 const TODAY = "CONVERT(date,DATEADD(minute,420,SYSUTCDATETIME()))";
 const CURRENT = `s.Status='Confirmed' AND m.IsPublic=1 AND s.StartDate<=${TODAY} AND (s.EndDate IS NULL OR ${TODAY}<s.EndDate)`;
 const selections = {
-  artworks: `SELECT a.ArtworkID AS id,a.ArtworkName AS title,a.ArtistID AS artistId,ar.ArtistName AS artist,a.CategoryID AS categoryId,a.MaterialID AS materialId,a.Material AS material,a.CreationPeriod AS creationPeriod,a.Dimensions AS dimensions,a.InformationSource AS source,a.ImageSource AS imageSource,(SELECT TOP(1) ImageURL FROM dbo.ArtworkImages i WHERE i.ArtworkID=a.ArtworkID ORDER BY i.IsPrimary DESC,i.DisplayOrder,i.ImageID) AS imageUrl,a.OwnerMuseumID AS ownerMuseumId,a.PublicationStatus AS status,a.IsDemo AS isDemo FROM dbo.Artworks a JOIN dbo.Artists ar ON ar.ArtistID=a.ArtistID`,
+  artworks: `SELECT a.ArtworkID AS id,a.ArtworkName AS title,a.ArtistID AS artistId,ar.ArtistName AS artist,a.CategoryID AS categoryId,a.MaterialID AS materialId,a.Material AS material,a.CreationPeriod AS creationPeriod,a.Dimensions AS dimensions,a.InformationSource AS source,a.ImageSource AS imageSource,(SELECT TOP(1) ImageURL FROM dbo.ArtworkImages i WHERE i.ArtworkID=a.ArtworkID ORDER BY i.IsPrimary DESC,i.DisplayOrder,i.ImageID) AS imageUrl,a.OwnerMuseumID AS ownerMuseumId,a.PublicationStatus AS status,a.IsDemo AS isDemo,
+  COALESCE(NULLIF(LTRIM(RTRIM(vi.FullDescription)),''),vi.ShortDescription) AS descriptionVi,
+  vi.ShortDescription AS shortDescriptionVi,vi.PublicationStatus AS vietnameseStatus
+  FROM dbo.Artworks a JOIN dbo.Artists ar ON ar.ArtistID=a.ArtistID
+  OUTER APPLY(SELECT d.FullDescription,d.ShortDescription,d.PublicationStatus FROM dbo.ArtworkDescriptions d JOIN dbo.Languages l ON l.LanguageID=d.LanguageID WHERE d.ArtworkID=a.ArtworkID AND l.LanguageCode='vi') vi`,
   museums: `SELECT MuseumID AS id,Name AS name,Address AS address,Description AS description,Contact AS contact,Latitude AS latitude,Longitude AS longitude,IsPublic AS isPublic,PinVerified AS pinVerified,Source AS source,IsDemo AS isDemo FROM dbo.Museums`,
   translations: `SELECT d.DescriptionID AS id,d.ArtworkID AS artworkId,a.ArtworkName AS artwork,l.LanguageCode AS language,d.Title AS title,d.FullDescription AS description,d.ShortDescription AS shortDescription,d.AudioURL AS audioUrl,d.InformationSource AS source,d.PublicationStatus AS status FROM dbo.ArtworkDescriptions d JOIN dbo.Artworks a ON a.ArtworkID=d.ArtworkID JOIN dbo.Languages l ON l.LanguageID=d.LanguageID WHERE l.LanguageCode IN ('vi','en','zh','ja','ko')`,
   schedules: `SELECT s.ScheduleID AS id,s.ArtworkID AS artworkId,a.ArtworkName AS artwork,s.MuseumID AS museumId,m.Name AS museum,CONVERT(varchar(10),s.StartDate,23) AS startDate,CONVERT(varchar(10),s.EndDate,23) AS endDate,s.Status AS status,s.Source AS source,CONVERT(varchar(10),s.VerifiedOn,23) AS verifiedOn,s.UpdatedBy AS updatedBy,s.UpdatedAt AS updatedAt FROM dbo.DisplaySchedules s JOIN dbo.Artworks a ON a.ArtworkID=s.ArtworkID JOIN dbo.Museums m ON m.MuseumID=s.MuseumID`,
@@ -270,6 +274,25 @@ function attachCatalogRoutes(app, sql) {
                     entity === "categories" ? 500 : 12000,
                   ),
                 };
+    // Inline Vietnamese content is optional for older API clients. When supplied,
+    // artwork metadata, Vietnamese text and publication are committed together.
+    const inlineVi =
+      entity === "artworks" && Object.hasOwn(body, "descriptionVi")
+        ? {
+            description: R.text(
+              body.descriptionVi,
+              "Mô tả tiếng Việt",
+              12000,
+              data.status === "Published",
+            ),
+            shortDescription: R.text(
+              body.shortDescriptionVi,
+              "Mô tả ngắn tiếng Việt",
+              1000,
+            ),
+            updateShort: Object.hasOwn(body, "shortDescriptionVi"),
+          }
+        : null;
     const id = await transaction(async (tx) => {
       let old;
       if (originalId) {
@@ -362,7 +385,7 @@ function attachCatalogRoutes(app, sql) {
         ).recordset[0];
         if (!material) R.fail("Chất liệu không tồn tại.");
         data.material = material.Name;
-        if (data.status === "Published") {
+        if (data.status === "Published" && !inlineVi) {
           if (!originalId)
             R.fail(
               "Lưu nháp và công bố bản tiếng Việt trước khi công bố tác phẩm.",
@@ -450,7 +473,14 @@ function attachCatalogRoutes(app, sql) {
         : `INSERT INTO dbo.${table}(${fields.map(([, column]) => column).join(",")}) OUTPUT INSERTED.${key} AS id VALUES(${fields.map(([name]) => `@${name}`).join(",")});`;
       const savedId = (
         await query(tx, statement, {
-          ...Object.fromEntries(fields.map(([name]) => [name, data[name]])),
+          ...Object.fromEntries(
+            fields.map(([name]) => [
+              name,
+              name === "status" && inlineVi && data.status === "Published"
+                ? "Draft"
+                : data[name],
+            ]),
+          ),
           id: originalId,
         })
       ).recordset[0].id;
@@ -460,6 +490,50 @@ function attachCatalogRoutes(app, sql) {
           `UPDATE dbo.ArtworkImages SET IsPrimary=0 WHERE ArtworkID=@id; IF EXISTS(SELECT 1 FROM dbo.ArtworkImages WHERE ArtworkID=@id AND ImageURL=@image) UPDATE dbo.ArtworkImages SET IsPrimary=1 WHERE ArtworkID=@id AND ImageURL=@image; ELSE INSERT INTO dbo.ArtworkImages(ArtworkID,ImageURL,IsPrimary,DisplayOrder) VALUES(@id,@image,1,0);`,
           { id: savedId, image: data.imageUrl },
         );
+      if (inlineVi) {
+        const language = (
+          await query(
+            tx,
+            "SELECT LanguageID FROM dbo.Languages WHERE LanguageCode='vi'",
+            {},
+          )
+        ).recordset[0]?.LanguageID;
+        if (!language)
+          R.fail(
+            "Chưa có cấu hình tiếng Việt. Vui lòng cập nhật database.",
+            503,
+            "LANGUAGE_UNAVAILABLE",
+          );
+        await query(
+          tx,
+          `
+          UPDATE dbo.ArtworkDescriptions WITH(UPDLOCK,HOLDLOCK)
+          SET Title=@title,FullDescription=@description,
+              ShortDescription=CASE WHEN @updateShort=1 THEN @shortDescription ELSE ShortDescription END,
+              PublicationStatus=CASE WHEN @artworkStatus='Published' THEN 'Published'
+                WHEN @artworkStatus='Draft' OR @description IS NULL THEN 'Draft' ELSE PublicationStatus END
+          WHERE ArtworkID=@id AND LanguageID=@language;
+          IF @@ROWCOUNT=0
+          INSERT INTO dbo.ArtworkDescriptions(ArtworkID,LanguageID,Title,FullDescription,ShortDescription,PublicationStatus)
+          VALUES(@id,@language,@title,@description,@shortDescription,CASE WHEN @artworkStatus='Published' THEN 'Published' ELSE 'Draft' END);
+        `,
+          {
+            id: savedId,
+            language,
+            title: data.title,
+            description: inlineVi.description,
+            shortDescription: inlineVi.shortDescription,
+            updateShort: inlineVi.updateShort,
+            artworkStatus: data.status,
+          },
+        );
+        if (data.status === "Published")
+          await query(
+            tx,
+            "UPDATE dbo.Artworks SET PublicationStatus='Published' WHERE ArtworkID=@id",
+            { id: savedId },
+          );
+      }
       return savedId;
     });
     res.status(originalId ? 200 : 201).json({ id, message: "Đã lưu dữ liệu." });

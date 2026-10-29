@@ -64,15 +64,15 @@ npm --prefix muses-admin run dev -- --port 5174
 
 Backend: `http://localhost:3001/api/health`. Khách: `http://localhost:5173`. Admin: `http://localhost:5174` — email/mật khẩu của admin:create. Không dùng `--prefix muses-react` nếu đã cd vào chính muses-react. Port bận: dùng terminal đang chạy hoặc dừng nó bằng Ctrl+C, không mở trùng thêm một dev server.
 
-Vite proxy `/api`, `/images` đến 3001, vì vậy cổng Vite khác vẫn dùng được. Nếu đổi port backend, đặt API*PROXY_TARGET trong `.env.local` của cả hai app rồi restart Vite. Không đưa mật khẩu SQL vào biến VITE*\*.
+Vite proxy `/api`, `/images` đến 3001, vì vậy cổng Vite khác vẫn dùng được. Nếu đổi port backend, đặt `API_PROXY_TARGET` trong `.env.local` của cả hai app rồi restart Vite. Không đưa mật khẩu SQL vào biến `VITE_*`.
 
 ## Luồng nghiệm thu
 
 1. Admin → Artists & Categories: tạo tác giả, chất liệu, thể loại.
 2. Museum Info & Maps: nhập tên/địa chỉ/tọa độ/nguồn, mở kiểm tra ghim, tích đã xác minh rồi công khai.
-3. Artworks: thêm hiện vật nháp với ảnh và nguồn/quyền ảnh, thông tin mặc định và bảo tàng sở hữu nếu biết. Mỗi bản sao là một bản ghi riêng.
-4. Languages & Audio: chọn hiện vật và ngôn ngữ; nhập tên, mô tả, nguồn bản dịch; duyệt bản tiếng Việt thành Published. Có thể nghe thử văn bản, giọng phải trùng ngôn ngữ.
-5. Artworks: chọn Published. Backend từ chối nếu thiếu tiếng Việt công bố hoặc ảnh. Nguồn thông tin, nguồn bản dịch và nguồn/quyền ảnh không bắt buộc theo thay đổi yêu cầu ngày 29/10/2026. Ẩn dùng Hidden, không xóa lịch sử.
+3. Artworks: thêm hoặc sửa hiện vật ngay trong một form. Phần **Nội dung tiếng Việt** có tên, mô tả đầy đủ và mô tả ngắn; nội dung tiếng Việt đã có trong DB được điền sẵn, kể cả dữ liệu cũ chỉ có mô tả ngắn. Điền ảnh, tác giả/chất liệu/thể loại và metadata. Mỗi bản sao là một bản ghi riêng.
+4. Bấm **Lưu nháp** để hoàn thiện sau hoặc **Lưu và công bố** để lưu cả hiện vật và nội dung tiếng Việt trong cùng giao dịch. Không cần chuyển sang Languages & Audio trước. Tác phẩm đang công bố có nút **Lưu thay đổi** và **Chuyển về nháp**.
+5. Languages & Audio dùng quản lý các bản dịch/nghe thử theo từng ngôn ngữ. Backend vẫn cần ảnh và mô tả tiếng Việt khi công bố; nguồn thông tin/bản dịch/quyền ảnh không bắt buộc. Nếu lưu bất kỳ phần nào lỗi thì rollback, form giữ dữ liệu để sửa và thử lại; các bản dịch khác và audio/nguồn tiếng Việt sẵn có không bị ghi đè bởi form Artworks.
 6. Exhibitions & Events: tạo lịch, nguồn, ngày kiểm chứng; chọn Confirmed. Khoảng ngày `[startDate,endDate)` theo Việt Nam; bỏ endDate nghĩa là vô hạn. Hệ thống từ chối lịch chồng nhau và không cho ẩn bảo tàng còn lịch hiện tại/tương lai đã xác nhận.
 7. Khách → Explore/Collection: tìm tên không phân biệt hoa thường, lọc đồng thời tác giả/chất liệu/bảo tàng hiện tại, chuyển trang; chọn hiện vật và đổi ngôn ngữ. Chỉ nội dung đã công bố được trả từ API. Thiếu bản dịch thì thông báo tiếng Việt và TTS đọc tiếng Việt, không đọc văn bản Việt bằng giọng khác.
 8. Chi tiết hiển thị đúng bảo tàng hiện tại, địa chỉ, nguồn và ngày kiểm chứng. Không có lịch hợp lệ thì báo chưa có; không suy diễn từ bảo tàng sở hữu/lịch cũ. Bản đồ dùng tọa độ lưu sẵn; mở chỉ đường tới đúng tọa độ. Khách không cần cho phép GPS để xem ghim.
