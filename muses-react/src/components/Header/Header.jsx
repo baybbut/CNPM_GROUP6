@@ -27,6 +27,22 @@ export default function Header() {
             {t(n.key)}
           </NavLink>
         ))}
+        <NavLink
+          to="/scan"
+          className="scan-nav"
+          aria-label={lang === "vi" ? "Quét QR tác phẩm" : "Scan artwork QR"}
+        >
+          <SvgIcon kind="qr" size={22} />
+          <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
+        </NavLink>
+        <NavLink
+          to="/museums"
+          className="account-nav"
+          aria-label={label(lang, "Museums")}
+        >
+          <SvgIcon kind="pin" size={20} className="museum-nav-icon" />
+          <span>{label(lang, "Museums")}</span>
+        </NavLink>
       </nav>
 
       <Link to="/" className="logo">
@@ -37,22 +53,6 @@ export default function Header() {
         <Link className="search-btn" to="/explore/collection">
           <SearchIcon light={light} />
           <span>{t("search")}</span>
-        </Link>
-        <NavLink
-          to="/scan"
-          className="scan-nav"
-          aria-label={lang === "vi" ? "Quét QR tác phẩm" : "Scan artwork QR"}
-        >
-          <SvgIcon kind="qr" size={22} />
-          <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
-        </NavLink>
-        <Link
-          to="/museums"
-          className="account-nav"
-          aria-label={label(lang, "Museums")}
-        >
-          <SvgIcon kind="pin" size={20} className="museum-nav-icon" />
-          <span>{label(lang, "Museums")}</span>
         </Link>
         <LangSwitcher />
         <Link to="/tickets" className="btn btn-brown ticket-nav">

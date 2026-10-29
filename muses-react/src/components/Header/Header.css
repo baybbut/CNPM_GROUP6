@@ -27,6 +27,7 @@
   line-height: 1;
   letter-spacing: .02em;
 }
+.header .nav-left > a,
 .header .nav-right > a,
 .header .lang-toggle {
   display: inline-flex;
@@ -43,7 +44,8 @@
 }
 .header .search-icon,
 .header .ticket-icon { width: 20px; height: 20px; object-fit: contain; }
-.header .museum-nav-icon { display: none; }
+.header .museum-nav-icon { display: block; }
+.header .nav-left .scan-nav.active { border-bottom: 0; }
 .header.light { color: #fff; }
 .header.light .lang-toggle { border-color: currentColor; }
 .header.light .lang-arrow { filter: invert(1); }
@@ -73,7 +75,7 @@
   .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
   .header .nav-right .ticket-nav { padding: 10px 16px; }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .header {
     height: 112px;
     grid-template-columns: auto minmax(0, 1fr);
@@ -82,8 +84,10 @@
   .header .nav-left {
     grid-row: 2;
     grid-column: 1 / -1;
-    justify-content: center;
-    gap: clamp(16px, 4vw, 48px);
+    justify-content: flex-start;
+    gap: clamp(12px, 2.5vw, 32px);
+    overflow-x: auto;
+    padding-bottom: 3px;
   }
   .header .logo { grid-row: 1; grid-column: 1; }
   .header .nav-right { grid-row: 1; grid-column: 2; }
@@ -95,9 +99,9 @@
   .header .nav-right { gap: 9px; font-size: 11px; }
   .header .nav-left { font-size: 10px; gap: 18px; }
   .header .nav-right > .search-btn { display: none; }
-  .header .nav-right .scan-nav span,
+  .header .nav-left .scan-nav span,
   .header .account-nav > span { display: none; }
-  .header .nav-right .museum-nav-icon { display: block; }
+  .header .nav-left .museum-nav-icon { display: block; }
   .header .nav-right .ticket-nav { padding: 8px 10px; gap: 5px; }
   .header .lang-toggle { gap: 3px; }
 }
