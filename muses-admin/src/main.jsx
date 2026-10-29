@@ -14,6 +14,7 @@ const nav = [
   ["Languages & Audio", "audio"],
   ["Exhibitions & Events", "calendar"],
   ["VISITS"],
+  ["Tickets", "qr"],
   ["QR Check-in", "qr"],
   ["Museum Info & Maps", "map"],
 ];
