@@ -20,9 +20,12 @@ const statusLabel = {
 const definitions = {
   artworks: {
     title: "Tác phẩm",
-    description: "Quản lý từng hiện vật, thông tin nguồn và nội dung công bố.",
+    description:
+      "Nhập nội dung tiếng Việt, thông tin tác phẩm và công bố ngay tại đây.",
     fields: [
-      ["title", "Tên tác phẩm", "text", true],
+      ["title", "Tên tác phẩm (tiếng Việt)", "text", true],
+      ["descriptionVi", "Mô tả tiếng Việt", "textarea"],
+      ["shortDescriptionVi", "Mô tả ngắn (không bắt buộc)", "textarea"],
       ["artistId", "Tác giả", "artists", true],
       ["categoryId", "Thể loại", "categories", true],
       ["materialId", "Chất liệu", "materials", true],
@@ -32,13 +35,11 @@ const definitions = {
       ["imageUrl", "URL ảnh đại diện"],
       ["imageSource", "Nguồn / quyền sử dụng ảnh (không bắt buộc)"],
       ["ownerMuseumId", "Bảo tàng sở hữu (khác nơi đang trưng bày)", "museums"],
-      ["status", "Trạng thái", "publication", true],
     ],
   },
   translations: {
     title: "Bản dịch & thuyết minh",
-    description:
-      "Nhập và duyệt bản dịch thủ công. Nội dung tiếng Việt cần công bố trước tác phẩm.",
+    description: "Quản lý bản dịch và nghe thử thuyết minh theo từng ngôn ngữ.",
     fields: [
       ["artworkId", "Tác phẩm", "artworks", true],
       ["language", "Ngôn ngữ", "languages", true],
@@ -46,7 +47,11 @@ const definitions = {
       ["description", "Mô tả đầy đủ", "textarea"],
       ["shortDescription", "Mô tả ngắn", "textarea"],
       ["audioUrl", "URL bản thu âm (không bắt buộc)"],
-      ["source", "Nguồn bản dịch / người biên dịch (không bắt buộc)", "textarea"],
+      [
+        "source",
+        "Nguồn bản dịch / người biên dịch (không bắt buộc)",
+        "textarea",
+      ],
       ["status", "Trạng thái", "translationStatus", true],
     ],
   },
@@ -189,29 +194,49 @@ export default function Catalog({ entity = "artworks", search = "" }) {
   function launch(row) {
     setSaveError("");
     setNotice("");
-    setEdit(
-      row
-        ? { ...row }
-        : {
-            status: kind === "schedules" ? "Draft" : "Draft",
-            language: "vi",
-            isPublic: false,
-            pinVerified: false,
-          },
-    );
+    const next = row
+      ? { ...row }
+      : {
+          status: "Draft",
+          language: "vi",
+          isPublic: false,
+          pinVerified: false,
+        };
+    if (kind === "artworks") {
+      next.descriptionVi = row?.descriptionVi ?? "";
+      next.shortDescriptionVi = row?.shortDescriptionVi ?? "";
+    }
+    setEdit(next);
   }
   async function save(e) {
     e.preventDefault();
+    const intent =
+      kind === "artworks"
+        ? e.nativeEvent.submitter?.value || edit.status || "Draft"
+        : edit.status;
+    if (
+      kind === "artworks" &&
+      intent === "Published" &&
+      !edit.descriptionVi?.trim()
+    ) {
+      setSaveError("Nhập mô tả tiếng Việt trong form này để công bố tác phẩm.");
+      e.currentTarget.querySelector('[name="descriptionVi"]')?.focus();
+      return;
+    }
     setSaving(true);
     setSaveError("");
     try {
       await adminApi(
         `/api/admin/catalog/${kind}${edit.id ? `/${edit.id}` : ""}`,
         edit.id ? "PUT" : "POST",
-        edit,
+        { ...edit, status: intent },
       );
       setEdit(null);
-      setNotice("Đã lưu dữ liệu.");
+      setNotice(
+        kind === "artworks" && intent === "Published"
+          ? "Đã lưu và công bố tác phẩm."
+          : "Đã lưu dữ liệu.",
+      );
       setAttempt((n) => n + 1);
     } catch (e) {
       setSaveError(e.message);
@@ -264,6 +289,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
       <Field key={name} label={title}>
         {select ? (
           <select
+            name={name}
             required={required}
             value={value}
             disabled={
@@ -282,12 +308,13 @@ export default function Catalog({ entity = "artworks", search = "" }) {
           </select>
         ) : type === "textarea" ? (
           <textarea
+            name={name}
             value={value}
-            rows={name === "description" ? 6 : 3}
+            rows={["description", "descriptionVi"].includes(name) ? 6 : 3}
             maxLength={
-              name === "description"
+              ["description", "descriptionVi"].includes(name)
                 ? 12000
-                : name === "shortDescription"
+                : ["shortDescription", "shortDescriptionVi"].includes(name)
                   ? 1000
                   : 4000
             }
@@ -302,6 +329,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
           />
         ) : (
           <input
+            name={name}
             type={type}
             value={value}
             step={type === "number" ? "any" : undefined}
@@ -440,7 +468,20 @@ export default function Catalog({ entity = "artworks", search = "" }) {
         >
           <form onSubmit={save} className="catalog-form">
             <fieldset disabled={saving}>
-              {definitions[kind].fields.map(field)}
+              {kind === "artworks" ? (
+                <>
+                  <section className="catalog-form-group">
+                    <h3>Nội dung tiếng Việt</h3>
+                    {definitions.artworks.fields.slice(0, 3).map(field)}
+                  </section>
+                  <section className="catalog-form-group">
+                    <h3>Thông tin tác phẩm</h3>
+                    {definitions.artworks.fields.slice(3).map(field)}
+                  </section>
+                </>
+              ) : (
+                definitions[kind].fields.map(field)
+              )}
               {kind === "translations" && edit.description && (
                 <Narration
                   key={`${edit.artworkId}-${edit.language}`}
@@ -466,9 +507,38 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                 <button type="button" onClick={() => setEdit(null)}>
                   Hủy
                 </button>
-                <button className="primary">
-                  {saving ? "Đang lưu…" : "Lưu"}
-                </button>
+                {kind === "artworks" ? (
+                  <>
+                    <button
+                      type="submit"
+                      value={
+                        edit.status === "Published" ? "Published" : "Draft"
+                      }
+                      className={edit.status === "Published" ? "primary" : ""}
+                    >
+                      {saving
+                        ? "Đang lưu…"
+                        : edit.status === "Published"
+                          ? "Lưu thay đổi"
+                          : "Lưu nháp"}
+                    </button>
+                    <button
+                      type="submit"
+                      value={
+                        edit.status === "Published" ? "Draft" : "Published"
+                      }
+                      className={edit.status === "Published" ? "" : "primary"}
+                    >
+                      {edit.status === "Published"
+                        ? "Chuyển về nháp"
+                        : "Lưu và công bố"}
+                    </button>
+                  </>
+                ) : (
+                  <button className="primary">
+                    {saving ? "Đang lưu…" : "Lưu"}
+                  </button>
+                )}
               </div>
             </fieldset>
             {saveError && <p role="alert">{saveError}</p>}

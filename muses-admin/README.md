@@ -11,7 +11,7 @@ Backend chạy 3001; Vite proxy `/api`. Đổi backend bằng API*PROXY_TARGET t
 
 Cập nhật DB bằng `npm --prefix muses-backend run db:catalog` từ gốc repo; sau đó `admin:create` nếu chưa có tài khoản. Email/password Admin khác SQL login. Tất cả trang chính yêu cầu Admin; API cũng xác thực role, không chỉ ẩn UI.
 
-- Artworks: lưu nháp trước, nhập ảnh; nguồn thông tin và nguồn ảnh không bắt buộc; cần bản Việt công bố trước Published; Hidden giữ lịch sử.
+- Artworks: nhập/sửa tên và mô tả tiếng Việt trực tiếp cùng ảnh và thông tin tác phẩm; **Lưu nháp** hoặc **Lưu và công bố** tại một chỗ, không cần chuyển trang bản dịch. Dữ liệu cũ được điền sẵn; nguồn không bắt buộc; Hidden giữ lịch sử.
 - Languages & Audio: vi/en/zh/ja/ko, nhập tên/mô tả/nguồn thủ công, Draft/Published, URL audio tùy chọn và nghe thử đúng ngôn ngữ.
 - Museum Info & Maps: địa chỉ/tọa độ/nguồn, xác minh ghim; chặn ẩn bảo tàng còn lịch xác nhận hiện tại/tương lai.
 - Exhibitions & Events: lịch hiện vật tại bảo tàng, `[bắt đầu,kết thúc)`, nguồn/ngày kiểm chứng/người cập nhật; chống chồng lịch trong SQL transaction.

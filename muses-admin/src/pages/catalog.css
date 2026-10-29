@@ -150,3 +150,19 @@
     margin-top: 15px;
   }
 }
+
+.catalog-form-group {
+  display: grid;
+  gap: 16px;
+  border-bottom: 1px solid #ded5bd;
+  padding-bottom: 22px;
+}
+.catalog-form-group h3 {
+  font:
+    24px Georgia,
+    serif;
+  margin: 4px 0 6px;
+}
+.catalog-form-actions {
+  flex-wrap: wrap;
+}
