@@ -8,6 +8,6 @@ IF @principal='dbo' RETURN;
 DECLARE @grants NVARCHAR(MAX)=N'';
 SELECT @grants=@grants+N'GRANT SELECT,INSERT,UPDATE,DELETE ON OBJECT::dbo.'+QUOTENAME(name)+N' TO '+QUOTENAME(@principal)+N';'
 FROM sys.tables WHERE schema_id=SCHEMA_ID('dbo') AND name IN
-('Artworks','ArtworkDescriptions','ArtworkImages','Artists','Categories','Materials','Museums','DisplaySchedules');
+('Artworks','ArtworkDescriptions','ArtworkImages','Artists','Categories','Materials','Museums','DisplaySchedules','TicketOffers','TicketReservations');
 SET @grants=@grants+N'GRANT SELECT ON OBJECT::dbo.Languages TO '+QUOTENAME(@principal)+N';';
 EXEC sys.sp_executesql @grants;

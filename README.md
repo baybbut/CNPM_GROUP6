@@ -118,3 +118,7 @@ Tính năng dùng Web Speech API của trình duyệt, không cần API key, mig
 Trong admin **Languages & Audio**, lưu mô tả rồi bấm **Read aloud** ở cột Translation để nghe thử cùng kiểu chạy chữ. Bản dịch admin hiện vẫn chỉ lưu localStorage, chưa cập nhật database.
 
 Kiểm tra thuật toán tách câu và vị trí từ: `npm --prefix muses-react test`. Cloud đã kiểm tra sự kiện điều khiển và highlight bằng speech engine mô phỏng; cloud không có giọng cài sẵn nên chưa xác nhận âm thanh phát qua loa trên thiết bị thật.
+
+## Ticket
+
+Trang `/tickets` có chọn ngày/loại vé, thông tin khách, kiểm tra đơn và QR minh họa theo yêu cầu. Cập nhật DB bằng `db:catalog` và cấu hình bảng giá trong Admin → Tickets. QR mẫu không thu tiền và không có giá trị vào cửa. Xem [hướng dẫn Ticket](docs/TICKETS.md).

@@ -8,6 +8,8 @@ SELECT CASE WHEN EXISTS (
  ('Materials','SELECT'),('Materials','INSERT'),('Materials','UPDATE'),('Materials','DELETE'),
  ('Museums','SELECT'),('Museums','INSERT'),('Museums','UPDATE'),
  ('DisplaySchedules','SELECT'),('DisplaySchedules','INSERT'),('DisplaySchedules','UPDATE'),
+ ('TicketOffers','SELECT'),('TicketOffers','INSERT'),('TicketOffers','UPDATE'),
+ ('TicketReservations','SELECT'),('TicketReservations','INSERT'),('TicketReservations','UPDATE'),
  ('Languages','SELECT')
  ) permissions(tableName,action)
  WHERE COALESCE(HAS_PERMS_BY_NAME('dbo.'+tableName,'OBJECT',action),0)<>1

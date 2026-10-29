@@ -26,7 +26,9 @@ async function setupCatalog(
         "BACKUP DATABASE @database TO DISK=@backup WITH COPY_ONLY,CHECKSUM; RESTORE VERIFYONLY FROM DISK=@backup WITH CHECKSUM;",
       );
     await setupActivity(config, administrator, createPool);
-    const file = seed ? "CatalogDemo.sql" : "Catalog.sql";
+    const files = seed
+      ? ["CatalogDemo.sql", "Tickets.sql"]
+      : ["Catalog.sql", "Tickets.sql"];
     if (seed) {
       await pool
         .request()
@@ -35,11 +37,12 @@ async function setupCatalog(
           "IF NOT EXISTS(SELECT 1 FROM dbo.Users WHERE Role IN ('Admin','Administrator') AND IsActive=1) THROW 51000,N'Create a web Admin account before seeding demo data.',1;",
         );
     }
-    for (const batch of fs
-      .readFileSync(path.join(__dirname, "../MusesDB", file), "utf8")
-      .split(/^GO\s*$/im)
-      .filter((s) => s.trim()))
-      await pool.request().query(batch);
+    for (const file of files)
+      for (const batch of fs
+        .readFileSync(path.join(__dirname, "../MusesDB", file), "utf8")
+        .split(/^GO\s*$/im)
+        .filter((s) => s.trim()))
+        await pool.request().query(batch);
     await pool
       .request()
       .input("runtimeLogin", sql.NVarChar(128), config.user)

@@ -46,7 +46,7 @@ test(
   CREATE TABLE ArtworkImages(ImageID INT IDENTITY PRIMARY KEY,ArtworkID INT REFERENCES Artworks(ArtworkID),ImageURL NVARCHAR(500),IsPrimary BIT,DisplayOrder INT);
   CREATE TABLE ArtworkDescriptions(DescriptionID INT IDENTITY PRIMARY KEY,ArtworkID INT REFERENCES Artworks(ArtworkID),LanguageID INT REFERENCES Languages(LanguageID),ShortDescription NVARCHAR(1000),FullDescription NVARCHAR(MAX),AudioURL NVARCHAR(500),UNIQUE(ArtworkID,LanguageID));`);
       for (let run = 0; run < 2; run++)
-        for (const file of ["ActivityAnalytics.sql", "Catalog.sql"])
+        for (const file of ["ActivityAnalytics.sql", "Catalog.sql", "Tickets.sql"])
           for (const batch of fs
             .readFileSync(path.join(__dirname, "../MusesDB", file), "utf8")
             .split(/^GO\s*$/im)
