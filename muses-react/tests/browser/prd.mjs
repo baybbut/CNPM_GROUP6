@@ -43,6 +43,8 @@ const work = {
   material: "Oil",
   creationPeriod: "2026",
   description: "A description for narration.",
+  descriptionVi: "Mô tả tiếng Việt có sẵn.",
+  shortDescriptionVi: "Mô tả ngắn có sẵn.",
   contentLanguage: "vi",
   descriptionLanguage: "vi",
   isFallback: true,
@@ -123,7 +125,23 @@ async function intercept(p) {
     else if (failSave) {
       code = 409;
       data = { message: "Fixture: current schedule prevents hiding museum." };
-    } else data = { id: 2, message: "Saved" };
+    } else {
+      const payload = JSON.parse(p.request.postData || "{}");
+      const savedId =
+        p.request.method === "POST"
+          ? 2
+          : Number(url.pathname.split("/").at(-1));
+      if (entity === "artworks") {
+        const saved = { ...payload, id: savedId };
+        store.artworks =
+          p.request.method === "POST"
+            ? [...store.artworks, saved]
+            : store.artworks.map((row) =>
+                row.id === savedId ? { ...row, ...saved } : row,
+              );
+      }
+      data = { id: savedId, message: "Saved" };
+    }
   } else if (url.pathname === "/api/admin/analytics")
     data = {
       summary: {},
@@ -148,7 +166,7 @@ ws.addEventListener("message", (event) => {
     if (msg.error) p.reject(Error(msg.error.message));
     else p.resolve(msg.result);
   } else if (msg.method === "Fetch.requestPaused")
-    intercept(msg.params).catch(console.error);
+    intercept(msg.params).catch(error=>{if(!error.message.includes("Invalid InterceptionId")) console.error(error);});
   else if (msg.method === "Runtime.exceptionThrown")
     exceptions.push(
       msg.params.exceptionDetails.text +
@@ -284,9 +302,62 @@ try {
     "Unsaved artwork",
     "failed save retains form",
   );
+  const writesBefore = requests.filter(
+    (r) => r.path === "/api/admin/catalog/artworks" && r.method === "POST",
+  ).length;
+  await ev(
+    `document.querySelector('.catalog-form button[value=Published]').click()`,
+  );
+  await until(
+    `document.querySelector('.catalog-form [role=alert]').textContent.includes('Nhập mô tả tiếng Việt')`,
+  );
+  assert.equal(
+    requests.filter(
+      (r) => r.path === "/api/admin/catalog/artworks" && r.method === "POST",
+    ).length,
+    writesBefore,
+  );
+  await ev(
+    `(()=>{const d=document.querySelector('[name=descriptionVi]');Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(d,'Mô tả để công bố ngay trong form.');d.dispatchEvent(new Event('input',{bubbles:true}));const img=document.querySelector('[name=imageUrl]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(img,'https://example.org/test.jpg');img.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+  );
+  failSave = false;
+  await ev(
+    `document.querySelector('.catalog-form button[value=Published]').click()`,
+  );
+  await until(`!document.querySelector('.catalog-form')`);
+  const saved = JSON.parse(
+    requests
+      .filter(
+        (r) => r.path === "/api/admin/catalog/artworks" && r.method === "POST",
+      )
+      .at(-1).body,
+  );
+  assert.equal(saved.status, "Published");
+  assert.equal(saved.descriptionVi, "Mô tả để công bố ngay trong form.");
+  await until(`document.querySelector('tbody tr button')`);
+  await ev(`document.querySelector('tbody tr button').click()`);
+  await until(`document.querySelector('[name=descriptionVi]')`);
+  assert.equal(
+    await ev(`document.querySelector('[name=descriptionVi]').value`),
+    "Mô tả tiếng Việt có sẵn.",
+    "existing Vietnamese text is prefilled",
+  );
+  await ev(
+    `document.querySelector('.catalog-form button[value=Published]').click()`,
+  );
+  await until(`!document.querySelector('.catalog-form')`);
+  assert.equal(
+    requests.some(
+      (r) =>
+        r.path.includes("/api/admin/catalog/translations") &&
+        r.method !== "GET",
+    ),
+    false,
+    "one-form publication never navigates or saves via separate translation requests",
+  );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: five-language fallback/TTS, combined filters/page, map destination, protected Admin login, failed-save retention, and widths 375/768/1440 (controlled API fixture).",
+    "PASS: five-language fallback/TTS, combined filters/page, map destination, protected Admin login, failed-save retention, one-form publication with prefilled Vietnamese, and widths 375/768/1440 (controlled API fixture).",
   );
 } catch (e) {
   console.error(
