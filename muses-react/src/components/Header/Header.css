@@ -1,39 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap'); /*tải font Kalnia về */
-.header
-{position:absolute;
-  inset:0 0 auto 0;
-  z-index:5;
-  height:80px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  padding:0 24px;
-  font-size:15px}
-.nav-left
-{display:flex;
-  gap:32px;
-  text-transform:uppercase;
-  font-size:14px;
-  transform: translateX(40px)
+@import url("https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap"); /*tải font Kalnia về */
+.header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  height: 80px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 24px;
+  font-size: 15px;
 }
-  .logo
-{font-family:'Kalnia', sans-serif; /* dùng font Kalnia*/
-  font-size:50px;
-  letter-spacing:.02em}
-.nav-right
-{display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap:32px;
-  text-transform:uppercase;
-  font-size:14px}
-.nav-right .btn
-{text-transform:none;
-  padding:10px 24px}
+.nav-left {
+  display: flex;
+  gap: 32px;
+  text-transform: uppercase;
+  font-size: 14px;
+  transform: translateX(40px);
+}
+.logo {
+  font-family: "Kalnia", sans-serif; /* dùng font Kalnia*/
+  font-size: 50px;
+  letter-spacing: 0.02em;
+}
+.nav-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 32px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+.nav-right .btn {
+  text-transform: none;
+  padding: 10px 24px;
+}
 
-@media (max-width:900px){
-  .header{grid-template-columns:auto 1fr}
-  .nav-left{display:none}
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: auto 1fr;
+  }
+  .nav-left {
+    display: none;
+  }
 }
 .search-btn {
   display: inline-flex;
@@ -59,10 +67,16 @@
   object-fit: contain;
 }
 
-.header.light{color:#fff}
-.header.light .lang-toggle{border-color:#fff}
+.header.light {
+  color: #fff;
+}
+.header.light .lang-toggle {
+  border-color: #fff;
+}
 
-.header.sand{background:#9b9078}
+.header.sand {
+  background: #9b9078;
+}
 /* Vị trí để đặt gạch dưới */
 .header .nav-left a,
 .header .search-btn {
@@ -119,8 +133,10 @@
 
   transform: scaleX(0);
   transform-origin: right;
-  transition: left 0.3s ease, width 0.3s ease,
-              transform 0.3s ease;
+  transition:
+    left 0.3s ease,
+    width 0.3s ease,
+    transform 0.3s ease;
 }
 
 /* Hover: cả icon và chữ dịch trái */
@@ -164,12 +180,51 @@
   background: currentColor;
 }
 /* Keep collection navigation usable on narrow screens. */
-@media (max-width:600px){
-  .header{padding:0 14px;grid-template-columns:auto minmax(0,1fr);gap:14px}
-  .header .logo{font-size:29px}
-  .header .nav-right{min-width:0;gap:12px;font-size:12px}
-  .header .search-btn{display:none}
-  .header .nav-right .btn{padding:8px 10px;font-size:12px;gap:5px}
-  .header .lang-toggle{font-size:11px;gap:3px}
+@media (max-width: 600px) {
+  .header {
+    padding: 0 14px;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px;
+  }
+  .header .logo {
+    font-size: 29px;
+  }
+  .header .nav-right {
+    min-width: 0;
+    gap: 12px;
+    font-size: 12px;
+  }
+  .header .search-btn {
+    display: none;
+  }
+  .header .nav-right .btn {
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .header .lang-toggle {
+    font-size: 11px;
+    gap: 3px;
+  }
 }
-.header.light .lang-arrow{filter:invert(1)}
+.header.light .lang-arrow {
+  filter: invert(1);
+}
+
+.header .museum-nav-icon {
+  display: none;
+}
+@media (max-width: 600px) {
+  .header .nav-right > .ticket-nav {
+    display: inline-flex;
+  }
+  .header .nav-right .museum-nav-icon {
+    display: block;
+  }
+  .header .account-nav > span {
+    display: none;
+  }
+  .header .nav-right {
+    gap: 9px;
+  }
+}

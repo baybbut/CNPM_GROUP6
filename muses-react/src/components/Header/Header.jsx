@@ -46,13 +46,18 @@ export default function Header() {
           <SvgIcon kind="qr" size={22} />
           <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
         </NavLink>
-        <Link to="/museums" className="account-nav">
-          {label(lang, "Museums")}
+        <Link
+          to="/museums"
+          className="account-nav"
+          aria-label={label(lang, "Museums")}
+        >
+          <SvgIcon kind="pin" size={20} className="museum-nav-icon" />
+          <span>{label(lang, "Museums")}</span>
         </Link>
         <LangSwitcher />
-        <button className="btn btn-brown">
+        <Link to="/tickets" className="btn btn-brown ticket-nav">
           <TicketIcon /> {t("ticket")}
-        </button>
+        </Link>
       </div>
     </header>
   );

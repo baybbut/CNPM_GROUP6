@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import TicketIcon from "../../../icon/ticketW.png";
 import { InfoIcon } from "../Icons";
@@ -29,14 +30,14 @@ export default function Hero() {
           </span>
         </div>
         <div className="welcome-actions">
-          <button className="btn btn-brown">
+          <Link to="/tickets" className="btn btn-brown">
             <img src={TicketIcon} alt="" className="ticket-icon" />
             {t("bookTicket")}
-          </button>
-          <button className="btn btn-grey">
+          </Link>
+          <Link to="/visit" className="btn btn-grey">
             <InfoIcon />
             {t("prepare")}
-          </button>
+          </Link>
         </div>
       </div>
     </section>
