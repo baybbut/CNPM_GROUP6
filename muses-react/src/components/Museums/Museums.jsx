@@ -10,6 +10,7 @@ import {
   searchPlaces,
   connectCatalogue,
 } from "./placeModel.mjs";
+import referencePlaces from "../../data/hcmPlaces.json";
 import "./museums.css";
 
 export function MuseumMap({ museum }) {
@@ -91,7 +92,11 @@ function DiscoverMuseums() {
     t = (key) => label(lang, key);
   const [q, setQ] = useState(""),
     [kind, setKind] = useState("all"),
-    [data, setData] = useState(null),
+    [data, setData] = useState({
+      items: referencePlaces,
+      sourceType: "reference",
+      fetchedAt: null,
+    }),
     [museums, setMuseums] = useState([]),
     [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0),
@@ -109,8 +114,12 @@ function DiscoverMuseums() {
   useEffect(() => {
     const c = new AbortController();
     setError(false);
-    catalog("/api/places/hcm", c.signal, 30000)
-      .then(setData)
+    catalog("/api/places/hcm", c.signal, 35000)
+      .then((next) => {
+        if (!Array.isArray(next?.items) || !next.items.some(hasCoordinates))
+          throw Error("PLACES_UNAVAILABLE");
+        setData(next);
+      })
       .catch((e) => {
         if (e.name !== "AbortError") setError(true);
       });
@@ -214,13 +223,21 @@ function DiscoverMuseums() {
           {position && ` · ${t("Nearest first")}`}
         </span>
         {!data && !error && <span>{t("Loading…")}</span>}
-        {data?.stale && (
+        {data?.stale && data.sourceType !== "reference" && (
           <span>{t("Showing the last available map data.")}</span>
         )}
       </div>
+      {data?.sourceType === "reference" && (
+        <p className="places-note" role="status">
+          {t("Reference places")}{" "}
+          <button onClick={() => setAttempt((n) => n + 1)}>
+            {t("Refresh places")}
+          </button>
+        </p>
+      )}
       {error && (
         <p className="places-load-error" role="alert">
-          {t("Places could not be loaded. Please try again.")}{" "}
+          {t("More places are temporarily unavailable.")}{" "}
           <button onClick={() => setAttempt((n) => n + 1)}>
             {t("Try again")}
           </button>{" "}
@@ -256,6 +273,11 @@ function DiscoverMuseums() {
                 </button>
               </h2>
               <p>{place.address}</p>
+              {place.pinAccuracy === "approximate" && (
+                <p className="place-distance">
+                  {t("Approximate pin — use directions for the entrance.")}
+                </p>
+              )}
               {place.distance != null && (
                 <p className="place-distance">
                   {place.distance.toFixed(1)} km · {t("Straight-line distance")}

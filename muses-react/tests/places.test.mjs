@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { directionsUrl } from "../src/api/catalog.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -52,4 +54,20 @@ test("curated artwork links need both matching name and nearby pin; demo or owne
     { ...museum, latitude: 21 },
   ])
     assert.equal(connectCatalogue(items, [m])[0].museumId, undefined);
+});
+
+test("reference museums are immediately usable, multilingual and route by address instead of an approximate pin", () => {
+  const reference = JSON.parse(
+    readFileSync(new URL("../src/data/hcmPlaces.json", import.meta.url)),
+  );
+  assert.equal(reference.length, 4);
+  for (const lang of ["vi", "en", "zh", "ja", "ko"])
+    assert.equal(searchPlaces(reference, { lang }).length, 4);
+  const museum = searchPlaces(reference, { q: "my thuat" })[0];
+  assert.ok(museum);
+  const destination = new URL(directionsUrl(museum)).searchParams.get(
+    "destination",
+  );
+  assert.ok(destination.includes("97A Phó Đức Chính"));
+  assert.ok(!destination.includes("10.769"));
 });

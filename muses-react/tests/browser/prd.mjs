@@ -13,6 +13,8 @@ let nextId = 0,
   failSave = true,
   requests = [],
   exceptions = [];
+let placesStatus = 200;
+let placesEmpty = false;
 const pending = new Map();
 function call(method, params = {}) {
   return new Promise((resolve, reject) => {
@@ -117,7 +119,8 @@ async function intercept(p) {
   else if (url.pathname === "/api/artworks") data = [work];
   else if (url.pathname.startsWith("/api/artworks/"))
     data = { ...work, requestedLanguage: url.searchParams.get("lang") || "vi" };
-  else if (url.pathname === "/api/places/hcm")
+  else if (url.pathname === "/api/places/hcm") {
+    code = placesStatus;
     data = {
       fetchedAt: "2026-10-29T00:00:00Z",
       stale: false,
@@ -139,7 +142,8 @@ async function intercept(p) {
         },
       ],
     };
-  else if (url.pathname === "/api/museums") data = [museum];
+    if (placesEmpty) data.items = [];
+  } else if (url.pathname === "/api/museums") data = [museum];
   else if (url.pathname.startsWith("/api/museums/"))
     data = { ...museum, artworks: [work] };
   else if (url.pathname.startsWith("/api/admin/catalog/")) {
@@ -292,7 +296,9 @@ try {
     );
   }
   await navigate(visitor + "/museums");
-  await until('document.querySelector(".museum-card")');
+  await until(
+    `document.querySelector('.museum-card') && document.querySelectorAll('.museum-card').length===2`,
+  );
   assert.equal(
     await ev(
       `[...document.querySelectorAll('.museum-card a[href*="google.com/maps/dir"]')].some(a=>a.href.includes('destination=10.8%2C106.6'))`,
@@ -339,12 +345,57 @@ try {
       "map page overflow " + width,
     );
   }
-  await ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))");
-  await writeFile("/tmp/muses-places-desktop.png",Buffer.from((await call("Page.captureScreenshot",{format:"png"})).data,"base64"));
+  await ev(
+    "new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))",
+  );
+  await writeFile(
+    "/tmp/muses-places-desktop.png",
+    Buffer.from(
+      (await call("Page.captureScreenshot", { format: "png" })).data,
+      "base64",
+    ),
+  );
   await viewport(375);
-  await ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))");
-  await writeFile("/tmp/muses-places-mobile.png",Buffer.from((await call("Page.captureScreenshot",{format:"png"})).data,"base64"));
-  assert.equal(requests.some(r=>/latitude|longitude/.test(r.body || "")),false,"visitor GPS must not be sent to Muses APIs");
+  await ev(
+    "new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))",
+  );
+  await writeFile(
+    "/tmp/muses-places-mobile.png",
+    Buffer.from(
+      (await call("Page.captureScreenshot", { format: "png" })).data,
+      "base64",
+    ),
+  );
+  assert.equal(
+    requests.some((r) => /latitude|longitude/.test(r.body || "")),
+    false,
+    "visitor GPS must not be sent to Muses APIs",
+  );
+  for (const status of [404, 503, 200]) {
+    placesStatus = status;
+    placesEmpty = status === 200;
+    await navigate(visitor + "/museums");
+    await until("document.querySelector('.places-load-error')");
+    await until("document.querySelectorAll('.venue-marker').length===4");
+    assert.equal(
+      await ev("document.querySelectorAll('.museum-card').length"),
+      4,
+      "reference places survive API " + status,
+    );
+    assert.ok(
+      (
+        await ev("document.querySelector('.discovery-results').textContent")
+      ).includes("97A Phó Đức Chính"),
+    );
+    assert.equal(
+      await ev(
+        `[...document.querySelectorAll('.museum-card a[href*="google.com/maps/dir"]')].some(a=>new URL(a.href).searchParams.get('destination').includes('97A Phó Đức Chính'))`,
+      ),
+      true,
+    );
+  }
+  placesStatus = 200;
+  placesEmpty = false;
   await navigate(admin + "/#Artworks");
   await until('document.querySelector(".catalog-auth form")');
   await ev(
@@ -429,7 +480,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: five-language fallback/TTS, combined filters/page, interactive map pins, GPS denial/success, place type filtering, map destination, protected Admin login, failed-save retention, one-form publication with prefilled Vietnamese, and widths 375/768/1440 (controlled API fixture).",
+    "PASS: five-language fallback/TTS, combined filters/page, interactive map pins, API 404/503/empty fallback recovery, GPS denial/success, place type filtering, map destination, protected Admin login, failed-save retention, one-form publication with prefilled Vietnamese, and widths 375/768/1440 (controlled API fixture).",
   );
 } catch (e) {
   console.error(

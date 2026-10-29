@@ -1,5 +1,30 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "Reference places": [
+    "Địa điểm tham khảo",
+    "参考地点",
+    "参考施設",
+    "참고 장소",
+  ],
+  "Refresh places": [
+    "Tải thêm địa điểm",
+    "刷新地点",
+    "施設を再読み込み",
+    "장소 새로고침",
+  ],
+  "Approximate pin — use directions for the entrance.": [
+    "Ghim tham khảo — xem chỉ đường để đến đúng lối vào.",
+    "标记为大致位置，请使用路线寻找入口。",
+    "ピンは目安です。入口までは経路案内をご確認ください。",
+    "핀은 대략적인 위치입니다. 입구는 길찾기로 확인하세요.",
+  ],
+  "More places are temporarily unavailable.": [
+    "Tạm thời chưa tải thêm được địa điểm.",
+    "暂时无法加载更多地点。",
+    "追加の施設を読み込めませんでした。",
+    "현재 추가 장소를 불러올 수 없습니다.",
+  ],
+
   "Your location": ["Vị trí của bạn", "您的位置", "現在地", "내 위치"],
   "The museum location has not been confirmed yet.": [
     "Chưa xác nhận được vị trí bảo tàng.",

@@ -23,7 +23,10 @@ export function distanceKm(a, b) {
 export function directionsUrl(museum) {
   const q = new URLSearchParams({
     api: "1",
-    destination: `${Number(museum.latitude)},${Number(museum.longitude)}`,
+    destination:
+      museum.pinAccuracy === "approximate"
+        ? `${museum.name}, ${museum.address}`
+        : `${Number(museum.latitude)},${Number(museum.longitude)}`,
   });
   return `https://www.google.com/maps/dir/?${q}`;
 }
