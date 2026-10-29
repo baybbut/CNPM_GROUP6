@@ -60,7 +60,9 @@ async function intercept(p) {
         },
       ],
     };
-  } else if (path === "/api/catalog/artworks") {
+  } else if (path === "/api/qr/artworks/17")
+    data = { id: 17, active: true, label: artwork.title };
+  else if (path === "/api/catalog/artworks") {
     code = catalogueFail ? 503 : 200;
     const match =
       !u.searchParams.get("q") ||

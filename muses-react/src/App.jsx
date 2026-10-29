@@ -19,7 +19,7 @@ import Exhibition from "./components/exhibition/exhibition";
 import Explore from "./components/explore/explore";
 import Collection from "./components/explore/collection";
 
-import ArtworkDetail from "./components/explore/ArtworkDetail";
+import QRArtworkPage from "./components/Scanner/QRArtworkPage";
 
 const Itinerary = lazy(() => import("./components/Museums/Itinerary"));
 
@@ -75,7 +75,7 @@ export default function App() {
           <Route path="/exhibition" element={<Exhibition />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/explore/collection" element={<Collection />} />
-          <Route path="/explore/artworks/:id" element={<ArtworkDetail />} />
+          <Route path="/explore/artworks/:id" element={<QRArtworkPage />} />
         </Routes>
       </main>
       <Footer />

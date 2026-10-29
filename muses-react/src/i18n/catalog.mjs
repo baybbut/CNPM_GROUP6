@@ -1,5 +1,17 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "This QR code is no longer active.": [
+    "Mã QR này hiện không hoạt động.",
+    "此二维码已停用。",
+    "このQRコードは現在無効です。",
+    "이 QR 코드는 현재 비활성 상태입니다.",
+  ],
+  "QR unavailable. Please try again.": [
+    "Chưa mở được mã QR. Vui lòng thử lại.",
+    "无法打开二维码，请重试。",
+    "QRコードを開けません。もう一度お試しください。",
+    "QR 코드를 열 수 없습니다. 다시 시도하세요.",
+  ],
   "Open full-size plan": [
     "Xem sơ đồ kích thước gốc",
     "查看原尺寸平面图",

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { catalog } from "../../api/catalog.mjs";
+import { label } from "../../i18n/catalog.mjs";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import "./scanner.css";
@@ -12,7 +14,8 @@ export default function ArtworkQR({
 }) {
   const [open, setOpen] = useState(false),
     [image, setImage] = useState(""),
-    [error, setError] = useState(false);
+    [error, setError] = useState(false),
+    [disabled, setDisabled] = useState(false);
   const dialog = useRef(null),
     trigger = useRef(null);
   const titleId = `qr-title-${id}`;
@@ -24,8 +27,15 @@ export default function ArtworkQR({
     let active = true;
     setImage("");
     setError(false);
+    setDisabled(false);
     dialog.current?.querySelector("button")?.focus();
-    import("qrcode")
+    const c = new AbortController();
+    catalog(`/api/qr/artworks/${encodeURIComponent(id)}`, c.signal)
+      .then((result) => {
+        if (!result?.active || String(result.id) !== String(id))
+          throw Error("QR_UNAVAILABLE");
+        return import("qrcode");
+      })
       .then((m) =>
         (m.default || m).toDataURL(url, {
           width: 600,
@@ -36,11 +46,15 @@ export default function ArtworkQR({
       .then((src) => {
         if (active) setImage(src);
       })
-      .catch(() => {
-        if (active) setError(true);
+      .catch((e) => {
+        if (active) {
+          setError(true);
+          setDisabled([404, 410].includes(e.status));
+        }
       });
     return () => {
       active = false;
+      c.abort();
       document.body.style.overflow = overflow;
       trigger.current?.focus();
     };
@@ -102,7 +116,12 @@ export default function ArtworkQR({
               ) : (
                 <p role="status">
                   {error
-                    ? "QR unavailable"
+                    ? label(
+                        language,
+                        disabled
+                          ? "This QR code is no longer active."
+                          : "QR unavailable. Please try again.",
+                      )
                     : vi
                       ? "Đang tạo QR…"
                       : "Creating QR…"}
@@ -113,7 +132,7 @@ export default function ArtworkQR({
                   ? "Quét bằng mục Quét QR trên web hoặc camera điện thoại."
                   : "Scan with the website QR scanner or your phone camera."}
               </p>
-              <p className="qr-url">{url}</p>
+              {image && <p className="qr-url">{url}</p>}
               {["localhost", "127.0.0.1", "[::1]"].includes(
                 window.location.hostname,
               ) && (
@@ -123,12 +142,14 @@ export default function ArtworkQR({
                     : "To scan on your phone, open this website using your computer’s network IP address and create the QR again. Both devices need the same Wi-Fi."}
                 </p>
               )}
-              <Link
-                to={`/explore/artworks/${id}?lang=${language}&source=qr`}
-                onClick={() => setOpen(false)}
-              >
-                {vi ? "Xem đầy đủ tác phẩm" : "View full artwork"}
-              </Link>
+              {!disabled && (
+                <Link
+                  to={`/explore/artworks/${id}?lang=${language}&source=qr`}
+                  onClick={() => setOpen(false)}
+                >
+                  {vi ? "Xem đầy đủ tác phẩm" : "View full artwork"}
+                </Link>
+              )}
               {image && (
                 <a href={image} download={`muses-artwork-${id}.png`}>
                   {vi ? "Tải ảnh QR" : "Download QR"}

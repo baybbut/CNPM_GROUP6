@@ -132,6 +132,7 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
           material,
           museum,
           page: String(page),
+          ...(qrMode ? { qr: "1" } : {}),
         });
         const [data, options] = await Promise.all([
           catalog(`/api/catalog/artworks?${params}`, controller.signal),
@@ -150,7 +151,7 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [lang, query, artist, material, museum, page, attempt]);
+  }, [lang, query, artist, material, museum, page, attempt, qrMode]);
   function change(setter, value) {
     setter(value);
     setPage(1);

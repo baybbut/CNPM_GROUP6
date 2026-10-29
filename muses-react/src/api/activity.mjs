@@ -1,3 +1,4 @@
+import { contentLanguage } from "./contentLanguages.mjs";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 export function activityId() {
   const bytes = new Uint8Array(16);
@@ -79,6 +80,25 @@ export function trackAudio(language) {
   trackActivity("audio_play", {
     artworkId: Number(match[1]),
     language: (language || document.documentElement.lang).split("-")[0],
+    ...(point && /^[\w:-]{1,80}$/.test(point) ? { point } : {}),
+  });
+}
+
+export function trackQRLanding(artworkId, point, language) {
+  const key = `${artworkId}:${point || ""}`;
+  try {
+    const previous = JSON.parse(
+      sessionStorage.getItem("muses-last-qr") || "null",
+    );
+    if (previous?.key === key && Date.now() - previous.time < 10000) return;
+    sessionStorage.setItem(
+      "muses-last-qr",
+      JSON.stringify({ key, time: Date.now() }),
+    );
+  } catch {}
+  trackActivity("qr_scan", {
+    artworkId,
+    language: contentLanguage(language),
     ...(point && /^[\w:-]{1,80}$/.test(point) ? { point } : {}),
   });
 }

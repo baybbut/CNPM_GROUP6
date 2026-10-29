@@ -3,8 +3,7 @@ import { useLocation } from "react-router-dom";
 import { trackActivity } from "../api/activity.mjs";
 export default function ActivityTracker() {
   const { pathname, search } = useLocation(),
-    last = useRef(""),
-    lastQR = useRef("");
+    last = useRef("");
   useEffect(() => {
     const key = pathname + search;
     if (last.current === key) return;
@@ -22,24 +21,6 @@ export default function ActivityTracker() {
       ).split("-")[0],
     };
     trackActivity("page_view", details);
-    const qrKey = `${pathname}:${point || ""}`;
-    if (!match || query.get("source") !== "qr") lastQR.current = "";
-    if (match && query.get("source") === "qr" && lastQR.current !== qrKey) {
-      lastQR.current = qrKey;
-      // Reloading a QR landing page immediately must not inflate scan counts.
-      let recent = false;
-      try {
-        const previous = JSON.parse(
-          sessionStorage.getItem("muses-last-qr") || "null",
-        );
-        recent = previous?.key === qrKey && Date.now() - previous.time < 10000;
-        sessionStorage.setItem(
-          "muses-last-qr",
-          JSON.stringify({ key: qrKey, time: Date.now() }),
-        );
-      } catch {}
-      if (!recent) trackActivity("qr_scan", details);
-    }
   }, [pathname, search]);
   useEffect(() => {
     const beat = () => {
