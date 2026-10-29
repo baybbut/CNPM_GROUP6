@@ -114,6 +114,20 @@ function attachTicketRoutes(app, sql) {
       }),
     ),
   );
+  app.get(
+    "/api/tickets/prices",
+    run(async (_req, res) => {
+      const result = await query(
+        app.locals.pool,
+        `SELECT m.MuseumID AS id,m.Name AS name,m.Address AS address,m.Latitude AS latitude,m.Longitude AS longitude,m.IsPublic AS isPublic,m.IsDemo AS isDemo,
+        t.AdultPrice AS adultPrice,t.ConcessionPrice AS concessionPrice,t.ChildPrice AS childPrice,t.Terms AS terms,t.ClosedWeekdays AS closedWeekdays,
+        CONVERT(varchar(33),t.UpdatedAt,126)+'Z' AS updatedAt
+        FROM dbo.Museums m LEFT JOIN dbo.TicketOffers t ON t.MuseumID=m.MuseumID AND t.IsEnabled=1
+        WHERE m.IsPublic=1 AND m.IsDemo=0 ORDER BY m.Name;`,
+      );
+      res.json({ items: result.recordset });
+    }),
+  );
   app.post(
     "/api/tickets/checkout",
     run(async (req, res) => {

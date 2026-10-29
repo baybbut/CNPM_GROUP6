@@ -79,6 +79,7 @@ let server,
   role = null;
 const orders = new Map();
 let saved = 0;
+let priceQuery = "";
 const originalMode = process.env.TICKET_PAYMENT_MODE;
 before(async () => {
   process.env.TICKET_PAYMENT_MODE = "demo";
@@ -93,6 +94,27 @@ before(async () => {
         return this;
       },
       async query(statement) {
+        if (statement.includes("LEFT JOIN dbo.TicketOffers")) {
+          priceQuery = statement;
+          return {
+            recordset: [
+              {
+                id: 1,
+                name: "Real museum",
+                adultPrice: 40000,
+                concessionPrice: 20000,
+                childPrice: 0,
+              },
+              {
+                id: 2,
+                name: "Not priced yet",
+                adultPrice: null,
+                concessionPrice: null,
+                childPrice: null,
+              },
+            ],
+          };
+        }
         if (statement.startsWith("SELECT BookingCode AS code"))
           return {
             recordset: orders.has(values.requestId)
@@ -245,4 +267,17 @@ test("even a valid signed callback cannot turn a demo QR into a paid ticket", as
       else process.env[k] = original[k];
     }
   }
+});
+
+test("public price lookup is guest-readable, includes unknown prices and never creates an order", async () => {
+  role = null;
+  const beforeSaved = saved;
+  const response = await fetch(`${origin}/api/tickets/prices`);
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.equal(data.items[0].childPrice, 0);
+  assert.equal(data.items[1].adultPrice, null);
+  assert.match(priceQuery, /m.IsPublic=1 AND m.IsDemo=0/);
+  assert.match(priceQuery, /t.IsEnabled=1/);
+  assert.equal(saved, beforeSaved);
 });
