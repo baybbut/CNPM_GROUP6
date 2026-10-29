@@ -240,10 +240,12 @@ export default function ArtworkDetail() {
                     )}
                   </p>
                 )}
-                <p>
-                  <strong>{label(lang, "Source")}: </strong>
-                  {artwork.source}
-                </p>
+                {artwork.source && (
+                  <p>
+                    <strong>{label(lang, "Source")}: </strong>
+                    {artwork.source}
+                  </p>
+                )}
                 {artwork.imageSource && (
                   <p>
                     <strong>{label(lang, "Image source")}: </strong>
