@@ -40,13 +40,14 @@ export default function Header() {
           className="account-nav"
           aria-label={label(lang, "Museums")}
         >
-          <SvgIcon kind="pin" size={20} className="museum-nav-icon" />
+          <SvgIcon kind="pin" light={light} size={20} className="museum-nav-icon" />
           <span>{label(lang, "Museums")}</span>
         </NavLink>
       </nav>
 
       <Link to="/" className="logo">
-        MUSES
+        <SvgIcon kind="logo" light={light} size={40} className="brand-icon" />
+        <span>MUSES</span>
       </Link>
 
       <div className="nav-right">
