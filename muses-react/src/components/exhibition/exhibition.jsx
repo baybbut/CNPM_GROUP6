@@ -86,7 +86,7 @@ function ExhibitionContent() {
     <div className="ex">
       {/* HERO */}
       <section
-        className="ex-hero"
+        className="ex-hero" data-scroll-intro
         style={{ "--ex-hero-image": `url("${hero}")` }}
       >
         <h1>{t("EXHIBITION AND EVENTS")}</h1>

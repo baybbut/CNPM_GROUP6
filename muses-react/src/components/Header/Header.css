@@ -1,230 +1,106 @@
-@import url("https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap"); /*tải font Kalnia về */
 .header {
   position: absolute;
-  inset: 0 0 auto 0;
+  inset: 0 0 auto;
   z-index: 5;
   height: 80px;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  padding: 0 24px;
-  font-size: 15px;
+  column-gap: 24px;
+  padding-inline: clamp(20px, 3vw, 56px);
+  color: #000;
 }
-.nav-left {
+.header .nav-left,
+.header .nav-right {
   display: flex;
-  gap: 32px;
-  text-transform: uppercase;
-  font-size: 14px;
-  transform: translateX(40px);
-}
-.logo {
-  font-family: "Kalnia", sans-serif; /* dùng font Kalnia*/
-  font-size: 50px;
-  letter-spacing: 0.02em;
-}
-.nav-right {
-  display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 32px;
+  gap: clamp(12px, 1.4vw, 28px);
+  min-width: 0;
+  font-size: 13px;
   text-transform: uppercase;
-  font-size: 14px;
+  white-space: nowrap;
 }
-.nav-right .btn {
+.header .nav-right { justify-content: flex-end; }
+.header .logo {
+  font-family: var(--serif);
+  font-size: clamp(32px, 3vw, 46px);
+  line-height: 1;
+  letter-spacing: .02em;
+}
+.header .nav-right > a,
+.header .lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: inherit;
+}
+.header .nav-right .ticket-nav {
+  display: inline-flex;
+  padding: 10px 20px;
   text-transform: none;
-  padding: 10px 24px;
 }
-
-@media (max-width: 900px) {
-  .header {
-    grid-template-columns: auto 1fr;
-  }
-  .nav-left {
-    display: none;
-  }
-}
-.search-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.nav-right .btn-brown {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ticket-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.header.light {
-  color: #fff;
-}
-.header.light .lang-toggle {
-  border-color: #fff;
-}
-
-.header.sand {
-  background: #9b9078;
-}
-/* Vị trí để đặt gạch dưới */
+.header .search-icon,
+.header .ticket-icon { width: 20px; height: 20px; object-fit: contain; }
+.header .museum-nav-icon { display: none; }
+.header.light { color: #fff; }
+.header.light .lang-toggle { border-color: currentColor; }
+.header.light .lang-arrow { filter: invert(1); }
+.header.sand { background: #9b9078; }
 .header .nav-left a,
-.header .search-btn {
-  position: relative;
-  padding-bottom: 10px;
-}
-
-/* Gạch trắng ban đầu thu lại */
+.header .search-btn { position: relative; padding-block: 8px; }
 .header .nav-left a::after,
 .header .search-btn::after {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  inset: auto 0 0;
   height: 2px;
-  background: #fff;
-
+  background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.3s ease;
+  transition: transform .2s ease;
   pointer-events: none;
 }
-
-/* Hover: gạch chạy từ trái sang phải */
 .header .nav-left a:hover::after,
-.header .search-btn:hover::after,
 .header .nav-left a:focus-visible::after,
-.header .search-btn:focus-visible::after {
-  transform: scaleX(1);
-}
+.header .nav-left a.active::after,
+.header .search-btn:hover::after,
+.header .search-btn:focus-visible::after { transform: scaleX(1); }
 
-/* Mục của trang đang xem luôn có gạch */
-.header .nav-left a.active::after {
-  transform: scaleX(1);
+@media (max-width: 1400px) {
+  .header { column-gap: 20px; padding-inline: 24px; }
+  .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
+  .header .nav-right .ticket-nav { padding: 10px 16px; }
 }
-
-/* Icon và chữ chuyển động mượt */
-.header .search-btn .search-icon,
-.header .search-btn span {
-  transition: transform 0.3s ease;
-}
-
-/* Gạch dưới Search */
-.header .search-btn::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  background: currentColor;
-  pointer-events: none;
-
-  transform: scaleX(0);
-  transform-origin: right;
-  transition:
-    left 0.3s ease,
-    width 0.3s ease,
-    transform 0.3s ease;
-}
-
-/* Hover: cả icon và chữ dịch trái */
-.header .search-btn:hover .search-icon,
-.header .search-btn:hover span {
-  transform: translateX(-100px);
-}
-
-/* Gạch dài thêm về phía trái */
-.header .search-btn:hover::after {
-  left: -100px;
-  width: calc(100% + 100px);
-  transform: scaleX(1);
-}
-
-/* Home: chữ và gạch hover đen */
-.header {
-  color: #000;
-}
-
-/* Visit: chữ và gạch hover trắng */
-.header.light {
-  color: #fff;
-}
-
-/* Exhibition: chữ và gạch hover đen */
-.header.sand {
-  color: #000;
-}
-
-.header {
-  color: #000;
-}
-
-.header.light {
-  color: #fff;
-}
-
-.header .nav-left a::after,
-.header .search-btn::after {
-  background: currentColor;
-}
-/* Keep collection navigation usable on narrow screens. */
-@media (max-width: 600px) {
+@media (max-width: 1200px) {
   .header {
-    padding: 0 14px;
+    height: 112px;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 14px;
+    grid-template-rows: 68px 44px;
   }
-  .header .logo {
-    font-size: 29px;
+  .header .nav-left {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    justify-content: center;
+    gap: clamp(16px, 4vw, 48px);
   }
-  .header .nav-right {
-    min-width: 0;
-    gap: 12px;
-    font-size: 12px;
-  }
-  .header .search-btn {
-    display: none;
-  }
-  .header .nav-right .btn {
-    padding: 8px 10px;
-    font-size: 12px;
-    gap: 5px;
-  }
-  .header .lang-toggle {
-    font-size: 11px;
-    gap: 3px;
-  }
-}
-.header.light .lang-arrow {
-  filter: invert(1);
-}
-
-.header .museum-nav-icon {
-  display: none;
+  .header .logo { grid-row: 1; grid-column: 1; }
+  .header .nav-right { grid-row: 1; grid-column: 2; }
+  .header ~ main .hero { padding-top: 112px; }
 }
 @media (max-width: 600px) {
-  .header .nav-right > .ticket-nav {
-    display: inline-flex;
-  }
-  .header .nav-right .museum-nav-icon {
-    display: block;
-  }
-  .header .account-nav > span {
-    display: none;
-  }
-  .header .nav-right {
-    gap: 9px;
-  }
+  .header { padding-inline: 14px; column-gap: 12px; }
+  .header .logo { font-size: 27px; }
+  .header .nav-right { gap: 9px; font-size: 11px; }
+  .header .nav-left { font-size: 10px; gap: 18px; }
+  .header .nav-right > .search-btn { display: none; }
+  .header .nav-right .scan-nav span,
+  .header .account-nav > span { display: none; }
+  .header .nav-right .museum-nav-icon { display: block; }
+  .header .nav-right .ticket-nav { padding: 8px 10px; gap: 5px; }
+  .header .lang-toggle { gap: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header .nav-left a::after, .header .search-btn::after { transition: none; }
 }

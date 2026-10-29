@@ -283,12 +283,6 @@
   .scan-layout {
     gap: 25px;
   }
-  .header .nav-right {
-    gap: 15px;
-  }
-  .header .scan-nav span {
-    display: none;
-  }
 }
 @media (max-width: 700px) {
   .scan-page {
@@ -324,19 +318,5 @@
   .scan-upload {
     font-size: 12px;
     padding: 11px 15px;
-  }
-}
-@media (max-width: 600px) {
-  .header .nav-right {
-    gap: 10px;
-  }
-  .header .nav-right > .btn {
-    display: none;
-  }
-  .header .scan-nav {
-    display: flex;
-  }
-  .header .scan-nav span {
-    display: none;
   }
 }

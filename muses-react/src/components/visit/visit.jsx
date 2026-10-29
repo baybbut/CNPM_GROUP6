@@ -65,7 +65,7 @@ export default function Visit() {
   return (
     <div className="visit">
       {/* HERO */}
-      <section className="v-hero">
+      <section className="v-hero" data-scroll-intro>
         <div className="v-hero-text">
           <h1>VISIT</h1>
           <p>{t("Everything you need to know before visiting the museum")}</p>

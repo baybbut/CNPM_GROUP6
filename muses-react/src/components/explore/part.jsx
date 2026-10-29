@@ -13,7 +13,7 @@ export function Hero({ img }) {
   const { t } = useLang();
   return (
     <section
-      className="xp-hero"
+      className="xp-hero" data-scroll-intro
       style={
         img
           ? {
