@@ -50,6 +50,7 @@ test(
           "ActivityAnalytics.sql",
           "Catalog.sql",
           "Tickets.sql",
+          "ArtworkQR.sql",
         ])
           for (const batch of fs
             .readFileSync(path.join(__dirname, "../MusesDB", file), "utf8")

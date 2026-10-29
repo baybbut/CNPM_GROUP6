@@ -141,7 +141,7 @@ function attachCatalogRoutes(app, sql) {
       if (page > 100000) R.fail("Trang không hợp lệ.");
       values.offset = (page - 1) * 12;
     }
-    const where = `WHERE a.PublicationStatus='Published' AND (@artist IS NULL OR a.ArtistID=@artist) AND (@material IS NULL OR a.MaterialID=@material) AND (@museum IS NULL OR e.MuseumID=@museum) AND (a.ArtworkName COLLATE Latin1_General_100_CI_AI LIKE @q OR ar.ArtistName COLLATE Latin1_General_100_CI_AI LIKE @q OR d.Title COLLATE Latin1_General_100_CI_AI LIKE @q OR vi.Title COLLATE Latin1_General_100_CI_AI LIKE @q)`;
+    const where = `WHERE a.PublicationStatus='Published' ${req.query.qr === "1" ? "AND a.QRIsEnabled=1" : ""} AND (@artist IS NULL OR a.ArtistID=@artist) AND (@material IS NULL OR a.MaterialID=@material) AND (@museum IS NULL OR e.MuseumID=@museum) AND (a.ArtworkName COLLATE Latin1_General_100_CI_AI LIKE @q OR ar.ArtistName COLLATE Latin1_General_100_CI_AI LIKE @q OR d.Title COLLATE Latin1_General_100_CI_AI LIKE @q OR vi.Title COLLATE Latin1_General_100_CI_AI LIKE @q)`;
     const result = await query(
       app.locals.pool,
       `SELECT ${fields} ${publicFrom} ${where} ORDER BY a.ArtworkID OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY; SELECT COUNT(*) AS total ${publicFrom} ${where};`,

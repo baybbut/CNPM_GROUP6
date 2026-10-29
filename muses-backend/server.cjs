@@ -11,6 +11,7 @@ const sql = require("mssql");
 
 const { attachPlaceRoutes } = require("./places.cjs");
 const { attachTicketRoutes } = require("./tickets.cjs");
+const { attachArtworkQRRoutes } = require("./artwork-qr.cjs");
 const { attachCatalogRoutes } = require("./catalog.cjs");
 const app = express();
 app.get("/api/translation/health", (_req, res) =>
@@ -97,6 +98,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+attachArtworkQRRoutes(app, sql);
 attachCatalogRoutes(app, sql);
 attachTicketRoutes(app, sql);
 attachPlaceRoutes(app);

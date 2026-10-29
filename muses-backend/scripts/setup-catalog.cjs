@@ -27,8 +27,8 @@ async function setupCatalog(
       );
     await setupActivity(config, administrator, createPool);
     const files = seed
-      ? ["CatalogDemo.sql", "Tickets.sql"]
-      : ["Catalog.sql", "Tickets.sql"];
+      ? ["CatalogDemo.sql", "Tickets.sql", "ArtworkQR.sql"]
+      : ["Catalog.sql", "Tickets.sql", "ArtworkQR.sql"];
     if (seed) {
       await pool
         .request()
@@ -99,7 +99,7 @@ if (require.main === module) {
       console.log(
         process.argv.includes("--demo")
           ? "Đã thêm bộ dữ liệu MINH HỌA."
-          : "Đã cập nhật mô hình PRD. Nội dung cũ giữ ở trạng thái nháp; dùng npm run admin:create để tạo Admin nếu chưa có.",
+          : "Đã cập nhật mô hình PRD và quản lý QR. Dữ liệu và trạng thái công bố hiện có được giữ; dùng npm run admin:create để tạo Admin nếu chưa có.",
       );
     } catch (e) {
       console.error("Chưa hoàn tất:", e.message);

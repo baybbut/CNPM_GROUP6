@@ -455,3 +455,15 @@ test("failure to save inline Vietnamese rolls back the artwork and image transac
     failInlineVi = false;
   }
 });
+
+test("QR catalogue filters paused QR in both page and total without hiding ordinary artworks", async () => {
+  calls = [];
+  assert.equal((await send("/api/catalog/artworks?qr=1")).status, 200);
+  const qrQuery = calls.find((c) =>
+    c.statement.includes("SELECT COUNT(*) AS total"),
+  );
+  assert.equal((qrQuery.statement.match(/a.QRIsEnabled=1/g) || []).length, 2);
+  calls = [];
+  assert.equal((await send("/api/catalog/artworks")).status, 200);
+  assert.ok(calls.every((c) => !c.statement.includes("QRIsEnabled")));
+});

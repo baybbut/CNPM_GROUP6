@@ -1,4 +1,7 @@
-SELECT CASE WHEN EXISTS (
+SELECT CASE WHEN COL_LENGTH('dbo.Artworks','QRIsEnabled') IS NULL OR
+ COL_LENGTH('dbo.Artworks','QRLabel') IS NULL OR
+ COL_LENGTH('dbo.Artworks','QRUpdatedAt') IS NULL OR
+ COL_LENGTH('dbo.Artworks','QRUpdatedBy') IS NULL OR EXISTS (
  SELECT 1 FROM (VALUES
  ('Artworks','SELECT'),('Artworks','INSERT'),('Artworks','UPDATE'),
  ('ArtworkDescriptions','SELECT'),('ArtworkDescriptions','INSERT'),('ArtworkDescriptions','UPDATE'),
