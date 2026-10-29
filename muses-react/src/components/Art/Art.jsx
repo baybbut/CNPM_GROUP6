@@ -8,6 +8,7 @@ export default function Art({
   delay = 0,
   flip = false,
   flipTitle = "",
+  onClick,
 }) {
   const [flipped, setFlipped] = useState(false);
 
@@ -27,14 +28,36 @@ export default function Art({
     .join(" ");
 
   // Art thông thường: giữ cách hiển thị cũ.
+
   if (!flip) {
+    const style = {
+      background,
+      "--reveal-delay": `${delay}ms`,
+    };
+
+    if (onClick) {
+      return (
+        <button
+          type="button"
+          className={className}
+          style={{
+            ...style,
+            border: 0,
+            padding: 0,
+            cursor: "pointer",
+          }}
+          aria-label={item.title || "Artwork"}
+          onClick={onClick}
+        />
+      );
+    }
+
     return (
       <div
         className={className}
-        style={{
-          background,
-          "--reveal-delay": `${delay}ms`,
-        }}
+        style={style}
+        role="img"
+        aria-label={item.title || "Muses artwork"}
       />
     );
   }
@@ -51,19 +74,11 @@ export default function Art({
     >
       <span className="art-flip-inner" aria-hidden="true">
         {/* Mặt trước */}
-        <span
-          className="art-face art-front"
-          style={{ background }}
-        />
+        <span className="art-face art-front" style={{ background }} />
 
         {/* Mặt sau */}
-        <span
-          className="art-face art-back"
-          style={{ background }}
-        >
-          <span className="art-caption">
-            {flipTitle || item.date || ""}
-          </span>
+        <span className="art-face art-back" style={{ background }}>
+          <span className="art-caption">{flipTitle || item.date || ""}</span>
         </span>
       </span>
     </button>

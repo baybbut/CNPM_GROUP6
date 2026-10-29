@@ -1,30 +1,74 @@
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { NAV_LINKS } from "../../data/data";
-import  TicketIcon  from "../../../icon/ticket.png";
+import { TicketIcon, SearchIcon, SvgIcon } from "../Icons";
+import { label } from "../../i18n/catalog.mjs";
+import { priceText } from "../Tickets/priceText.mjs";
 import LangSwitcher from "../LangSwitcher/LangSwitcher";
-import SearchIcon from "../../../icon/search.png";
 import "./Header.css";
 
 export default function Header() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const { pathname } = useLocation();
+
+  const light = pathname === "/visit"; // trang Visit: chữ trắng
+  const sand = ["/exhibition", "/explore"].some((p) => pathname.startsWith(p)); // trang Exhibition: nền nâu xám
+
   return (
-    <header className="header">
+    <header className={`header ${light ? "light" : ""} ${sand ? "sand" : ""}`}>
       <nav className="nav-left">
-        {NAV_LINKS.map((k) => (
-          <a key={k} href="#">{t(k)}</a>
+        {NAV_LINKS.map((n) => (
+          <NavLink
+            key={n.key}
+            to={n.to}
+            className={({ isActive }) =>
+              isActive && n.to !== "#" ? "active" : ""
+            }
+          >
+            {t(n.key)}
+          </NavLink>
         ))}
+        <NavLink
+          to="/scan"
+          className="scan-nav"
+          aria-label={lang === "vi" ? "Quét QR tác phẩm" : "Scan artwork QR"}
+        >
+          <SvgIcon kind="qr" size={22} />
+          <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
+        </NavLink>
+        <NavLink
+          to="/museums"
+          className="account-nav"
+          aria-label={label(lang, "Museums")}
+        >
+          <SvgIcon
+            kind="pin"
+            light={light}
+            size={20}
+            className="museum-nav-icon"
+          />
+          <span>{label(lang, "Museums")}</span>
+        </NavLink>
       </nav>
-      <a href="#" className="logo">MUSES</a>
+
+      <Link to="/" className="logo">
+        <SvgIcon kind="logo" light={light} size={40} className="brand-icon" />
+        <span>MUSES</span>
+      </Link>
+
       <div className="nav-right">
-        <button className="search-btn">
-          {t("search")} 
-          <img src={SearchIcon} alt="" className="search-icon" />
-        </button>
+        <Link className="search-btn" to="/explore/collection">
+          <SearchIcon light={light} />
+          <span>{t("search")}</span>
+        </Link>
         <LangSwitcher />
-        <button className="btn btn-brown"> 
-          <img src={TicketIcon} alt="" className="ticket-icon" />
-          {t("ticket")}
-          </button>
+        <Link
+          to="/tickets"
+          className="btn btn-brown ticket-nav"
+          aria-label={priceText(lang, "title")}
+        >
+          <TicketIcon /> {priceText(lang, "shortTitle")}
+        </Link>
       </div>
     </header>
   );

@@ -1,0 +1,70 @@
+[
+  {
+    "id": "hcm-reference-fine-arts",
+    "name": "Bảo tàng Mỹ thuật TP.HCM",
+    "names": {
+      "vi": "Bảo tàng Mỹ thuật TP.HCM",
+      "en": "Ho Chi Minh City Museum of Fine Arts",
+      "zh": "胡志明市美术馆",
+      "ja": "ホーチミン市美術館",
+      "ko": "호찌민시 미술관"
+    },
+    "address": "97A Phó Đức Chính, TP. Hồ Chí Minh",
+    "latitude": 10.769,
+    "longitude": 106.699,
+    "kind": "museum",
+    "pinAccuracy": "approximate",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ho_Chi_Minh_City_Museum_of_Fine_Arts"
+  },
+  {
+    "id": "hcm-reference-war-remnants",
+    "name": "Bảo tàng Chứng tích Chiến tranh",
+    "names": {
+      "vi": "Bảo tàng Chứng tích Chiến tranh",
+      "en": "War Remnants Museum",
+      "zh": "战争遗迹博物馆",
+      "ja": "戦争証跡博物館",
+      "ko": "전쟁박물관"
+    },
+    "address": "28 Võ Văn Tần, TP. Hồ Chí Minh",
+    "latitude": 10.779,
+    "longitude": 106.692,
+    "kind": "museum",
+    "pinAccuracy": "approximate",
+    "sourceUrl": "https://en.wikipedia.org/wiki/War_Remnants_Museum"
+  },
+  {
+    "id": "hcm-reference-history",
+    "name": "Bảo tàng Lịch sử TP.HCM",
+    "names": {
+      "vi": "Bảo tàng Lịch sử TP.HCM",
+      "en": "Ho Chi Minh City History Museum",
+      "zh": "胡志明市历史博物馆",
+      "ja": "ホーチミン市歴史博物館",
+      "ko": "호찌민시 역사박물관"
+    },
+    "address": "2 Nguyễn Bỉnh Khiêm, TP. Hồ Chí Minh",
+    "latitude": 10.787,
+    "longitude": 106.705,
+    "kind": "museum",
+    "pinAccuracy": "approximate",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Museum_of_Vietnamese_History"
+  },
+  {
+    "id": "hcm-reference-city-museum",
+    "name": "Bảo tàng TP. Hồ Chí Minh",
+    "names": {
+      "vi": "Bảo tàng TP. Hồ Chí Minh",
+      "en": "Ho Chi Minh City Museum",
+      "zh": "胡志明市博物馆",
+      "ja": "ホーチミン市博物館",
+      "ko": "호찌민시 박물관"
+    },
+    "address": "65 Lý Tự Trọng, TP. Hồ Chí Minh",
+    "latitude": 10.776,
+    "longitude": 106.7,
+    "kind": "museum",
+    "pinAccuracy": "approximate",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ho_Chi_Minh_City_Museum"
+  }
+]

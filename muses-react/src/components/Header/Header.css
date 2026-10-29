@@ -1,60 +1,117 @@
-@import url('https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap'); /*tải font Kalnia về */
-.header
-{position:absolute;
-  inset:0 0 auto 0;
-  z-index:5;
-  height:80px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  padding:0 24px;
-  font-size:15px}
-.nav-left
-{display:flex;
-  gap:32px;
-  text-transform:uppercase;
-  font-size:14px;
-  transform: translateX(40px)
+.header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  height: 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 24px;
+  padding-inline: clamp(20px, 3vw, 56px);
+  color: #000;
 }
-  .logo
-{font-family:'Kalnia', sans-serif; /* dùng font Kalnia*/
-  font-size:50px;
-  letter-spacing:.02em}
-.nav-right
-{display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap:32px;
-  text-transform:uppercase;
-  font-size:14px}
-.nav-right .btn
-{text-transform:none;
-  padding:10px 24px}
-
-@media (max-width:900px){
-  .header{grid-template-columns:auto 1fr}
-  .nav-left{display:none}
+.header .nav-left,
+.header .nav-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 28px);
+  min-width: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
-.search-btn {
+.header .nav-right { justify-content: flex-end; }
+.header .logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  white-space: nowrap;
+  font-family: var(--serif);
+  font-size: clamp(32px, 3vw, 46px);
+  line-height: 1;
+  letter-spacing: .02em;
 }
-
-.search-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.nav-right .btn-brown {
+.header .brand-icon { width: 40px; height: 40px; }
+.header .nav-left > a,
+.header .nav-right > a,
+.header .lang-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: inherit;
 }
+.header .nav-right .ticket-nav {
+  display: inline-flex;
+  padding: 10px 20px;
+  text-transform: none;
+}
+.header .search-icon,
+.header .ticket-icon { width: 20px; height: 20px; object-fit: contain; }
+.header .museum-nav-icon { display: block; }
+.header .nav-left .scan-nav.active { border-bottom: 0; }
+.header.light { color: #fff; }
+.header.light .lang-toggle { border-color: currentColor; }
+.header.light .lang-arrow { filter: invert(1); }
+.header.sand { background: #9b9078; }
+.header .nav-left a,
+.header .search-btn { position: relative; padding-block: 8px; }
+.header .nav-left a::after,
+.header .search-btn::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .2s ease;
+  pointer-events: none;
+}
+.header .nav-left a:hover::after,
+.header .nav-left a:focus-visible::after,
+.header .nav-left a.active::after,
+.header .search-btn:hover::after,
+.header .search-btn:focus-visible::after { transform: scaleX(1); }
 
-.ticket-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+@media (max-width: 1400px) {
+  .header { column-gap: 20px; padding-inline: 24px; }
+  .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
+  .header .nav-right .ticket-nav { padding: 10px 16px; }
+}
+@media (max-width: 1400px) {
+  .header {
+    height: 112px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 68px 44px;
+  }
+  .header .nav-left {
+    grid-row: 2;
+    grid-column: 1;
+    justify-content: flex-start;
+    gap: clamp(12px, 2.5vw, 32px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .header .nav-left::-webkit-scrollbar { display: none; }
+  .header .logo { grid-row: 1; grid-column: 1 / -1; justify-self: start; }
+  .header .nav-right { grid-row: 2; grid-column: 2; }
+  .header ~ main .hero { padding-top: 112px; }
+}
+@media (max-width: 600px) {
+  .header { padding-inline: 14px; column-gap: 12px; }
+  .header .logo { font-size: 27px; gap: 8px; }
+  .header .brand-icon { width: 30px; height: 30px; }
+  .header .nav-right { gap: 9px; font-size: 11px; }
+  .header .nav-left { font-size: 10px; gap: 18px; }
+  .header .nav-right > .search-btn { display: none; }
+  .header .nav-left .scan-nav span,
+  .header .account-nav > span { display: none; }
+  .header .nav-left .museum-nav-icon { display: block; }
+  .header .nav-right .ticket-nav { padding: 8px 10px; gap: 5px; }
+  .header .lang-toggle { gap: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header .nav-left a::after, .header .search-btn::after { transition: none; }
 }
