@@ -38,3 +38,11 @@
   .welcome-bar,[dir="rtl"] .welcome-bar{margin:0;flex-direction:column;align-items:stretch}
   .welcome-text{border:0;padding:0}
 }
+
+.welcome-actions .ticket-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}

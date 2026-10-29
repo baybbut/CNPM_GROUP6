@@ -1,5 +1,31 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "Discover the collection": [
+    "Khám phá những tác phẩm nổi bật",
+    "发现精选馆藏",
+    "注目の作品を見つける",
+    "주목할 작품을 만나보세요",
+  ],
+  "Plan your visit": [
+    "Lên kế hoạch tham quan",
+    "规划参观",
+    "来館を計画する",
+    "방문 계획 세우기",
+  ],
+  "View artwork": ["Xem tác phẩm", "查看作品", "作品を見る", "작품 보기"],
+  "Previous highlight": [
+    "Tác phẩm trước",
+    "上一个精选作品",
+    "前の注目作品",
+    "이전 추천 작품",
+  ],
+  "Next highlight": [
+    "Tác phẩm tiếp theo",
+    "下一个精选作品",
+    "次の注目作品",
+    "다음 추천 작품",
+  ],
+
   "Reference places": [
     "Địa điểm tham khảo",
     "参考地点",

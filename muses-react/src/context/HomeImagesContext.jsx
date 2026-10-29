@@ -55,6 +55,7 @@ export function useHomeImages(items, section) {
   return items.map((item) => ({
     ...item,
     img: images[`home.${section}.${item.cls}`]?.src || item.img,
+    configuredImg: images[`home.${section}.${item.cls}`]?.src || null,
     artworkId:
       images[`home.${section}.${item.cls}`]?.artworkId || item.artworkId,
   }));
