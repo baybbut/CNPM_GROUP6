@@ -128,24 +128,14 @@ function artwork(body) {
     fail("Cần ảnh đại diện trước khi công bố tác phẩm.");
   return {
     imageUrl,
-    imageSource: text(
-      body.imageSource,
-      "Nguồn / quyền sử dụng ảnh",
-      1000,
-      body.status === "Published",
-    ),
+    imageSource: text(body.imageSource, "Nguồn / quyền sử dụng ảnh", 1000),
     title: text(body.title, "Tên tác phẩm", 250, true),
     artistId: id(body.artistId, "Tác giả"),
     categoryId: id(body.categoryId, "Thể loại"),
     materialId: id(body.materialId, "Chất liệu"),
     creationPeriod: text(body.creationPeriod, "Năm / giai đoạn", 150),
     dimensions: text(body.dimensions, "Kích thước", 100),
-    source: text(
-      body.source,
-      "Nguồn thông tin",
-      1000,
-      body.status === "Published",
-    ),
+    source: text(body.source, "Nguồn thông tin", 1000),
     ownerMuseumId: body.ownerMuseumId ? id(body.ownerMuseumId) : null,
     status: status(body.status),
   };
@@ -158,7 +148,7 @@ function translation(body) {
     title: text(body.title, "Tên bản dịch", 250, state === "Published"),
     description: text(body.description, "Mô tả", 12000, state === "Published"),
     shortDescription: text(body.shortDescription, "Mô tả ngắn", 1000),
-    source: text(body.source, "Nguồn bản dịch", 1000, state === "Published"),
+    source: text(body.source, "Nguồn bản dịch", 1000),
     audioUrl: url(body.audioUrl, "Âm thanh"),
     status: state,
   };

@@ -237,6 +237,31 @@ test("publication requires Vietnamese translation and does not erase entered dra
   assert.equal((await response.json()).code, "DEFAULT_TRANSLATION_REQUIRED");
   requiredVi = false;
 });
+test("artworks and reviewed translations can be published without source fields", async () => {
+  const input = {
+    title: "Tác phẩm",
+    artistId: 1,
+    categoryId: 1,
+    materialId: 1,
+    imageUrl: "https://example.org/artwork.jpg",
+    status: "Published",
+  };
+  assert.equal(R.artwork(input).source, null);
+  assert.equal(R.artwork(input).imageSource, null);
+  assert.equal(R.translation({
+    artworkId: 1,
+    language: "vi",
+    title: "Tác phẩm",
+    description: "Mô tả đã duyệt.",
+    status: "Published",
+  }).source, null);
+  role = "Admin";
+  calls = [];
+  assert.equal((await send("/api/admin/catalog/artworks/1", "PUT", input)).status, 200);
+  const update = calls.find(c => c.statement.startsWith("UPDATE dbo.Artworks SET ArtworkName="));
+  assert.equal(update.values.source, null);
+  assert.equal(update.values.imageSource, null);
+});
 test("overlapping confirmed schedules and museum hiding with schedules are rejected", async () => {
   role = "Admin";
   conflict = true;

@@ -24,7 +24,7 @@ Kiểm tra tự động hiện tại: backend 42 PASS + 1 bài SQL SKIP; web 14 
 | FR07 | OSM embed ghim theo DB; địa chỉ/liên kết luôn có, retry khi lỗi/timeout                        | Browser hướng đích + bố cục; cần kiểm tra provider thật và chặn mạng         |
 | FR08 | Google Maps directions, destination=lat,lng của DB; không truyền vị trí khách                  | Unit URL + browser                                                           |
 | FR09 | Global Admin gate; API kiểm tra role bằng phiên cookie HttpOnly                                | API 401/403, auth tests; browser login form                                  |
-| FR10 | API/GUI tác phẩm thật; Draft/Published/Hidden (xóa mềm); vi/source/ảnh bắt buộc trước công bố            | API thiếu vi→409; browser lưu lỗi vẫn giữ form                               |
+| FR10 | API/GUI tác phẩm thật; Draft/Published/Hidden (xóa mềm); vi/ảnh bắt buộc; nguồn tác phẩm/bản dịch/ảnh tùy chọn trước công bố            | API thiếu vi→409; browser lưu lỗi vẫn giữ form                               |
 | FR11 | UNIQUE artwork/language; trạng thái bản dịch, nhập/duyệt thủ công, nghe thử                    | API/DB constraint; live SQL test duplicate và draft→Published                |
 | FR12 | API/GUI bảo tàng thật; tọa độ/địa chỉ/nguồn/xác minh ghim; chặn ẩn khi có lịch                 | Unit tọa độ + API guard; chờ live SQL                                        |
 | FR13 | API/GUI lịch; ngày hợp lệ, nguồn/ngày xác minh/người sửa; SERIALIZABLE + locks                 | Unit/API adapter; race thật chỉ được nghiệm thu sau `test:sql`               |
@@ -83,3 +83,5 @@ Mỗi hàng cần ghi thêm **kết quả thực tế, tên người kiểm tra,
 | 29/10/2026 | Bộ minh họa 20 tác phẩm/3 bảo tàng/5 nội dung ×5 ngôn ngữ                  | Demo có nhãn, không tự nhận là thông tin trưng bày thật                                                 |
 
 Không tuyên bố hoàn thành nghiệm thu P0/NFR khi các kiểm tra SQL thật, thiết bị và dữ liệu thực chưa được nhóm ghi nhận.
+
+Thay đổi theo yêu cầu người dùng 29/10/2026: bỏ điều kiện bắt buộc nguồn thông tin tác phẩm, nguồn bản dịch và nguồn/quyền ảnh khi công bố. Giữ các trường để nhập bổ sung; không thay đổi nguồn xác nhận lịch trưng bày hoặc điều kiện công khai bảo tàng.

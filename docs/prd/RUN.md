@@ -72,7 +72,7 @@ Vite proxy `/api`, `/images` đến 3001, vì vậy cổng Vite khác vẫn dùn
 2. Museum Info & Maps: nhập tên/địa chỉ/tọa độ/nguồn, mở kiểm tra ghim, tích đã xác minh rồi công khai.
 3. Artworks: thêm hiện vật nháp với ảnh và nguồn/quyền ảnh, thông tin mặc định và bảo tàng sở hữu nếu biết. Mỗi bản sao là một bản ghi riêng.
 4. Languages & Audio: chọn hiện vật và ngôn ngữ; nhập tên, mô tả, nguồn bản dịch; duyệt bản tiếng Việt thành Published. Có thể nghe thử văn bản, giọng phải trùng ngôn ngữ.
-5. Artworks: chọn Published. Backend từ chối nếu thiếu tiếng Việt công bố, nguồn, ảnh hoặc nguồn ảnh. Ẩn dùng Hidden, không xóa lịch sử.
+5. Artworks: chọn Published. Backend từ chối nếu thiếu tiếng Việt công bố hoặc ảnh. Nguồn thông tin, nguồn bản dịch và nguồn/quyền ảnh không bắt buộc theo thay đổi yêu cầu ngày 29/10/2026. Ẩn dùng Hidden, không xóa lịch sử.
 6. Exhibitions & Events: tạo lịch, nguồn, ngày kiểm chứng; chọn Confirmed. Khoảng ngày `[startDate,endDate)` theo Việt Nam; bỏ endDate nghĩa là vô hạn. Hệ thống từ chối lịch chồng nhau và không cho ẩn bảo tàng còn lịch hiện tại/tương lai đã xác nhận.
 7. Khách → Explore/Collection: tìm tên không phân biệt hoa thường, lọc đồng thời tác giả/chất liệu/bảo tàng hiện tại, chuyển trang; chọn hiện vật và đổi ngôn ngữ. Chỉ nội dung đã công bố được trả từ API. Thiếu bản dịch thì thông báo tiếng Việt và TTS đọc tiếng Việt, không đọc văn bản Việt bằng giọng khác.
 8. Chi tiết hiển thị đúng bảo tàng hiện tại, địa chỉ, nguồn và ngày kiểm chứng. Không có lịch hợp lệ thì báo chưa có; không suy diễn từ bảo tàng sở hữu/lịch cũ. Bản đồ dùng tọa độ lưu sẵn; mở chỉ đường tới đúng tọa độ. Khách không cần cho phép GPS để xem ghim.
