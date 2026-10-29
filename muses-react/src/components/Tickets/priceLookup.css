@@ -1,0 +1,321 @@
+.price-page {
+  background: #f3efdf;
+  min-height: 75vh;
+  color: #28271f;
+  padding-top: 120px;
+}
+.price-hero {
+  max-width: 1400px;
+  margin: auto;
+  padding: 45px 5% 55px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 8%;
+  align-items: center;
+}
+.price-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1.8;
+  text-transform: uppercase;
+}
+.price-hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(34px, 5vw, 62px);
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 20px 0;
+}
+.price-hero p {
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 530px;
+}
+.price-hero-link {
+  display: inline-flex;
+  gap: 15px;
+  align-items: center;
+  border-bottom: 1px solid #82764e;
+  margin-top: 28px;
+  padding-bottom: 8px;
+  font-size: 13px;
+}
+.price-hero-image {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 140px 140px 4px 4px;
+}
+.price-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.price-hero-image span {
+  position: absolute;
+  inset: auto 0 0;
+  background: linear-gradient(transparent, #000c);
+  color: white;
+  padding: 45px 25px 25px;
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 1.4;
+}
+.price-directory {
+  padding: 40px 5% 65px;
+  background: #e7e1cb;
+}
+.price-search {
+  display: grid;
+  grid-template-columns: 1.7fr 1.4fr 1fr 1fr;
+  gap: 16px;
+  max-width: 1400px;
+  margin: auto;
+}
+.price-search label {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  font-size: 12px;
+  min-width: 0;
+}
+.price-search input,
+.price-search select {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 12px;
+  font: inherit;
+  color: #28271f;
+  background: #faf7eb;
+  border: 1px solid #b4aa8d;
+  border-radius: 4px;
+  height: 46px;
+}
+.price-results-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  max-width: 1400px;
+  margin: 30px auto 22px;
+}
+.price-results-meta button,
+.price-status button,
+.price-empty button {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  max-width: 1400px;
+  margin: auto;
+  align-items: start;
+}
+.price-card {
+  background: #faf7eb;
+  border: 1px solid #c4b999;
+  border-radius: 6px;
+  padding: 26px;
+  min-width: 0;
+}
+.price-card-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #746a50;
+}
+.price-card h2 {
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 400;
+  margin: 22px 0 13px;
+  overflow-wrap: anywhere;
+}
+.price-address {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+  min-height: 44px;
+}
+.price-address img {
+  margin-top: 2px;
+}
+.price-feature {
+  background: #eae4ce;
+  border-radius: 4px;
+  margin: 24px 0 10px;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+.price-feature > span {
+  width: 100%;
+  font-size: 12px;
+  color: #625a45;
+}
+.price-feature strong {
+  font-size: clamp(24px, 2.5vw, 34px);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.price-feature .price-unknown {
+  font-size: 22px;
+  color: #7b725a;
+}
+.price-feature small {
+  font-size: 11px;
+  color: #6b634c;
+}
+.price-tiers {
+  margin-bottom: 20px;
+}
+.price-tiers > div {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #d9d0b5;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.price-tiers dd {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.price-card-note,
+.price-conditions p {
+  font-size: 12px;
+  line-height: 1.85;
+  margin: 15px 0;
+  color: #625a45;
+  white-space: pre-line;
+}
+.price-conditions {
+  border-top: 1px solid #d9d0b5;
+  padding-top: 18px;
+  margin-top: 20px;
+}
+.price-conditions summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  list-style: none;
+  line-height: 1.7;
+}
+.price-conditions summary::-webkit-details-marker {
+  display: none;
+}
+.price-conditions summary span {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+.price-conditions[open] summary span {
+  transform: rotate(45deg);
+}
+.price-conditions small {
+  font-size: 11px;
+  color: #6b634c;
+}
+.price-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 22px;
+}
+.price-card-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.price-card-actions a:first-child {
+  width: 100%;
+}
+.price-status {
+  max-width: 1400px;
+  margin: 20px auto;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.price-error {
+  border-left: 3px solid #8a6a3b;
+  padding: 12px 18px;
+  background: #f8f4e5;
+}
+.price-empty {
+  padding: 45px;
+  text-align: center;
+  line-height: 2.3;
+}
+.price-footnote {
+  max-width: 1400px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #6b634c;
+  margin: 30px auto 0;
+}
+@media (max-width: 1100px) {
+  .price-search {
+    grid-template-columns: 1fr 1fr;
+  }
+  .price-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .price-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 25px;
+  }
+  .price-hero-image {
+    height: 230px;
+    border-radius: 100px 100px 4px 4px;
+  }
+  .price-grid {
+    grid-template-columns: 1fr;
+  }
+  .price-card {
+    padding: 24px;
+  }
+  .price-directory {
+    padding-top: 28px;
+  }
+  .price-feature strong {
+    font-size: 32px;
+  }
+}
+@media (max-width: 430px) {
+  .price-search {
+    grid-template-columns: 1fr;
+  }
+  .price-hero h1 {
+    font-size: 36px;
+  }
+  .price-results-meta {
+    margin-top: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .price-conditions summary span {
+    transition: none;
+  }
+}

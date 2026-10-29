@@ -1,6 +1,7 @@
 import referencePlaces from "../../data/hcmPlaces.json" with { type: "json" };
 import { connectCatalogue, hasCoordinates } from "../Museums/placeModel.mjs";
 import { validVisitDate } from "../Tickets/ticketModel.mjs";
+import { priceLookupLink } from "../Tickets/priceModel.mjs";
 export function visitDestinations(museums = []) {
   const real = museums.filter(
     (m) =>
@@ -24,10 +25,7 @@ export function visitDestinations(museums = []) {
   ];
 }
 export function visitTicketLink(place, date) {
-  const query = new URLSearchParams();
-  if (place?.museumId) query.set("museum", String(place.museumId));
-  if (validVisitDate({}, date)) query.set("date", date);
-  return `/tickets${query.size ? `?${query}` : ""}`;
+  return priceLookupLink(place, validVisitDate({}, date) ? date : "");
 }
 export function mapSearchUrl(place, category = "") {
   return `https://www.google.com/maps/search/?${new URLSearchParams({ api: "1", query: `${category} ${place.name}, ${place.address}`.trim() })}`;

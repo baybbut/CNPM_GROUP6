@@ -3,6 +3,7 @@ import { useLang } from "../../context/LangContext";
 import { NAV_LINKS } from "../../data/data";
 import { TicketIcon, SearchIcon, SvgIcon } from "../Icons";
 import { label } from "../../i18n/catalog.mjs";
+import { priceText } from "../Tickets/priceText.mjs";
 import LangSwitcher from "../LangSwitcher/LangSwitcher";
 import "./Header.css";
 
@@ -40,7 +41,12 @@ export default function Header() {
           className="account-nav"
           aria-label={label(lang, "Museums")}
         >
-          <SvgIcon kind="pin" light={light} size={20} className="museum-nav-icon" />
+          <SvgIcon
+            kind="pin"
+            light={light}
+            size={20}
+            className="museum-nav-icon"
+          />
           <span>{label(lang, "Museums")}</span>
         </NavLink>
       </nav>
@@ -56,8 +62,12 @@ export default function Header() {
           <span>{t("search")}</span>
         </Link>
         <LangSwitcher />
-        <Link to="/tickets" className="btn btn-brown ticket-nav">
-          <TicketIcon /> {t("ticket")}
+        <Link
+          to="/tickets"
+          className="btn btn-brown ticket-nav"
+          aria-label={priceText(lang, "title")}
+        >
+          <TicketIcon /> {priceText(lang, "shortTitle")}
         </Link>
       </div>
     </header>

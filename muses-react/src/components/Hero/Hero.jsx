@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import TicketIcon from "../../../icon/ticketW.png";
+import { priceText } from "../Tickets/priceText.mjs";
 import { InfoIcon } from "../Icons";
 import "./Hero.css";
 
 import { useHomeImage } from "../../context/HomeImagesContext";
 
 export default function Hero() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const image = useHomeImage("home.hero");
   return (
     <section className="hero" data-scroll-intro>
@@ -32,7 +33,7 @@ export default function Hero() {
         <div className="welcome-actions">
           <Link to="/tickets" className="btn btn-brown">
             <img src={TicketIcon} alt="" className="ticket-icon" />
-            {t("bookTicket")}
+            {priceText(lang, "title")}
           </Link>
           <Link to="/visit" className="btn btn-grey">
             <InfoIcon />

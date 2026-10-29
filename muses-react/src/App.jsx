@@ -1,4 +1,5 @@
-import Tickets, { TicketReceipt } from "./components/Tickets/Tickets";
+import { TicketReceipt } from "./components/Tickets/Tickets";
+import PriceLookup from "./components/Tickets/PriceLookup";
 import Museums from "./components/Museums/Museums";
 import ActivityTracker from "./components/ActivityTracker";
 import VisitorAccount from "./components/VisitorAccount";
@@ -41,7 +42,7 @@ export default function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/tickets" element={<PriceLookup />} />
           <Route path="/tickets/confirmation/:id" element={<TicketReceipt />} />
           <Route path="/tickets/result" element={<TicketReceipt />} />
           <Route path="/museums" element={<Museums />} />

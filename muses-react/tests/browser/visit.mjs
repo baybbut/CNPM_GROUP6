@@ -51,7 +51,7 @@ async function intercept(p) {
         isPublic: true,
       },
     ];
-  if (url.pathname === "/api/tickets/offers") {
+  if (url.pathname === "/api/tickets/prices") {
     status = fail ? 503 : 200;
     data = { paymentReady: false, mode: "Demo", items: offers };
   }
@@ -190,13 +190,16 @@ try {
   await ev(
     "document.querySelector('.v-admission-row a[href^=\"/tickets\"]').click()",
   );
-  await wait("document.querySelector('.ticket-form input[type=date]')");
+  await wait("document.querySelector('.price-page')");
+  await wait(
+    "document.querySelectorAll('.price-card').length===1 && document.querySelector('.price-card h2').textContent.includes('Lịch sử')",
+  );
   assert.equal(
-    await ev("document.querySelector('.ticket-form input[type=date]').value"),
+    await ev("new URL(location.href).searchParams.get('date')"),
     date,
   );
   assert.equal(
-    await ev("document.querySelector('.ticket-form select').value"),
+    await ev("new URL(location.href).searchParams.get('museum')"),
     "32",
   );
   await call("Page.navigate", { url: origin + "/visit?lang=vi" });
@@ -212,13 +215,17 @@ try {
     "document.querySelectorAll('.v-faq')[1].querySelector('summary').click()",
   );
   assert.equal(await ev("document.querySelectorAll('.v-faq')[1].open"), true);
-  await ev("document.querySelector('#directions').scrollIntoView({behavior:'instant',block:'start'})");
-  await wait("document.querySelector('.v-tabs-list a[href=\"#directions\"]').getAttribute('aria-current')==='location'");
+  await ev(
+    "document.querySelector('#directions').scrollIntoView({behavior:'instant',block:'start'})",
+  );
+  await wait(
+    "document.querySelector('.v-tabs-list a[href=\"#directions\"]').getAttribute('aria-current')==='location'",
+  );
   for (const width of [375, 768, 1440]) await viewport(width);
   for (const lang of ["vi", "en", "zh", "ja", "ko"]) {
     await call("Page.navigate", { url: origin + "/visit?lang=" + lang });
     await wait(
-      `document.documentElement.lang==='${lang}' && document.querySelector('.v-hero h1')?.textContent===${JSON.stringify(visitText(lang,'heroTitle'))}`,
+      `document.documentElement.lang==='${lang}' && document.querySelector('.v-hero h1')?.textContent===${JSON.stringify(visitText(lang, "heroTitle"))}`,
     );
     assert.equal(
       await ev("document.querySelector('.v-hero h1').textContent"),
@@ -263,7 +270,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: Visit nine sections, real destination/price/map changes, museum+date transfer to Tickets, sticky navigation/FAQ, five languages, API failure/retry and 375/768/1440 widths. Controlled API fixtures.",
+    "PASS: Visit nine sections, real destination/price/map changes, museum+date transfer to price lookup, sticky navigation/FAQ, five languages, API failure/retry and 375/768/1440 widths. Controlled API fixtures.",
   );
 } finally {
   ws.close();

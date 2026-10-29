@@ -24,7 +24,11 @@ export function directionsUrl(museum) {
   const q = new URLSearchParams({
     api: "1",
     destination:
-      museum.pinAccuracy === "approximate"
+      museum.pinAccuracy === "approximate" ||
+      museum.latitude == null ||
+      museum.longitude == null ||
+      !Number.isFinite(Number(museum.latitude)) ||
+      !Number.isFinite(Number(museum.longitude))
         ? `${museum.name}, ${museum.address}`
         : `${Number(museum.latitude)},${Number(museum.longitude)}`,
   });

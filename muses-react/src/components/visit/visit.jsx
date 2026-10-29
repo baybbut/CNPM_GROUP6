@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { catalog, directionsUrl } from "../../api/catalog.mjs";
 import { SvgIcon } from "../Icons";
@@ -51,29 +51,36 @@ function ExternalLink({ href, children, className = "v-link" }) {
   );
 }
 export default function Visit() {
+  const [params] = useSearchParams();
   const { lang } = useLang(),
     t = (key) => visitText(lang, key);
   const [activeTab, setActiveTab] = useState("hours"),
     [museums, setMuseums] = useState([]),
     [offers, setOffers] = useState([]),
-    [paymentReady, setPaymentReady] = useState(false),
     [ticketLoading, setTicketLoading] = useState(true),
     [ticketError, setTicketError] = useState(false),
     [attempt, setAttempt] = useState(0),
-    [selectedId, setSelectedId] = useState("hcm-reference-fine-arts"),
-    [date, setDate] = useState(ticketToday),
+    [selectedId, setSelectedId] = useState(
+      params.get("museum") || "hcm-reference-fine-arts",
+    ),
+    [date, setDate] = useState(() => params.get("date") || ticketToday()),
     [artworks, setArtworks] = useState([]);
   const tabs = useRef(null);
   const destinations = useMemo(() => visitDestinations(museums), [museums]);
   const place = useMemo(() => {
     const item =
-      destinations.find((m) => m.id === selectedId) || destinations[0];
+      destinations.find(
+        (m) => m.id === selectedId || String(m.museumId || "") === selectedId,
+      ) || destinations[0];
     return { ...item, name: item.names?.[lang] || item.name };
   }, [destinations, selectedId, lang]);
   const offer = offers.find(
-    (o) => Number(o.id) === place.museumId && !o.isDemo,
+    (o) =>
+      Number(o.id) === place.museumId &&
+      !o.isDemo &&
+      typeof o.adultPrice === "number",
   );
-  const bookingUrl = visitTicketLink(place, date);
+  const priceUrl = visitTicketLink(place, date);
   useEffect(() => {
     const c = new AbortController();
     setTicketError(false);
@@ -83,11 +90,10 @@ export default function Visit() {
         if (Array.isArray(data)) setMuseums(data);
       })
       .catch(() => {});
-    catalog("/api/tickets/offers", c.signal)
+    catalog("/api/tickets/prices", c.signal)
       .then((data) => {
         if (!Array.isArray(data.items)) throw Error("INVALID_OFFERS");
         setOffers(data.items);
-        setPaymentReady(Boolean(data.paymentReady));
       })
       .catch((e) => {
         if (e.name !== "AbortError") setTicketError(true);
@@ -246,7 +252,7 @@ export default function Visit() {
           <div className="v-text">
             <h3>{t("prices")}</h3>
             <p>{t("priceTip")}</p>
-            <Link className="btn btn-brown" to={bookingUrl}>
+            <Link className="btn btn-brown" to={priceUrl}>
               {t("tickets")}
               <SvgIcon kind="ticket" light size={20} />
             </Link>
@@ -285,7 +291,6 @@ export default function Visit() {
                 {offer.terms && (
                   <p className="v-admission-note">{offer.terms}</p>
                 )}
-                {!paymentReady && <p className="v-demo-note">{t("demo")}</p>}
               </>
             ) : (
               <>
@@ -426,7 +431,7 @@ export default function Visit() {
           <div className="v-text">
             <h3>{t("familyTitle")}</h3>
             <p>{t("familyTip")}</p>
-            <Link className="v-link" to={bookingUrl}>
+            <Link className="v-link" to={priceUrl}>
               {t("tickets")}
               <SvgIcon kind="arrow" size={18} />
             </Link>
@@ -452,7 +457,7 @@ export default function Visit() {
             <span>MUSES</span>
             <h3>{place.name}</h3>
             <p>{place.address}</p>
-            <Link className="btn btn-brown" to={bookingUrl}>
+            <Link className="btn btn-brown" to={priceUrl}>
               {t("tickets")}
             </Link>
           </div>
