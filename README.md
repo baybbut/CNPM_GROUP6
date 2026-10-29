@@ -125,4 +125,6 @@ Trang `/tickets` là chức năng tra cứu giá vé theo bảo tàng, tìm theo
 
 Bản đồ tương tác TP.HCM, định vị khách và vị trí trưng bày tác phẩm: [hướng dẫn Maps](docs/MAPS.md).
 
+Scan QR hiển thị danh sách tác phẩm; chọn tác phẩm để hiện popup QR, quét mở trang chi tiết: [hướng dẫn QR tác phẩm và thử trên điện thoại](docs/ARTWORK-QR.md).
+
 Trang Visit hoàn thiện và luồng chọn điểm đến/ngày sang Ticket: [hướng dẫn Visit](docs/VISIT.md).

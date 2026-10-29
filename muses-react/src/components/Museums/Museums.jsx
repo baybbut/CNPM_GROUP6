@@ -2,9 +2,10 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
-import { catalog, directionsUrl } from "../../api/catalog.mjs";
+import { catalog } from "../../api/catalog.mjs";
 import { ArtworkImage } from "../explore/Artworks";
 import PlacesMap from "./PlacesMap";
+import Directions, { useDirections } from "./Directions";
 import {
   hasCoordinates,
   searchPlaces,
@@ -25,13 +26,24 @@ export function MuseumMap({ museum }) {
     [museum],
   );
   const places = useMemo(() => [place], [place]);
+  const directions = useDirections();
   if (!hasCoordinates(place))
     return <p>{t("The museum location has not been confirmed yet.")}</p>;
   const lat = Number(place.latitude),
     lng = Number(place.longitude);
   return (
     <section className="museum-map" aria-label={t("Museum map")}>
-      <PlacesMap places={places} title={`${t("Museum map")}: ${place.name}`} />
+      <PlacesMap
+        places={places}
+        route={directions.state?.route}
+        position={directions.state?.origin}
+        title={`${t("Museum map")}: ${place.name}`}
+      />
+      <Directions
+        state={directions.state}
+        onClose={directions.clear}
+        onRetry={() => directions.start(place)}
+      />
       <div className="museum-map-links">
         <a
           href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`}
@@ -40,13 +52,9 @@ export function MuseumMap({ museum }) {
         >
           {t("Open map")}
         </a>
-        <a
-          href={directionsUrl(place)}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <button onClick={() => directions.start(place)}>
           {t("Directions")}
-        </a>
+        </button>
       </div>
     </section>
   );
@@ -105,6 +113,7 @@ function DiscoverMuseums() {
     [gpsBusy, setGpsBusy] = useState(false),
     [selectedId, setSelectedId] = useState(null);
   const gpsRun = useRef(0);
+  const directions = useDirections(position);
   useEffect(
     () => () => {
       gpsRun.current++;
@@ -170,10 +179,17 @@ function DiscoverMuseums() {
   const selected = places.find((p) => p.id === selectedId);
   const selectPlace = (id) => {
     setSelectedId(id);
+    directions.clear();
   };
+  function showDirections(place) {
+    setSelectedId(place.id);
+    directions.start(place);
+  }
   useEffect(() => {
-    if (selectedId && !places.some((p) => p.id === selectedId))
+    if (selectedId && !places.some((p) => p.id === selectedId)) {
       setSelectedId(null);
+      directions.clear();
+    }
   }, [places, selectedId]);
   return (
     <div className="museum-page discovery-page">
@@ -287,13 +303,9 @@ function DiscoverMuseums() {
                 <button onClick={() => selectPlace(place.id)}>
                   {t("Show on map")}
                 </button>
-                <a
-                  href={directionsUrl(place)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <button onClick={() => showDirections(place)}>
                   {t("Directions")}
-                </a>
+                </button>
                 {place.museumId && (
                   <Link to={`/museums/${place.museumId}`}>
                     {t("Currently on display")}
@@ -323,21 +335,23 @@ function DiscoverMuseums() {
         <div className="discovery-map">
           <PlacesMap
             places={places}
-            position={position}
+            position={directions.state?.origin || position}
+            route={directions.state?.route}
             selectedId={selectedId}
             onSelect={selectPlace}
           />
-          {selected && (
+          <Directions
+            state={directions.state}
+            onClose={directions.clear}
+            onRetry={() => directions.start(directions.state.place)}
+          />
+          {selected && !directions.state && (
             <div className="selected-place" aria-live="polite">
               <strong>{selected.name}</strong>
               <p>{selected.address}</p>
-              <a
-                href={directionsUrl(selected)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <button onClick={() => showDirections(selected)}>
                 {t("Directions")}
-              </a>
+              </button>
             </div>
           )}
         </div>

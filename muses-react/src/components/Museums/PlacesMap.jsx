@@ -12,15 +12,18 @@ export default function PlacesMap({
   onSelect,
   title,
   focus = "results",
+  route = null,
 }) {
   const { lang } = useLang();
   const host = useRef(null),
     mapRef = useRef(null),
+    routeRef = useRef(route),
     markers = useRef(new Map()),
     onSelectRef = useRef(onSelect);
   const [tileError, setTileError] = useState(false),
     [retry, setRetry] = useState(0);
   onSelectRef.current = onSelect;
+  routeRef.current = route;
   useEffect(() => {
     const map = L.map(host.current, { scrollWheelZoom: false }).setView(
       HCM_CENTER,
@@ -38,7 +41,14 @@ export default function PlacesMap({
     const loadTimeout = setTimeout(() => setTileError(true), 15000);
     tiles.on("load", () => clearTimeout(loadTimeout));
     tiles.on("tileerror", () => setTileError(true));
-    const resize = new ResizeObserver(() => map.invalidateSize());
+    const resize = new ResizeObserver(() => {
+      map.invalidateSize();
+      if (routeRef.current?.points?.length)
+        map.fitBounds(L.latLngBounds(routeRef.current.points), {
+          padding: [36, 36],
+          animate: false,
+        });
+    });
     resize.observe(host.current);
     return () => {
       clearTimeout(loadTimeout);
@@ -89,6 +99,13 @@ export default function PlacesMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+    if (route?.points?.length) {
+      map.fitBounds(L.latLngBounds(route.points), {
+        padding: [36, 36],
+        animate: false,
+      });
+      return;
+    }
     if (hasCoordinates(position))
       map.setView([position.latitude, position.longitude], 13, {
         animate: false,
@@ -105,14 +122,24 @@ export default function PlacesMap({
         });
       else map.setView(HCM_CENTER, 12, { animate: false });
     }
-  }, [places, position, retry, focus]);
+  }, [places, position, retry, focus, route]);
   useEffect(() => {
     const marker = markers.current.get(selectedId);
-    if (marker) {
+    if (marker && !route) {
       mapRef.current?.panTo(marker.getLatLng(), { animate: false });
       marker.openTooltip();
     }
-  }, [selectedId, places, retry]);
+  }, [selectedId, places, retry, route]);
+  useEffect(() => {
+    if (!route?.points?.length || !mapRef.current) return;
+    const map = mapRef.current;
+    const line = L.polyline(route.points, {
+      color: "#2563eb",
+      weight: 6,
+      opacity: 0.9,
+    }).addTo(map);
+    return () => map.removeLayer(line);
+  }, [route, retry]);
   return (
     <section
       className="places-map-panel"

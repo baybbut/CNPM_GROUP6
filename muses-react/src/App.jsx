@@ -4,6 +4,7 @@ import Museums from "./components/Museums/Museums";
 import ActivityTracker from "./components/ActivityTracker";
 import VisitorAccount from "./components/VisitorAccount";
 import NewsArticle, { NewsIndex } from "./components/News/NewsPage";
+import CameraScanner from "./components/Scanner/CameraScanner";
 import Scanner from "./components/Scanner/Scanner";
 import { useLang } from "./context/LangContext";
 import { CONTENT_LANGUAGES } from "./api/contentLanguages.mjs";
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/news" element={<NewsIndex />} />
           <Route path="/news/:slug" element={<NewsArticle />} />
           <Route path="/scan" element={<Scanner />} />
+          <Route path="/scan/camera" element={<CameraScanner />} />
           <Route path="/" element={<Home />} />
           <Route path="/visit" element={<Visit />} />
           <Route path="/exhibition" element={<Exhibition />} />

@@ -362,3 +362,40 @@
     height: 340px;
   }
 }
+.map-directions {
+  padding: 22px;
+  margin-top: 14px;
+  border: 1px solid #a09678;
+  background: #faf7e9;
+  border-radius: 14px;
+  overflow-wrap: anywhere;
+}
+.map-directions-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.map-directions-heading h3 {
+  margin: 0;
+  font-size: 19px;
+}
+.map-directions-heading button {
+  font-size: 26px;
+  padding: 0 8px;
+}
+.map-directions p {
+  margin: 12px 0;
+  line-height: 1.6;
+}
+.map-directions small {
+  display: block;
+  margin-top: 15px;
+}
+.museum-map-links button,
+.selected-place > button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}

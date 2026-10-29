@@ -1,5 +1,51 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "Explore artworks with QR": [
+    "Khám phá tác phẩm qua QR",
+    "扫码探索艺术品",
+    "QRで作品を探す",
+    "QR로 작품 둘러보기",
+  ],
+  "Choose an artwork to display its QR code. Scan with your phone to see the images, full details and audio guide.":
+    [
+      "Chọn một tác phẩm để mở mã QR. Quét mã bằng điện thoại để xem hình ảnh, thông tin và nghe thuyết minh.",
+      "选择作品显示二维码。用手机扫描查看图片、完整详情和语音导览。",
+      "作品を選ぶとQRコードが表示されます。スマートフォンで読み取り、画像・詳細・音声ガイドをご覧ください。",
+      "작품을 선택하면 QR 코드가 표시됩니다. 휴대폰으로 스캔해 이미지, 상세 정보와 오디오 가이드를 확인하세요.",
+    ],
+  "Scan an existing code": [
+    "Quét mã có sẵn",
+    "扫描已有二维码",
+    "QRコードを読み取る",
+    "기존 코드 스캔",
+  ],
+  "Close directions": [
+    "Đóng chỉ đường",
+    "关闭路线",
+    "経路を閉じる",
+    "길찾기 닫기",
+  ],
+  "Finding a driving route from your location…": [
+    "Đang tìm đường ô tô từ vị trí của bạn…",
+    "正在从您的位置查找驾车路线…",
+    "現在地からの車の経路を検索中…",
+    "현재 위치에서 자동차 경로 검색 중…",
+  ],
+  "Unable to find a route. Allow location access or choose your starting point in Google Maps.":
+    [
+      "Chưa tìm được đường đi. Hãy cho phép truy cập vị trí hoặc chọn điểm xuất phát trong Google Maps.",
+      "无法查找路线。请允许定位或在 Google 地图中选择出发点。",
+      "経路を取得できません。位置情報を許可するか、Google マップで出発地を選んでください。",
+      "경로를 찾을 수 없습니다. 위치를 허용하거나 Google 지도에서 출발지를 선택하세요.",
+    ],
+  "Driving route": ["Lộ trình ô tô", "驾车路线", "車の経路", "자동차 경로"],
+  "Navigate in Google Maps": [
+    "Dẫn đường bằng Google Maps",
+    "使用 Google 地图导航",
+    "Google マップでナビ",
+    "Google 지도로 안내",
+  ],
+  min: ["phút", "分钟", "分", "분"],
   "Discover the collection": [
     "Khám phá những tác phẩm nổi bật",
     "发现精选馆藏",

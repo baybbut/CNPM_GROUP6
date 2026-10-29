@@ -15,7 +15,7 @@ The backend needs outbound HTTPS to `overpass-api.de` or `overpass.kumi.systems`
 
 ## Visitor location
 
-GPS is requested only when the visitor presses **Use my location**, with a timeout and a recoverable denial state. Coordinates are kept in component memory, not sent to the Muses API, analytics or local storage. The visible map requests third-party map tiles for the displayed area. Distances are straight-line distances calculated in the browser, not driving distances. Directions open Google Maps with only the destination coordinates; the visitor can supply their start location there.
+GPS is requested only when the visitor presses **Use my location** or **Directions**, with a timeout and a recoverable denial state. Coordinates are kept in component memory, not sent to the Muses API, analytics or local storage. The visible map requests third-party map tiles for the displayed area. List distances are straight-line distances calculated in the browser. **Directions** draws a driving route on the same Leaflet map, fits the whole route, and shows distance and estimated duration. The browser sends the requested origin and destination coordinates to the public OSRM routing service (`router.project-osrm.org`); they are not sent to the Muses API or analytics. Closing/replacing a route aborts its pending request and removes the old line. If GPS or routing is unavailable, a retry and Google Maps link let the visitor choose a starting point externally. Reference pins remain approximate, including route destinations; use the venue address / Google Maps to confirm the entrance. The estimate is not live traffic or continuous turn-by-turn navigation.
 
 Browser geolocation requires HTTPS or localhost. An ordinary `http://192.168…` address on a phone may display the map but cannot use GPS; use HTTPS when testing phone location. Refusing GPS does not block search or map browsing. Resetting to HCMC clears the in-memory position.
 
@@ -28,3 +28,7 @@ In Admin, maintain the real museum address/coordinates and confirmed display sch
 ## Verification limits
 
 Unit tests cover normalization, gallery classification, excluded private/disused places, unsafe website URLs, cache/coalescing, provider fallback and outage handling, reference-list recovery and name/address routing, multilingual search, distances and conservative catalogue matching. Browser tests use controlled API responses for marker selection, GPS refusal/success, filters and responsive widths; these are not a check of real-world map accuracy. The cloud environment blocks outbound requests to the public OSM/Overpass services, so a successful live venue fetch and real tile rendering must be checked on the user's local network. Live SQL schedule/migration verification remains separate.
+
+## Inline directions verification
+
+`node muses-react/tests/browser/qr-directions.mjs` uses controlled API/OSRM/GPS fixtures to test route drawing, mobile layout, errors, retries and denied GPS. Real OSRM requests are blocked by the cloud outbound proxy (403), so live route accuracy and service availability still require local verification. No SQL migration or API key is required.

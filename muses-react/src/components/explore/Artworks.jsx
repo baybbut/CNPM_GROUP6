@@ -6,6 +6,7 @@ import { useLang } from "../../context/LangContext";
 import { fetchArtworks, mediaUrl } from "../../api/artworks";
 import "./artworks.css";
 import { SvgIcon } from "../Icons";
+import ArtworkQR from "../Scanner/ArtworkQR";
 
 export function useArtworks(id) {
   const { lang } = useLang();
@@ -104,7 +105,7 @@ export function RequestState({
   return null;
 }
 
-export function ArtworkCollection({ compact = false }) {
+export function ArtworkCollection({ compact = false, qrMode = false }) {
   const { lang } = useLang(),
     t = (key) => label(lang, key);
   const [query, setQuery] = useState(""),
@@ -224,36 +225,46 @@ export function ArtworkCollection({ compact = false }) {
           </p>
           {items.length ? (
             <div className="aw-grid">
-              {items.map((a) => (
-                <Link
-                  className="aw-card"
-                  to={`/explore/artworks/${a.id}?lang=${lang}`}
-                  key={a.id}
-                >
-                  <div className="aw-image">
-                    <ArtworkImage artwork={a} />
-                    {a.isNationalTreasure && (
-                      <span className="aw-treasure">
-                        {t("National treasure")}
+              {items.map((a) => {
+                const Card = qrMode ? ArtworkQR : Link;
+                return (
+                  <Card
+                    className="aw-card"
+                    {...(qrMode
+                      ? {
+                          id: a.id,
+                          language: lang,
+                          vi: lang === "vi",
+                          title: a.title,
+                        }
+                      : { to: `/explore/artworks/${a.id}?lang=${lang}` })}
+                    key={a.id}
+                  >
+                    <div className="aw-image">
+                      <ArtworkImage artwork={a} />
+                      {a.isNationalTreasure && (
+                        <span className="aw-treasure">
+                          {t("National treasure")}
+                        </span>
+                      )}
+                    </div>
+                    <div className="aw-card-info">
+                      <p>{a.category}</p>
+                      <h3>{a.title}</h3>
+                      <span>{a.artist}</span>
+                      {a.creationPeriod && <small>{a.creationPeriod}</small>}
+                      {a.isDemo && (
+                        <small>
+                          {t("Demonstration data — not a real exhibition.")}
+                        </small>
+                      )}
+                      <span className="aw-card-arrow" aria-hidden="true">
+                        <SvgIcon kind="arrow" size={20} />
                       </span>
-                    )}
-                  </div>
-                  <div className="aw-card-info">
-                    <p>{a.category}</p>
-                    <h3>{a.title}</h3>
-                    <span>{a.artist}</span>
-                    {a.creationPeriod && <small>{a.creationPeriod}</small>}
-                    {a.isDemo && (
-                      <small>
-                        {t("Demonstration data — not a real exhibition.")}
-                      </small>
-                    )}
-                    <span className="aw-card-arrow" aria-hidden="true">
-                      <SvgIcon kind="arrow" size={20} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <p className="aw-request">{t("No results found.")}</p>

@@ -4,6 +4,46 @@
   min-height: 80vh;
   color: #302a20;
 }
+.scan-catalogue .aw-section {
+  padding: 35px 0 0;
+}
+.scan-catalogue .aw-card {
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+.scan-catalogue .aw-card:focus-visible {
+  outline: 3px solid #8b713e;
+  outline-offset: 4px;
+}
+.scan-catalogue-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.scan-catalogue-tools label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.scan-catalogue-tools select {
+  padding: 10px 16px;
+  border: 1px solid #8b805e;
+  border-radius: 20px;
+  color: #171710;
+  background: #fffdf1;
+  font: inherit;
+}
+.artwork-qr-dialog > a {
+  margin: 4px;
+}
 .scan-intro {
   max-width: 750px;
   margin-bottom: 40px;
@@ -14,7 +54,7 @@
   margin-bottom: 17px;
 }
 .scan-intro h1 {
-  font: 400 clamp(32px, 4vw, 54px)/1.2 var(--serif);
+  font: 400 clamp(32px, 4vw, 54px) / 1.2 var(--serif);
   letter-spacing: -0.03em;
   margin-bottom: 18px;
 }
@@ -224,7 +264,8 @@
   backdrop-filter: blur(4px);
 }
 .artwork-qr-dialog {
-  width: 420px;
+  width: min(420px, calc(100vw - 40px));
+  min-width: 0;
   max-width: 100%;
   max-height: 90vh;
   overflow: auto;
