@@ -12,6 +12,8 @@
 
 PRD này mô tả yêu cầu sản phẩm hiện hành và phân biệt phần đã có trong mã nguồn với phần còn cần dữ liệu hoặc nghiệm thu thực tế. PRD gốc được giữ nguyên để truy vết thay đổi. “Đã triển khai” không đồng nghĩa đã nghiệm thu trên SQL Server, điện thoại hoặc môi trường triển khai công khai.
 
+[Bộ sơ đồ phân tích](diagrams/README.md) đã được vẽ lại theo phạm vi này, gồm **Use Case tổng quát, 21 Use Case chi tiết và ERD chia 3 nhóm**. Hình được chèn ở mục 5, 8 và 13; mỗi nhóm có file draw.io chỉnh sửa được. Ba file người dùng cung cấp ban đầu được lưu riêng để đối chiếu.
+
 ## 1. Tổng quan sản phẩm
 
 Muses tập hợp thông tin tác phẩm nghệ thuật và nơi trưng bày để khách có thể tra cứu trước hoặc trong chuyến tham quan. Khách tìm tác phẩm theo tên/tác giả, đọc nội dung bằng ngôn ngữ phù hợp, nghe thuyết minh, mở QR, xem bảo tàng hiện đang trưng bày và xây dựng lộ trình tham quan tại TP.HCM.
@@ -85,27 +87,33 @@ Tài khoản SQL quản trị dùng cho setup/backup không phải một role ng
 
 ## 5. Luồng sử dụng chính
 
-### UC-01. Tìm hiểu một tác phẩm
+![Sơ đồ Use Case tổng quát của Muses: khách truy cập và quản trị viên](diagrams/images/usecase-tong-quat.png)
+
+[Mở SVG để phóng to](diagrams/images/usecase-tong-quat.svg) · [File draw.io](diagrams/source/Muses_UseCase_TongQuat.drawio).
+
+Mã **UC01–UC21** dùng cho các sơ đồ chi tiết ở mục 13. Sáu luồng dưới đây tổng hợp nhiều Use Case thành hành trình sử dụng; không phải bộ mã Use Case riêng. Khách không bắt buộc đăng nhập để tra cứu; mọi chức năng quản trị yêu cầu phiên và role hợp lệ.
+
+### Luồng 01. Tìm hiểu một tác phẩm
 
 Khách mở bộ sưu tập → nhập tên/chọn bộ lọc → chọn tác phẩm → xem thông tin → chọn ngôn ngữ → nghe thuyết minh hoặc xem nơi trưng bày. Không tìm được kết quả thì nhận thông báo danh sách rỗng; lỗi API có trạng thái thử lại.
 
-### UC-02. Công bố tác phẩm
+### Luồng 02. Công bố tác phẩm
 
 Admin đăng nhập → mở Artworks → nhập thông tin, ảnh và nội dung tiếng Việt trong cùng form → lưu nháp hoặc lưu và công bố. Nếu dữ liệu chưa đủ, hệ thống giữ form và thông báo để sửa. Bản dịch ngôn ngữ khác được quản lý trong Languages & Audio.
 
-### UC-03. Sử dụng và quản lý QR
+### Luồng 03. Sử dụng và quản lý QR
 
 Khách mở `/scan` → chọn tác phẩm có QR hoạt động → xem/tải mã → quét để mở chi tiết. Admin mở Quản lý QR → tìm tác phẩm → đổi tên hoặc bật/tắt mã. Mã đã tắt bị chặn ở lần mở/tạo tiếp theo; nội dung công khai trong bộ sưu tập vẫn được giữ.
 
-### UC-04. Tìm bảo tàng và chỉ đường
+### Luồng 04. Tìm bảo tàng và chỉ đường
 
 Khách tìm địa điểm → chọn ghim/thẻ bảo tàng → xem tên/địa chỉ. Khi muốn vẽ đường đi trên map Muses, khách bấm Dùng vị trí của tôi và cho phép lấy vị trí → chọn Chỉ đường. Khi chưa lấy vị trí thành công, nút chỉ đường trên map bị khóa; khách vẫn tìm/xem địa điểm được.
 
-### UC-05. Lập kế hoạch tham quan
+### Luồng 05. Lập kế hoạch tham quan
 
 Khách mở `/museums/itinerary` → chọn bảo tàng → thay thứ tự, giờ bắt đầu và thời lượng → xem sơ đồ thứ tự/chủ đề. Nếu có vị trí, có thể sắp xếp điểm gần nhất trước hoặc chỉ đường tới một điểm. Kế hoạch không tự xác nhận giờ mở cửa hay đặt vé.
 
-### UC-06. Xem báo cáo truy cập
+### Luồng 06. Xem báo cáo truy cập
 
 Admin mở Overview hoặc Reports → chọn khoảng ngày và khung giờ → xem dữ liệu tương ứng. Overview có danh sách phiên để tìm/lọc trạng thái. Reports hiển thị chi tiết theo ngày, giờ, điểm đọc. Hôm nay/7 ngày có trạng thái chọn màu đen; Cả ngày đặt khung giờ về 00:00–24:00.
 
@@ -232,6 +240,28 @@ Một người dùng nhiều trình duyệt/thiết bị có thể được tín
 
 Các bảng/route đặt vé cũ có thể còn để tương thích mã nguồn; không tính thành chức năng mua vé hiện hành. Các dịch vụ bản đồ ngoài là nguồn phụ thuộc, không phải dữ liệu do Muses tự xác minh. TTS do trình duyệt và giọng được cung cấp trên thiết bị thực hiện.
 
+### 8.1. ERD tác phẩm, ngôn ngữ và hình ảnh
+
+![ERD tác phẩm, danh mục, bản mô tả theo ngôn ngữ và hình ảnh](diagrams/images/erd-catalogue.png)
+
+[Mở SVG](diagrams/images/erd-catalogue.svg) · [File ERD draw.io — 3 trang](diagrams/source/Muses_ERD.drawio).
+
+### 8.2. ERD bảo tàng, lịch trưng bày và giá vé
+
+![ERD bảo tàng, lịch trưng bày hiện vật và bảng giá tra cứu](diagrams/images/erd-museums.png)
+
+[Mở SVG](diagrams/images/erd-museums.svg).
+
+### 8.3. ERD tài khoản, phiên và sự kiện website
+
+![ERD tài khoản, phiên đăng nhập, phiên truy cập và sự kiện website](diagrams/images/erd-activity.png)
+
+[Mở SVG](diagrams/images/erd-activity.svg).
+
+ERD dùng tên bảng thực tế: `Users`, `ArtworkDescriptions`, `DisplaySchedules` và `Languages.LanguageID`. Nhãn **tham chiếu** là cùng bảng được lặp lại ở nhóm khác để đọc quan hệ, không phải bảng mới. `PK` là khóa chính, `FK` là khóa ngoại, `UQ` là ràng buộc duy nhất; chân quạ biểu thị nhiều và vòng tròn biểu thị có thể không có quan hệ.
+
+Cấu hình QR nằm trên `Artworks`; `QRUpdatedBy` được code ghi bằng UserID nhưng migration hiện tại chưa tạo FK, nên được ghi rõ là tham chiếu logic. Không thêm bảng `AdminUsers`, `MuseumTranslations` hoặc bảng QR giả vào mô hình hiện hành. `TicketReservations` là phần tương thích cũ được loại khỏi phạm vi ERD chức năng đang dùng; tọa độ khách không lưu trong DB này. Một số dòng gộp hai cột cùng kiểu để trình bày gọn; đây không phải script tạo DB hay danh sách đầy đủ các index/CHECK/default.
+
 ## 9. Yêu cầu phi chức năng
 
 | Mã     | Yêu cầu                                                                                                                 | Cách đánh giá                                                                                          |
@@ -299,6 +329,7 @@ Hướng mở rộng: CMS tin tức/sự kiện, quản lý nguồn giá vé, s�
 ## 12. Truy vết và tài liệu kỹ thuật
 
 - [README](../../README.md): cài đặt, vận hành, route và xử lý lỗi.
+- [Bộ sơ đồ và file draw.io](diagrams/README.md), [mô hình kỹ thuật tóm tắt](MODEL.md).
 - [PRD gốc ngày 29/10/2026](PRD-2026-10-29.txt): giữ nguyên nguồn yêu cầu ban đầu.
 - [RUN](RUN.md): setup/backup và kiểm thử SQL.
 - [ACCEPTANCE](ACCEPTANCE.md): đối chiếu lần triển khai PRD gốc; kết quả lịch sử không thay thế nghiệm thu bản hiện tại.
@@ -307,3 +338,264 @@ Hướng mở rộng: CMS tin tức/sự kiện, quản lý nguồn giá vé, s�
 - [Thống kê truy cập](../ADMIN-ANALYTICS.md), [Highlight](../HIGHLIGHT.md), [ảnh triển lãm](../EXHIBITION-IMAGES.md).
 
 Bằng chứng tự động nằm trong `muses-backend/test`, `muses-react/tests` và `muses-react/tests/browser`. Kiểm thử adapter SQL/API giả xác nhận các quy tắc và luồng được kiểm soát; kiểm chứng SQL thật, dữ liệu thực tế, độ chính xác bản đồ, giọng đọc và camera/điện thoại cần biên bản riêng.
+
+
+## 13. Sơ đồ Use Case chi tiết
+
+Bộ mới giữ thứ tự UC01–UC15 của tài liệu gửi ban đầu, cập nhật nội dung theo PRD và bổ sung UC16–UC21 cho QR, lộ trình, tra cứu giá vé, báo cáo và thông tin tham quan. Các sơ đồ mô tả yêu cầu/luồng đang xét; không thay thế biên bản nghiệm thu.
+
+Bấm tên từng Use Case để mở hình. `«include»` đi từ ca sử dụng chính đến hành vi bắt buộc; `«extend»` đi từ hành vi mở rộng về ca sử dụng chính, với điều kiện ghi trong `[ ]`. Các quy tắc và trường hợp lỗi được ghi trong khung chú thích của từng hình.
+
+[File draw.io gồm 21 trang](diagrams/source/Muses_UseCase_ChiTiet.drawio) · [Bảng truy vết và toàn bộ file hình](diagrams/README.md).
+
+<a id="uc01"></a>
+<details>
+<summary>UC01 — Tra cứu tác phẩm</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-02`.
+
+![UC01 — Tra cứu tác phẩm](diagrams/images/uc01.png)
+
+[Mở SVG](diagrams/images/uc01.svg) · [Mở riêng PNG](diagrams/images/uc01.png).
+
+</details>
+
+<a id="uc02"></a>
+<details>
+<summary>UC02 — Xem chi tiết tác phẩm</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-03 / WEB-04 / WEB-09`.
+
+![UC02 — Xem chi tiết tác phẩm](diagrams/images/uc02.png)
+
+[Mở SVG](diagrams/images/uc02.svg) · [Mở riêng PNG](diagrams/images/uc02.png).
+
+</details>
+
+<a id="uc03"></a>
+<details>
+<summary>UC03 — Chuyển ngôn ngữ nội dung</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-04`.
+
+![UC03 — Chuyển ngôn ngữ nội dung](diagrams/images/uc03.png)
+
+[Mở SVG](diagrams/images/uc03.svg) · [Mở riêng PNG](diagrams/images/uc03.png).
+
+</details>
+
+<a id="uc04"></a>
+<details>
+<summary>UC04 — Nghe thuyết minh</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-05 / WEB-06`.
+
+![UC04 — Nghe thuyết minh](diagrams/images/uc04.png)
+
+[Mở SVG](diagrams/images/uc04.svg) · [Mở riêng PNG](diagrams/images/uc04.png).
+
+</details>
+
+<a id="uc05"></a>
+<details>
+<summary>UC05 — Xem nơi trưng bày tác phẩm</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-09 / BR-03`.
+
+![UC05 — Xem nơi trưng bày tác phẩm](diagrams/images/uc05.png)
+
+[Mở SVG](diagrams/images/uc05.svg) · [Mở riêng PNG](diagrams/images/uc05.png).
+
+</details>
+
+<a id="uc06"></a>
+<details>
+<summary>UC06 — Tra cứu bảo tàng tại TP.HCM</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-10`.
+
+![UC06 — Tra cứu bảo tàng tại TP.HCM](diagrams/images/uc06.png)
+
+[Mở SVG](diagrams/images/uc06.svg) · [Mở riêng PNG](diagrams/images/uc06.png).
+
+</details>
+
+<a id="uc07"></a>
+<details>
+<summary>UC07 — Xem bản đồ bảo tàng</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-10 / WEB-11`.
+
+![UC07 — Xem bản đồ bảo tàng](diagrams/images/uc07.png)
+
+[Mở SVG](diagrams/images/uc07.svg) · [Mở riêng PNG](diagrams/images/uc07.png).
+
+</details>
+
+<a id="uc08"></a>
+<details>
+<summary>UC08 — Chỉ đường trên bản đồ Muses</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-11 / BR-04`.
+
+![UC08 — Chỉ đường trên bản đồ Muses](diagrams/images/uc08.png)
+
+[Mở SVG](diagrams/images/uc08.svg) · [Mở riêng PNG](diagrams/images/uc08.png).
+
+</details>
+
+<a id="uc09"></a>
+<details>
+<summary>UC09 — Đăng nhập tài khoản web</summary>
+
+**Tác nhân:** Khách / Admin. **Yêu cầu liên quan:** `WEB-16 / ADM-01`.
+
+![UC09 — Đăng nhập tài khoản web](diagrams/images/uc09.png)
+
+[Mở SVG](diagrams/images/uc09.svg) · [Mở riêng PNG](diagrams/images/uc09.png).
+
+</details>
+
+<a id="uc10"></a>
+<details>
+<summary>UC10 — Quản lý và công bố tác phẩm</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-02 / BR-01`.
+
+![UC10 — Quản lý và công bố tác phẩm](diagrams/images/uc10.png)
+
+[Mở SVG](diagrams/images/uc10.svg) · [Mở riêng PNG](diagrams/images/uc10.png).
+
+</details>
+
+<a id="uc11"></a>
+<details>
+<summary>UC11 — Quản lý bản dịch và URL audio</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-03 / BR-02`.
+
+![UC11 — Quản lý bản dịch và URL audio](diagrams/images/uc11.png)
+
+[Mở SVG](diagrams/images/uc11.svg) · [Mở riêng PNG](diagrams/images/uc11.png).
+
+</details>
+
+<a id="uc12"></a>
+<details>
+<summary>UC12 — Quản lý thông tin bảo tàng</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-05`.
+
+![UC12 — Quản lý thông tin bảo tàng](diagrams/images/uc12.png)
+
+[Mở SVG](diagrams/images/uc12.svg) · [Mở riêng PNG](diagrams/images/uc12.png).
+
+</details>
+
+<a id="uc13"></a>
+<details>
+<summary>UC13 — Quản lý lịch trưng bày hiện vật</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-06 / BR-03`.
+
+![UC13 — Quản lý lịch trưng bày hiện vật](diagrams/images/uc13.png)
+
+[Mở SVG](diagrams/images/uc13.svg) · [Mở riêng PNG](diagrams/images/uc13.png).
+
+</details>
+
+<a id="uc14"></a>
+<details>
+<summary>UC14 — Quản lý tác giả, chất liệu, thể loại</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-04`.
+
+![UC14 — Quản lý tác giả, chất liệu, thể loại](diagrams/images/uc14.png)
+
+[Mở SVG](diagrams/images/uc14.svg) · [Mở riêng PNG](diagrams/images/uc14.png).
+
+</details>
+
+<a id="uc15"></a>
+<details>
+<summary>UC15 — Đăng xuất</summary>
+
+**Tác nhân:** Khách / Admin. **Yêu cầu liên quan:** `WEB-16 / ADM-01`.
+
+![UC15 — Đăng xuất](diagrams/images/uc15.png)
+
+[Mở SVG](diagrams/images/uc15.svg) · [Mở riêng PNG](diagrams/images/uc15.png).
+
+</details>
+
+<a id="uc16"></a>
+<details>
+<summary>UC16 — Xem và quét QR tác phẩm</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-07 / WEB-08 / BR-05`.
+
+![UC16 — Xem và quét QR tác phẩm](diagrams/images/uc16.png)
+
+[Mở SVG](diagrams/images/uc16.svg) · [Mở riêng PNG](diagrams/images/uc16.png).
+
+</details>
+
+<a id="uc17"></a>
+<details>
+<summary>UC17 — Quản lý QR đang hoạt động</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-07 / BR-05`.
+
+![UC17 — Quản lý QR đang hoạt động](diagrams/images/uc17.png)
+
+[Mở SVG](diagrams/images/uc17.svg) · [Mở riêng PNG](diagrams/images/uc17.png).
+
+</details>
+
+<a id="uc18"></a>
+<details>
+<summary>UC18 — Xây dựng lộ trình tham quan</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-12 / BR-04`.
+
+![UC18 — Xây dựng lộ trình tham quan](diagrams/images/uc18.png)
+
+[Mở SVG](diagrams/images/uc18.svg) · [Mở riêng PNG](diagrams/images/uc18.png).
+
+</details>
+
+<a id="uc19"></a>
+<details>
+<summary>UC19 — Tra cứu giá vé bảo tàng</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-15 / BR-08`.
+
+![UC19 — Tra cứu giá vé bảo tàng](diagrams/images/uc19.png)
+
+[Mở SVG](diagrams/images/uc19.svg) · [Mở riêng PNG](diagrams/images/uc19.png).
+
+</details>
+
+<a id="uc20"></a>
+<details>
+<summary>UC20 — Xem Overview và Reports</summary>
+
+**Tác nhân:** Quản trị viên. **Yêu cầu liên quan:** `ADM-08 / ADM-09 / BR-06 / BR-07`.
+
+![UC20 — Xem Overview và Reports](diagrams/images/uc20.png)
+
+[Mở SVG](diagrams/images/uc20.svg) · [Mở riêng PNG](diagrams/images/uc20.png).
+
+</details>
+
+<a id="uc21"></a>
+<details>
+<summary>UC21 — Xem thông tin tham quan</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-01 / WEB-13 / WEB-14`.
+
+![UC21 — Xem thông tin tham quan](diagrams/images/uc21.png)
+
+[Mở SVG](diagrams/images/uc21.svg) · [Mở riêng PNG](diagrams/images/uc21.png).
+
+</details>

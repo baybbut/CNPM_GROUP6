@@ -4,6 +4,8 @@
 
 **Tài liệu yêu cầu sản phẩm:** [PRD hiện hành](docs/prd/PRD.md). Bản này mô tả phạm vi đã được điều chỉnh đến **30/10/2026**, đối chiếu mã nguồn chức năng tại `978b0e0`.
 
+**Sơ đồ phân tích:** [Use Case tổng quát, 21 Use Case chi tiết và ERD](docs/prd/diagrams/README.md) đã được vẽ lại theo phạm vi hiện hành. Hình PNG được chèn trong PRD; có bản SVG và file draw.io để chỉnh sửa.
+
 ## 1. Phạm vi đồ án
 
 | Thành phần      | Vai trò                                                                      | Trạng thái                                                                      |

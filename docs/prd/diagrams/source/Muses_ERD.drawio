@@ -1,0 +1,652 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="24.7.17" type="device">
+  <diagram id="erd-catalogue" name="ERD 1/3 — Tác phẩm, ngôn ngữ và hình ảnh">
+    <mxGraphModel dx="2140" dy="1630" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2140" pageHeight="1630" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" value="MUSES  /  PHÂN TÍCH HỆ THỐNG" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=18;fontColor=#356078;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="2040" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="ERD 1/3 — Tác phẩm, ngôn ngữ và hình ảnh" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=33;fontColor=#172B3A;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="64" width="2040" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Tên bảng/khóa theo SQL hiện hành. PK: khóa chính; FK: khóa ngoại; UQ: duy nhất; NULL: tùy chọn." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=19;fontColor=#536371;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="128" width="2040" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="PRD hiện hành • Đối chiếu mã nguồn 978b0e0 • 30/10/2026" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=17;fontColor=#687784;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1579" width="2040" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="245" width="430" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Artists" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="245" width="430" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="PK  ArtistID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="298" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="ArtistName : nvarchar(200)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="332" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="Biography : nvarchar(max) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="366" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="430" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Categories" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="430" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="PK  CategoryID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="593" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="UQ  CategoryName : nvarchar(100)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="627" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="Description : nvarchar(500) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="661" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="835" width="430" height="121" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="Materials" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="835" width="430" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="PK  MaterialID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="888" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="UQ  Name : nvarchar(200)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="922" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1130" width="430" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="Museums  [tham chiếu]" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#607582;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1130" width="430" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="PK  MuseumID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1183" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" value="Name : nvarchar(250)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1217" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" value="Chi tiết tại ERD 2/3" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1251" width="430" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n25" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="760" y="310" width="575" height="699" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="Artworks" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="760" y="310" width="575" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n27" value="PK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="363" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" value="FK  ArtistID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="397" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" value="FK  CategoryID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="431" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="FK  MaterialID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="465" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" value="FK  OwnerMuseumID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="499" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="ArtworkName : nvarchar(250)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="533" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n33" value="Material : nvarchar(200) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="567" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n34" value="CreationPeriod : nvarchar(150) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="601" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n35" value="Dimensions : nvarchar(100) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="635" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n36" value="PublicationStatus : varchar(12)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="669" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" value="InformationSource : nvarchar(1000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="703" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n38" value="ImageSource : nvarchar(1000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="737" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n39" value="IsDemo / IsNationalTreasure : bit" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="771" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n40" value="TreasureYear : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="805" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n41" value="Notes : nvarchar(max) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="839" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n42" value="QRIsEnabled : bit" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="873" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" value="QRLabel : nvarchar(150) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="907" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n44" value="QRUpdatedAt : datetime2 NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="941" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n45" value="QRUpdatedBy : int NULL  [tham chiếu logic]" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="975" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n46" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="245" width="470" height="223" as="geometry" />
+        </mxCell>
+        <mxCell id="n47" value="ArtworkImages" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="245" width="470" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n48" value="PK  ImageID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="298" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n49" value="FK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="332" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n50" value="ImageURL : nvarchar(500)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="366" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n51" value="IsPrimary : bit NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="400" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n52" value="DisplayOrder : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="434" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n53" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="600" width="470" height="427" as="geometry" />
+        </mxCell>
+        <mxCell id="n54" value="ArtworkDescriptions" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="600" width="470" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n55" value="PK  DescriptionID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="653" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n56" value="FK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="687" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n57" value="FK  LanguageID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="721" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n58" value="Title : nvarchar(250) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="755" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n59" value="ShortDescription : nvarchar(1000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="789" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n60" value="FullDescription : nvarchar(max) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="823" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n61" value="HistoryDescription : nvarchar(max) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="857" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n62" value="AudioURL : nvarchar(500) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="891" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n63" value="PublicationStatus : varchar(12)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="925" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n64" value="InformationSource : nvarchar(1000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="959" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n65" value="UQ  (ArtworkID, LanguageID)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="993" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n66" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="1220" width="470" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n67" value="Languages" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="1220" width="470" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n68" value="PK  LanguageID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="1273" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n69" value="UQ  LanguageCode : varchar(10)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="1307" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n70" value="LanguageName : nvarchar(100)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="1341" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n71" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1240" width="575" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n72" value="SiteImages" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1240" width="575" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n73" value="PK  SlotKey : varchar(80)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1293" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n74" value="ImageURL : nvarchar(500)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1327" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n75" value="FK  ArtworkID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1361" width="575" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="e76" value="tạo tác phẩm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.15;" edge="1" parent="1" source="n6" target="n25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="615" y="322" />
+              <mxPoint x="615" y="414" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e77" value="phân loại" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.4;" edge="1" parent="1" source="n11" target="n25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="617" />
+              <mxPoint x="650" y="577" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e78" value="chất liệu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.65;" edge="1" parent="1" source="n16" target="n25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="895" />
+              <mxPoint x="610" y="741" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e79" value="sở hữu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.9;" edge="1" parent="1" source="n20" target="n25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="665" y="1207" />
+              <mxPoint x="665" y="905" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e80" value="có ảnh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.07;entryX=0;entryY=0.5;" edge="1" parent="1" source="n25" target="n46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e81" value="có bản mô tả" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" edge="1" parent="1" source="n25" target="n53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e82" value="ngôn ngữ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="n66" target="n53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e83" value="slot có thể gắn tác phẩm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n25" target="n71">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n84" value="QR là cấu hình trên Artworks, không có bảng QR riêng. QRUpdatedBy ghi UserID nhưng migration chưa tạo FK.&#10;Mỗi tác phẩm có 0..n bản mô tả; UNIQUE(ArtworkID, LanguageID). Bảng tham chiếu được vẽ đầy đủ ở trang khác." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFF7E7;strokeColor=#C5AB7C;strokeWidth=1.5;fontSize=21;spacing=16;align=left;verticalAlign=middle;spacing=20;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1450" width="2020" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="erd-museums" name="ERD 2/3 — Bảo tàng, lịch trưng bày và giá vé">
+    <mxGraphModel dx="2100" dy="1520" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1520" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" value="MUSES  /  PHÂN TÍCH HỆ THỐNG" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=18;fontColor=#356078;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="2000" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="ERD 2/3 — Bảo tàng, lịch trưng bày và giá vé" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=33;fontColor=#172B3A;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="64" width="2000" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Quan hệ sở hữu và quan hệ trưng bày tách riêng. Bảng giá phục vụ tra cứu, không tạo giao dịch mua vé." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=19;fontColor=#536371;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="128" width="2000" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="PRD hiện hành • Đối chiếu mã nguồn 978b0e0 • 30/10/2026" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=17;fontColor=#687784;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1469" width="2000" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="230" width="520" height="359" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Museums" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="230" width="520" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="PK  MuseumID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="283" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="Name : nvarchar(250)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="317" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="Address : nvarchar(500)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="351" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="Description : nvarchar(4000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="385" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Contact : nvarchar(500) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="419" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="Latitude / Longitude : decimal(10,7)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="453" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="IsPublic / PinVerified : bit" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="487" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="Source : nvarchar(1000) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="521" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="IsDemo : bit" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="555" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="820" y="240" width="460" height="121" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="Artworks  [tham chiếu]" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#607582;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="820" y="240" width="460" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="PK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="293" width="460" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="Chi tiết tại ERD 1/3" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="327" width="460" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="240" width="500" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="Users  [tham chiếu]" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#607582;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="240" width="500" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" value="PK  UserID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="293" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" value="Role : varchar(30) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="327" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n25" value="Chi tiết tại ERD 3/3" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="361" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="820" y="820" width="550" height="393" as="geometry" />
+        </mxCell>
+        <mxCell id="n27" value="DisplaySchedules" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="820" y="820" width="550" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" value="PK  ScheduleID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="873" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" value="FK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="907" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="FK  MuseumID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="941" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" value="StartDate : date" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="975" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="EndDate : date NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1009" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n33" value="Status : varchar(12)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1043" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n34" value="Source : nvarchar(1000)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1077" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n35" value="VerifiedOn : date" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1111" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n36" value="FK  UpdatedBy : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1145" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" value="UpdatedAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="820" y="1179" width="550" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n38" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="820" width="520" height="359" as="geometry" />
+        </mxCell>
+        <mxCell id="n39" value="TicketOffers" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="820" width="520" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n40" value="PK, FK  MuseumID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="873" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n41" value="AdultPrice : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="907" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n42" value="ConcessionPrice : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="941" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" value="ChildPrice : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="975" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n44" value="IsEnabled : bit" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1009" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n45" value="ClosedWeekdays : varchar(20)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1043" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n46" value="Terms : nvarchar(1500)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1077" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n47" value="FK  UpdatedBy : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1111" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n48" value="UpdatedAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1145" width="520" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" value="cấu hình 0..1 bảng giá" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToOne;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n6" target="n38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e50" value="lịch của hiện vật" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n17" target="n26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e51" value="trưng bày" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.44;" edge="1" parent="1" source="n6" target="n26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="409" />
+              <mxPoint x="680" y="990" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e52" value="cập nhật lịch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=1;entryX=1;entryY=0.52;" edge="1" parent="1" source="n21" target="n26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1760" y="600" />
+              <mxPoint x="1460" y="600" />
+              <mxPoint x="1460" y="1020" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e53" value="cập nhật giá" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.9;exitY=0;entryX=1;entryY=0.8;" edge="1" parent="1" source="n21" target="n38">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1990" y="200" />
+              <mxPoint x="700" y="200" />
+              <mxPoint x="700" y="1150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n54" value="Lịch hiện tại: Confirmed và StartDate ≤ ngày Việt Nam &lt; EndDate; EndDate NULL = không giới hạn.&#10;Không cho lịch Confirmed của cùng hiện vật chồng nhau (kiểm tra trong giao dịch)." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFF7E7;strokeColor=#C5AB7C;strokeWidth=1.5;fontSize=21;spacing=16;align=left;verticalAlign=middle;spacing=20;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1270" width="1970" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="n55" value="Phạm vi giá vé hiện hành: chỉ đọc TicketOffers. TicketReservations và các route thanh toán cũ còn để tương thích,&#10;không nằm trong luồng khách của PRD này. Menu chỉnh giá vé trong Admin đã được bỏ." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFF7E7;strokeColor=#C5AB7C;strokeWidth=1.5;fontSize=21;spacing=16;align=left;verticalAlign=middle;spacing=20;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1380" width="1970" height="82" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="erd-activity" name="ERD 3/3 — Tài khoản, phiên và sự kiện website">
+    <mxGraphModel dx="1990" dy="1550" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1990" pageHeight="1550" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" value="MUSES  /  PHÂN TÍCH HỆ THỐNG" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=18;fontColor=#356078;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="1890" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="ERD 3/3 — Tài khoản, phiên và sự kiện website" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=33;fontColor=#172B3A;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="64" width="1890" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Dữ liệu truy cập mô tả trình duyệt/phiên; không phải số người có mặt thực tế tại bảo tàng." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=19;fontColor=#536371;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="128" width="1890" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="PRD hiện hành • Đối chiếu mã nguồn 978b0e0 • 30/10/2026" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;fontSize=17;fontColor=#687784;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1499" width="1890" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="735" y="230" width="500" height="291" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Users" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="735" y="230" width="500" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="PK  UserID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="283" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="FullName : nvarchar(150)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="317" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="UQ  Email : varchar(255)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="351" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="PasswordHash : nvarchar(500)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="385" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="Role : varchar(30) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="419" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="IsActive : bit NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="453" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="CreatedAt : datetime2 NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="487" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="480" height="223" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="AuthSessions" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="480" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="PK  TokenHash : varchar(64)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="293" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="FK  UserID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="327" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="CreatedAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="361" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="ExpiresAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="395" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="LastSeenAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="429" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="925" width="480" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" value="AuthLoginEvents" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="60" y="925" width="480" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" value="PK  LoginID : bigint" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="978" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n25" value="FK  UserID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1012" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="LoggedAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1046" width="480" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n27" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="735" y="925" width="500" height="223" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" value="AnalyticsSessions" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="735" y="925" width="500" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" value="PK  SessionID : varchar(36)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="978" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="VisitorID : varchar(36)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="1012" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" value="FK  UserID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="1046" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" value="StartedAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="1080" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n33" value="LastSeenAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="735" y="1114" width="500" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n34" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="800" width="470" height="325" as="geometry" />
+        </mxCell>
+        <mxCell id="n35" value="AnalyticsEvents" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#356078;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="800" width="470" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n36" value="PK  EventID : varchar(36)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="853" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" value="FK  SessionID : varchar(36)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="887" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n38" value="FK  UserID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="921" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n39" value="Kind : varchar(20)" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="955" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n40" value="FK  ArtworkID : int NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="989" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n41" value="PointKey : varchar(80) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1023" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n42" value="LanguageCode : varchar(10) NULL" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1057" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" value="OccurredAt : datetime2" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="1091" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n44" value="" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#356078;strokeWidth=1.5;fontSize=22;spacing=16;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="240" width="470" height="121" as="geometry" />
+        </mxCell>
+        <mxCell id="n45" value="Artworks  [tham chiếu]" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#607582;strokeColor=#356078;strokeWidth=1.5;fontSize=24;spacing=16;fontColor=#FFFFFF;fontStyle=1;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="240" width="470" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="n46" value="PK  ArtworkID : int" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#F3F7F9;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="293" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="n47" value="Chi tiết tại ERD 1/3" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E2E9ED;strokeWidth=1.5;fontSize=19;spacing=16;align=left;spacingLeft=15;spacingTop=0;spacingBottom=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="327" width="470" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="e48" value="đăng nhập" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0;exitY=0.25;entryX=1;entryY=0.5;" edge="1" parent="1" source="n6" target="n15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" value="lượt đăng nhập" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0;exitY=0.8;entryX=1;entryY=0.5;" edge="1" parent="1" source="n6" target="n22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="460" />
+              <mxPoint x="630" y="1000" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e50" value="khách có thể ẩn danh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n6" target="n27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e51" value="tài khoản khi ghi nhận" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0.65;entryY=0;" edge="1" parent="1" source="n6" target="n34">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1340" y="375" />
+              <mxPoint x="1340" y="710" />
+              <mxPoint x="1770" y="710" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e52" value="tác phẩm liên quan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=0.85;exitY=1;entryX=0.85;entryY=0;" edge="1" parent="1" source="n44" target="n34">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1870" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e53" value="phát sinh sự kiện" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeColor=#627581;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;startSize=18;endSize=18;jumpStyle=arc;jumpSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.65;" edge="1" parent="1" source="n27" target="n34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n54" value="Kind = page_view / qr_scan / audio_play. Heartbeat chỉ cập nhật phiên, không tạo loại sự kiện mới.&#10;VisitorID, PointKey và AnalyticsEvents.LanguageCode là giá trị, không có FK tới bảng riêng." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFF7E7;strokeColor=#C5AB7C;strokeWidth=1.5;fontSize=21;spacing=16;align=left;verticalAlign=middle;spacing=20;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1260" width="1870" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n55" value="AnalyticsSessions khác AuthSessions: khách ẩn danh vẫn có phiên truy cập. Thời gian sự kiện lưu UTC, báo cáo lọc UTC+7.&#10;GPS của khách không lưu vào các bảng này. AuthLoginEvents còn trong DB dù 3 thẻ thống kê đăng nhập đã bỏ khỏi UI." style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;fontColor=#172B3A;rounded=0;whiteSpace=wrap;fillColor=#FFF7E7;strokeColor=#C5AB7C;strokeWidth=1.5;fontSize=21;spacing=16;align=left;verticalAlign=middle;spacing=20;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1380" width="1870" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
