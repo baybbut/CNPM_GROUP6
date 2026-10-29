@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { NAV_LINKS } from "../../data/data";
 import { TicketIcon, SearchIcon, SvgIcon } from "../Icons";
+import { label } from "../../i18n/catalog.mjs";
 import LangSwitcher from "../LangSwitcher/LangSwitcher";
 import "./Header.css";
 
@@ -33,10 +34,10 @@ export default function Header() {
       </Link>
 
       <div className="nav-right">
-        <button className="search-btn" type="button">
+        <Link className="search-btn" to="/explore/collection">
           <SearchIcon light={light} />
           <span>{t("search")}</span>
-        </button>
+        </Link>
         <NavLink
           to="/scan"
           className="scan-nav"
@@ -45,8 +46,8 @@ export default function Header() {
           <SvgIcon kind="qr" size={22} />
           <span>{lang === "vi" ? "Quét QR" : "Scan QR"}</span>
         </NavLink>
-        <Link to="/account" className="account-nav">
-          {lang === "vi" ? "Tài khoản" : "Account"}
+        <Link to="/museums" className="account-nav">
+          {label(lang, "Museums")}
         </Link>
         <LangSwitcher />
         <button className="btn btn-brown">

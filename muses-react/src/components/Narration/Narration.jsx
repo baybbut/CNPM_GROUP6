@@ -1,3 +1,4 @@
+import { label } from "../../i18n/catalog.mjs";
 import { trackAudio } from "../../api/activity.mjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SvgIcon } from "../Icons";
@@ -16,6 +17,7 @@ export default function Narration({
   requestedLanguage = language,
   vi = true,
 }) {
+  const uiLanguage = requestedLanguage;
   const supported =
     typeof window !== "undefined" &&
     typeof window.speechSynthesis?.speak === "function" &&
@@ -88,9 +90,11 @@ export default function Narration({
     );
     if (!selectedVoice) {
       setError(
-        vi
-          ? "Chưa có giọng đọc cho ngôn ngữ này."
-          : "No voice available for this language.",
+        label(
+          uiLanguage,
+          "No voice available for this language.",
+          "Chưa có giọng đọc cho ngôn ngữ này.",
+        ),
       );
       return;
     }
@@ -157,9 +161,11 @@ export default function Narration({
         setWord(null);
         if (!["canceled", "interrupted"].includes(event.error))
           setError(
-            vi
-              ? "Chưa phát được giọng đọc. Hãy chọn giọng khác hoặc kiểm tra giọng đọc của thiết bị."
-              : "Speech could not start. Choose another voice or check your device speech settings.",
+            label(
+              uiLanguage,
+              "Speech could not start. Choose another voice or check your device speech settings.",
+              "Chưa phát được giọng đọc. Hãy chọn giọng khác hoặc kiểm tra giọng đọc của thiết bị.",
+            ),
           );
       };
       synth.speak(utterance);
@@ -174,31 +180,27 @@ export default function Narration({
   }
   const tokens = [...String(text).matchAll(/\S+|\s+/gu)];
   const activeSegment = segments[sentence];
-  const label =
+  const statusLabel =
     status === "playing"
-      ? vi
-        ? "Đang đọc"
-        : "Reading"
+      ? label(uiLanguage, "Reading", "Đang đọc")
       : status === "paused"
-        ? vi
-          ? "Đã tạm dừng"
-          : "Paused"
+        ? label(uiLanguage, "Paused", "Đã tạm dừng")
         : status === "ended"
-          ? vi
-            ? "Đã đọc xong"
-            : "Finished"
-          : vi
-            ? "Sẵn sàng đọc"
-            : "Ready";
+          ? label(uiLanguage, "Finished", "Đã đọc xong")
+          : label(uiLanguage, "Ready", "Sẵn sàng đọc");
   return (
     <div className="narration">
       <div className="narration-controls">
         <div className="narration-heading">
           <SvgIcon kind="headphones" size={22} />
           <strong>
-            {vi ? "Nghe và theo dõi văn bản" : "Listen and read along"}
+            {label(
+              uiLanguage,
+              "Listen and read along",
+              "Nghe và theo dõi văn bản",
+            )}
           </strong>
-          <span role="status">{label}</span>
+          <span role="status">{statusLabel}</span>
         </div>
         {supported ? (
           <>
@@ -210,28 +212,20 @@ export default function Narration({
                 onClick={status === "playing" ? pause : read}
               >
                 {status === "playing"
-                  ? vi
-                    ? "Tạm dừng"
-                    : "Pause"
+                  ? label(uiLanguage, "Pause", "Tạm dừng")
                   : status === "paused"
-                    ? vi
-                      ? "Tiếp tục"
-                      : "Resume"
+                    ? label(uiLanguage, "Resume", "Tiếp tục")
                     : !translationReady
-                      ? vi
-                        ? "Đọc bản gốc"
-                        : "Read original"
-                      : vi
-                        ? "Đọc văn bản"
-                        : "Read aloud"}
+                      ? label(uiLanguage, "Read original", "Đọc bản gốc")
+                      : label(uiLanguage, "Read aloud", "Đọc văn bản")}
               </button>
               <button type="button" disabled={!busy} onClick={stop}>
-                {vi ? "Dừng" : "Stop"}
+                {label(uiLanguage, "Stop", "Dừng")}
               </button>
               <label>
-                {vi ? "Tốc độ" : "Speed"}
+                {label(uiLanguage, "Speed", "Tốc độ")}
                 <select
-                  aria-label={vi ? "Tốc độ đọc" : "Reading speed"}
+                  aria-label={label(uiLanguage, "Reading speed", "Tốc độ đọc")}
                   value={speed}
                   disabled={busy}
                   onChange={(e) => setSpeed(e.target.value)}
@@ -244,15 +238,19 @@ export default function Narration({
                 </select>
               </label>
               <label className="narration-voice">
-                {vi ? "Giọng đọc" : "Voice"}
+                {label(uiLanguage, "Voice", "Giọng đọc")}
                 <select
-                  aria-label={vi ? "Giọng đọc" : "Voice"}
+                  aria-label={label(uiLanguage, "Voice", "Giọng đọc")}
                   value={voiceId}
                   disabled={busy}
                   onChange={(e) => setVoiceId(e.target.value)}
                 >
                   <option value="">
-                    {vi ? "Tự chọn giọng phù hợp" : "Automatic voice"}
+                    {label(
+                      uiLanguage,
+                      "Automatic voice",
+                      "Tự chọn giọng phù hợp",
+                    )}
                   </option>
                   {available.map((v) => (
                     <option value={v.voiceURI} key={v.voiceURI}>
@@ -269,34 +267,43 @@ export default function Narration({
                   checked={follow}
                   onChange={(e) => setFollow(e.target.checked)}
                 />
-                {vi ? "Tự cuộn theo lời đọc" : "Follow the narration"}
+                {label(
+                  uiLanguage,
+                  "Follow the narration",
+                  "Tự cuộn theo lời đọc",
+                )}
               </label>
               <small>
-                {vi
-                  ? "Tô sáng theo câu; theo từng từ khi giọng đọc hỗ trợ."
-                  : "Sentence highlighting; word highlighting when supported by the voice."}
+                {label(
+                  uiLanguage,
+                  "Sentence highlighting; word highlighting when supported by the voice.",
+                  "Tô sáng theo câu; theo từng từ khi giọng đọc hỗ trợ.",
+                )}
               </small>
             </div>
             {!available.length && (
               <p className="narration-note">
-                {vi
-                  ? `Thiết bị chưa cung cấp giọng ${lang.startsWith("vi") ? "tiếng Việt" : lang}. Bạn có thể cần thêm giọng đọc trong cài đặt thiết bị.`
-                  : `No ${lang} voice is listed. You may need to add a matching voice in your device settings.`}
+                {label(uiLanguage, "No voice available for this language.")} (
+                {lang})
               </p>
             )}
           </>
         ) : (
           <p className="narration-note">
-            {vi
-              ? "Trình duyệt này chưa hỗ trợ đọc văn bản thành tiếng. Bạn vẫn có thể đọc mô tả bên dưới."
-              : "This browser does not support speech synthesis. You can still read the description below."}
+            {label(
+              uiLanguage,
+              "This browser does not support speech synthesis. You can still read the description below.",
+              "Trình duyệt này chưa hỗ trợ đọc văn bản thành tiếng. Bạn vẫn có thể đọc mô tả bên dưới.",
+            )}
           </p>
         )}
         {!translationReady && (
           <p className="narration-note" role="status">
-            {vi
-              ? "Chưa có bản dịch. Bạn có thể nghe bản gốc."
-              : "Translation unavailable. You can listen to the original."}
+            {label(
+              uiLanguage,
+              "Translation unavailable. You can listen to the original.",
+              "Chưa có bản dịch. Bạn có thể nghe bản gốc.",
+            )}
           </p>
         )}
         {error && (
@@ -309,7 +316,11 @@ export default function Narration({
         className="narration-transcript"
         ref={transcript}
         tabIndex={0}
-        aria-label={vi ? "Nội dung thuyết minh" : "Narration transcript"}
+        aria-label={label(
+          uiLanguage,
+          "Narration transcript",
+          "Nội dung thuyết minh",
+        )}
       >
         <p>
           {tokens.map((token, index) => {

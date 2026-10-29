@@ -2,6 +2,7 @@ const locales = {
   vi: "vi-VN",
   en: "en-US",
   fr: "fr-FR",
+  ko: "ko-KR",
   ja: "ja-JP",
   zh: "zh-CN",
 };

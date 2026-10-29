@@ -1,3 +1,4 @@
+import Museums from "./components/Museums/Museums";
 import ActivityTracker from "./components/ActivityTracker";
 import VisitorAccount from "./components/VisitorAccount";
 import NewsArticle, { NewsIndex } from "./components/News/NewsPage";
@@ -39,6 +40,8 @@ export default function App() {
       <Header />
       <main>
         <Routes>
+          <Route path="/museums" element={<Museums />} />
+          <Route path="/museums/:id" element={<Museums />} />
           <Route path="/account" element={<VisitorAccount />} />
           <Route path="/news" element={<NewsIndex />} />
           <Route path="/news/:slug" element={<NewsArticle />} />

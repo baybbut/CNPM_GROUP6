@@ -46,7 +46,7 @@ export default function Art({
             padding: 0,
             cursor: "pointer",
           }}
-          aria-label={`Xem thông tin ${item.title || "tác phẩm"}`}
+          aria-label={item.title || "Artwork"}
           onClick={onClick}
         />
       );
@@ -56,10 +56,11 @@ export default function Art({
       <div
         className={className}
         style={style}
+        role="img"
+        aria-label={item.title || "Muses artwork"}
       />
     );
   }
-
 
   // Art có hai mặt: dùng cho Highlight.
   return (
@@ -73,19 +74,11 @@ export default function Art({
     >
       <span className="art-flip-inner" aria-hidden="true">
         {/* Mặt trước */}
-        <span
-          className="art-face art-front"
-          style={{ background }}
-        />
+        <span className="art-face art-front" style={{ background }} />
 
         {/* Mặt sau */}
-        <span
-          className="art-face art-back"
-          style={{ background }}
-        >
-          <span className="art-caption">
-            {flipTitle || item.date || ""}
-          </span>
+        <span className="art-face art-back" style={{ background }}>
+          <span className="art-caption">{flipTitle || item.date || ""}</span>
         </span>
       </span>
     </button>

@@ -1,7 +1,7 @@
 export const CONTENT_LANGUAGES = [
   { code: "vi", label: "Tiếng Việt" },
   { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
+  { code: "ko", label: "한국어" },
   { code: "ja", label: "日本語" },
   { code: "zh", label: "中文" },
 ];

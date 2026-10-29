@@ -1,3 +1,5 @@
+import { CurrentExhibition } from "../Museums/Museums";
+import { label } from "../../i18n/catalog.mjs";
 import { trackAudio } from "../../api/activity.mjs";
 import { useSearchParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
@@ -6,16 +8,16 @@ import {
   contentLanguage,
 } from "../../api/contentLanguages.mjs";
 import ArtworkQR from "../Scanner/ArtworkQR";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useArtworks, ArtworkImage, RequestState } from "./Artworks";
 import { mediaUrl } from "../../api/artworks";
-import indoorMap from "../../../maps/Mapindoormain.png";
 import "./artwork-detail.css";
 import Narration from "../Narration/Narration";
 import { SvgIcon } from "../Icons";
 
 function RelatedArtworks({ artwork, vi }) {
+  const { lang } = useLang();
   const state = useArtworks();
   const track = useRef(null);
   const related = (state.data || []).filter(
@@ -32,7 +34,7 @@ function RelatedArtworks({ artwork, vi }) {
     >
       <div className="detail-related-heading">
         <h2 id="related-artworks-title">
-          {vi ? "CÁC TÁC PHẨM CÙNG NGHỆ SĨ" : "MORE BY THE SAME ARTIST"}
+          {label(lang, "MORE BY THE SAME ARTIST", "CÁC TÁC PHẨM CÙNG NGHỆ SĨ")}
         </h2>
         <span>{artwork.artist}</span>
       </div>
@@ -59,7 +61,7 @@ function RelatedArtworks({ artwork, vi }) {
             <div className="detail-related-controls">
               <button
                 type="button"
-                aria-label={vi ? "Tác phẩm trước" : "Previous artworks"}
+                aria-label={label(lang, "Previous artworks", "Tác phẩm trước")}
                 onClick={() =>
                   track.current?.scrollBy({
                     left: -track.current.clientWidth * 0.8,
@@ -71,7 +73,7 @@ function RelatedArtworks({ artwork, vi }) {
               </button>
               <button
                 type="button"
-                aria-label={vi ? "Tác phẩm tiếp theo" : "Next artworks"}
+                aria-label={label(lang, "Next artworks", "Tác phẩm tiếp theo")}
                 onClick={() =>
                   track.current?.scrollBy({
                     left: track.current.clientWidth * 0.8,
@@ -85,9 +87,11 @@ function RelatedArtworks({ artwork, vi }) {
           </>
         ) : (
           <p className="detail-related-empty">
-            {vi
-              ? "Chưa có tác phẩm khác của nghệ sĩ này trong bộ sưu tập."
-              : "More works by this artist will be added to the collection."}
+            {label(
+              lang,
+              "More works by this artist will be added to the collection.",
+              "Chưa có tác phẩm khác của nghệ sĩ này trong bộ sưu tập.",
+            )}
           </p>
         ))}
     </section>
@@ -100,11 +104,16 @@ export default function ArtworkDetail() {
   const [query, setQuery] = useSearchParams();
   const state = useArtworks(id);
   const { data: artwork, loading, error, vi } = state;
+  const audioRef = useRef(null);
+  useEffect(() => {
+    const player = audioRef.current;
+    return () => player?.pause();
+  }, [id, lang, artwork?.audioUrl]);
   return (
     <div className="artwork-detail-page">
       <div className="detail-language-bar" style={{ padding: "100px 5% 0" }}>
         <label>
-          {vi ? "Ngôn ngữ nội dung" : "Content language"}
+          {label(lang, "Content language", "Ngôn ngữ nội dung")}
           <select
             value={contentLanguage(lang)}
             onChange={(e) => {
@@ -134,22 +143,27 @@ export default function ArtworkDetail() {
               <div className="detail-summary">
                 <Link className="detail-back" to="/explore/collection">
                   <SvgIcon kind="arrow" direction="left" size={17} />{" "}
-                  {vi ? "Bộ sưu tập" : "The collection"}
+                  {label(lang, "The collection", "Bộ sưu tập")}
                 </Link>
                 <h1>{artwork.title}</h1>
                 <p className="detail-short-description">
                   {artwork.shortDescription ||
                     artwork.description ||
-                    (vi
-                      ? "Khám phá tác phẩm trong bộ sưu tập Muses."
-                      : "Discover this work in the Muses collection.")}
+                    label(
+                      lang,
+                      "Discover this work in the Muses collection.",
+                      "Khám phá tác phẩm trong bộ sưu tập Muses.",
+                    )}
                 </p>
                 <dl className="detail-facts">
                   {[
-                    [vi ? "NGHỆ SĨ" : "ARTIST", artwork.artist],
-                    [vi ? "CHẤT LIỆU" : "MATERIAL", artwork.material],
-                    [vi ? "NĂM" : "YEAR", artwork.creationPeriod],
-                    [vi ? "KÍCH THƯỚC" : "DIMENSIONS", artwork.dimensions],
+                    [label(lang, "ARTIST", "NGHỆ SĨ"), artwork.artist],
+                    [label(lang, "MATERIAL", "CHẤT LIỆU"), artwork.material],
+                    [label(lang, "YEAR", "NĂM"), artwork.creationPeriod],
+                    [
+                      label(lang, "DIMENSIONS", "KÍCH THƯỚC"),
+                      artwork.dimensions,
+                    ],
                   ]
                     .filter(([, value]) => value)
                     .map(([label, value]) => (
@@ -161,19 +175,23 @@ export default function ArtworkDetail() {
                 </dl>
                 {Boolean(artwork.isNationalTreasure) && (
                   <p className="detail-treasure">
-                    ◇ {vi ? "Bảo vật quốc gia" : "National treasure"}
+                    ◇ {label(lang, "National treasure", "Bảo vật quốc gia")}
                     {artwork.treasureYear ? ` · ${artwork.treasureYear}` : ""}
                   </p>
                 )}
                 {mediaUrl(artwork.audioUrl) && (
                   <div className="detail-audio">
-                    <h2>{vi ? "Nghe thuyết minh" : "Audio guide"}</h2>
+                    <h2>{label(lang, "Audio guide", "Nghe thuyết minh")}</h2>
                     <audio
+                      ref={audioRef}
                       controls
                       onPlay={(event) => {
                         window.dispatchEvent(new Event("muses-audio-play"));
                         if (!event.currentTarget.dataset.counted) {
-                          trackAudio(contentLanguage(lang));
+                          trackAudio(
+                            artwork.contentLanguage ||
+                              artwork.descriptionLanguage,
+                          );
                           event.currentTarget.dataset.counted = "true";
                         }
                       }}
@@ -182,7 +200,7 @@ export default function ArtworkDetail() {
                       }}
                       preload="none"
                       src={mediaUrl(artwork.audioUrl)}
-                      key={`${id}-${artwork.audioUrl}`}
+                      key={`${id}-${lang}-${artwork.contentLanguage}-${artwork.audioUrl}`}
                     />
                   </div>
                 )}
@@ -190,72 +208,71 @@ export default function ArtworkDetail() {
             </div>
             <div className="detail-editorial">
               <section aria-labelledby="description-title">
-                <h2 id="description-title">{vi ? "MÔ TẢ" : "DESCRIPTION"}</h2>
+                <h2 id="description-title">
+                  {label(lang, "DESCRIPTION", "MÔ TẢ")}
+                </h2>
                 {artwork.description ? (
                   <Narration
-                    key={`${id}-${artwork.descriptionLanguage || (vi ? "vi" : "en")}`}
+                    key={`${id}-${lang}-${artwork.contentLanguage}`}
                     text={artwork.description}
-                    language={artwork.descriptionLanguage || (vi ? "vi" : "en")}
+                    language={
+                      artwork.contentLanguage ||
+                      artwork.descriptionLanguage ||
+                      "vi"
+                    }
                     requestedLanguage={contentLanguage(lang)}
                     vi={vi}
                   />
                 ) : (
                   <p>
-                    {vi
-                      ? "Mô tả tác phẩm đang được cập nhật."
-                      : "The description of this artwork is being prepared."}
+                    {label(
+                      lang,
+                      "The description of this artwork is being prepared.",
+                      "Mô tả tác phẩm đang được cập nhật.",
+                    )}
                   </p>
                 )}
-                {artwork.translationSource === "automatic" && (
-                  <p className="detail-translation-status">
-                    {vi ? "Bản dịch tự động" : "Automatic translation"}
-                  </p>
-                )}
-                {(artwork.translationStatus === "unavailable" ||
-                  (artwork.descriptionLanguage &&
-                    artwork.descriptionLanguage !== contentLanguage(lang))) && (
+                {artwork.isFallback && (
                   <p className="detail-translation-status" role="status">
-                    {vi
-                      ? "Chưa có bản dịch. Đang hiển thị bản gốc."
-                      : "Translation unavailable. Showing the original."}{" "}
-                    <button onClick={state.retry}>
-                      {vi ? "Thử lại" : "Retry"}
-                    </button>
+                    {label(
+                      lang,
+                      "Published translation unavailable; showing Vietnamese.",
+                    )}
+                  </p>
+                )}
+                <p>
+                  <strong>{label(lang, "Source")}: </strong>
+                  {artwork.source}
+                </p>
+                {artwork.imageSource && (
+                  <p>
+                    <strong>{label(lang, "Image source")}: </strong>
+                    {artwork.imageSource}
+                  </p>
+                )}
+                {artwork.isDemo && (
+                  <p className="catalog-demo">
+                    {label(lang, "Demonstration data — not a real exhibition.")}
                   </p>
                 )}
               </section>
               <section aria-labelledby="history-title">
-                <h2 id="history-title">{vi ? "LỊCH SỬ" : "HISTORY"}</h2>
+                <h2 id="history-title">{label(lang, "HISTORY", "LỊCH SỬ")}</h2>
                 <p>
                   {artwork.history ||
-                    (vi
-                      ? "Thông tin về lịch sử tác phẩm đang được cập nhật."
-                      : "The history of this artwork is being prepared.")}
+                    label(
+                      lang,
+                      "The history of this artwork is being prepared.",
+                      "Thông tin về lịch sử tác phẩm đang được cập nhật.",
+                    )}
                 </p>
               </section>
             </div>
           </article>
           <RelatedArtworks key={id} artwork={artwork} vi={vi} />
-          <section className="detail-map-section">
-            <Link to="/visit#directions" className="detail-map-link">
-              <img
-                src={indoorMap}
-                alt={
-                  vi
-                    ? "Sơ đồ các phòng trưng bày bảo tàng"
-                    : "Museum gallery floor plan"
-                }
-              />
-              <span>
-                {vi
-                  ? "BẢN ĐỒ TƯƠNG TÁC CỦA BẢO TÀNG"
-                  : "INTERACTIVE MAPS OF THE MUSEUM"}
-              </span>
-              <i aria-hidden="true">
-                <SvgIcon kind="arrow" size={24} />
-              </i>
-            </Link>
-          </section>
+          <div style={{ padding: "0 5% 50px" }}>
+            <CurrentExhibition artwork={artwork} />
+          </div>
         </>
       )}
     </div>

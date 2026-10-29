@@ -1,3 +1,4 @@
+import { label } from "../../i18n/catalog.mjs";
 import DateFilter from "./DateFilter";
 import { matchesEventDate } from "./eventDates.mjs";
 import { useState } from "react";
@@ -92,6 +93,9 @@ function ExhibitionContent() {
         <p>{t("News")}</p>
       </section>
 
+      <p className="catalog-demo" style={{ margin: "20px 5%" }}>
+        {label(lang, "Demonstration data — not a real exhibition.")}
+      </p>
       {/* TABS */}
       <div className="ex-wrap">
         <div className="ex-tabs" role="tablist">

@@ -1,3 +1,5 @@
+import { mediaUrl } from "../../api/artworks";
+import { label } from "../../i18n/catalog.mjs";
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "../../context/LangContext";
 import { GALLERY } from "../../data/data";
@@ -12,7 +14,23 @@ export default function Welcome() {
   const { t, lang } = useLang();
   const [selectedId, setSelectedId] = useState(null);
   const trigger = useRef(null);
-  const images = useHomeImages(GALLERY, "welcome");
+  const configured = useHomeImages(GALLERY, "welcome");
+  const catalogue = useArtworks();
+  const published = catalogue.data || [];
+  const images = configured.flatMap((slot, index) => {
+    const artwork =
+      published.find((a) => a.id === slot.artworkId) || published[index];
+    return artwork
+      ? [
+          {
+            ...slot,
+            artworkId: artwork.id,
+            title: artwork.title,
+            img: mediaUrl(artwork.imageUrl),
+          },
+        ]
+      : [];
+  });
 
   const galleryRef = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -42,6 +60,10 @@ export default function Welcome() {
     <section className="welcome">
       <h2 className="title light">{t("welcomeTitle")}</h2>
 
+      <RequestState {...catalogue} />
+      {!catalogue.loading && !catalogue.error && !published.length && (
+        <p>{label(lang, "No results found.")}</p>
+      )}
       <div className="gallery" ref={galleryRef}>
         {images.map((g, index) => (
           <Art
