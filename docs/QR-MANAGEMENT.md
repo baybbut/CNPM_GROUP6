@@ -1,6 +1,6 @@
 # Website QR management
 
-Overview now includes the visitor session list, search/status filters and its filtered CSV. The separate Visitors menu is removed; old `#Visitors` links resolve to Overview. Reports retains detailed analytics. The former QR Check-in menu is now **Quản lý QR** (`#QR%20Codes`); old `#QR Check-in` links resolve to it.
+Overview now includes the visitor session list, search/status filters. The separate Visitors menu is removed; old `#Visitors` links resolve to Overview. Reports retains detailed analytics. The former QR Check-in menu is now **Quản lý QR** (`#QR%20Codes`); old `#QR Check-in` links resolve to it.
 
 ## QR inventory and lifecycle
 
@@ -31,4 +31,4 @@ npm --prefix muses-react run dev -- --host 0.0.0.0 --port 5173
 - `PUT /api/admin/qr/artworks/:id`: Admin-only label/enabled update, strict boolean and length validation, actor/time recorded. Enabling requires current publication eligibility in the atomic UPDATE as well as validation.
 - `GET /api/qr/artworks/:id`: guest-readable availability; 410 for paused, 404 for unavailable/unpublished/missing, 503 for missing setup/service failure; no-store.
 
-Backend tests exercise authorization, validation, publication guards, persistence, missing schema and public QR filtering independently from normal artworks. Browser tests use controlled APIs to verify merged Overview search/filter/export, QR list and PNG preview, rename/pause/re-enable across Admin and visitor views, blocked legacy landings without QR events, ordinary collection access while paused, and successful validated QR landing events. Real QR PNG decoding is also checked in `qr-directions.mjs`. Both builds are verified. Live SQL migration/permissions and a physical phone require local verification; cloud tests do not claim to have run against the user's database.
+Backend tests exercise authorization, validation, publication guards, persistence, missing schema and public QR filtering independently from normal artworks. Browser tests use controlled APIs to verify merged Overview search/filter, QR list and PNG preview, rename/pause/re-enable across Admin and visitor views, blocked legacy landings without QR events, ordinary collection access while paused, and successful validated QR landing events. Real QR PNG decoding is also checked in `qr-directions.mjs`. Both builds are verified. Live SQL migration/permissions and a physical phone require local verification; cloud tests do not claim to have run against the user's database.

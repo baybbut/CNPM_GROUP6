@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Header, Panel, Stats, Field, download, csv } from "./shared";
+import { Header, Panel, Stats, Field } from "./shared";
 import "./analytics.css";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 async function api(path, body, signal) {
@@ -30,7 +30,7 @@ const weekStart = () =>
 const clock = (value) =>
   new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 const hourLabel = (hour) =>
-  `${String(hour).padStart(2, "0")}:00–${String((hour + 1) % 24).padStart(2, "0")}:00`;
+  `${String(hour).padStart(2, "0")}:00–${String(hour + 1).padStart(2, "0")}:00`;
 export default function Analytics({ mode = "overview", search = "" }) {
   const [user, setUser] = useState(null),
     [authLoading, setAuthLoading] = useState(true),
@@ -38,6 +38,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
     [authError, setAuthError] = useState("");
   const [from, setFrom] = useState(weekStart),
     [to, setTo] = useState(today),
+    [fromHour, setFromHour] = useState(0),
+    [toHour, setToHour] = useState(24),
     [data, setData] = useState(null),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(false),
@@ -70,7 +72,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
       setError("");
       try {
         const result = await api(
-          `/api/admin/analytics?from=${from}&to=${to}`,
+          `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
           null,
           controller.signal,
         );
@@ -94,7 +96,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
       controller.abort();
       clearInterval(timer);
     };
-  }, [user, from, to, attempt]);
+  }, [user, from, to, fromHour, toHour, attempt]);
   async function login(e) {
     e.preventDefault();
     setAuthBusy(true);
@@ -184,83 +186,13 @@ export default function Analytics({ mode = "overview", search = "" }) {
         visitorStatus === "all" ||
         (visitorStatus === "active" ? Boolean(row.active) : !row.active)),
   );
-  const hours = Array.from({ length: 24 }, (_, hour) => ({
-    hour,
+  const hours = Array.from({ length: toHour - fromHour }, (_, index) => ({
+    hour: fromHour + index,
     visitors: 0,
     interactions: 0,
-    ...data?.hours.find((row) => row.hour === hour),
+    ...data?.hours.find((row) => row.hour === fromHour + index),
   }));
   const maximum = Math.max(1, ...hours.map((row) => row.visitors));
-  const peak = data?.peakHours.length
-    ? data.peakHours.map(hourLabel).join(", ")
-    : "Chưa có dữ liệu";
-  function exportData(visitorsOnly = false) {
-    const rows = [
-      ["Từ ngày", from, "Đến ngày", to],
-      ["Múi giờ", "Asia/Ho_Chi_Minh"],
-      [],
-      ...(visitorsOnly
-        ? [
-            ["Mã phiên", "Khách", "Bắt đầu", "Hoạt động cuối", "Trạng thái"],
-            ...recentRows.map((row) => [
-              row.id,
-              row.name || "Khách",
-              clock(row.startedAt),
-              clock(row.lastSeenAt),
-              row.active ? "Đang hoạt động" : "Đã rời",
-            ]),
-          ]
-        : [
-            [
-              "Điểm đọc",
-              "Tác phẩm",
-              "Thiết bị tham gia",
-              "Tài khoản tham gia",
-              "Thiết bị xem",
-              "Lượt mở QR",
-              "Lượt bắt đầu nghe",
-            ],
-            ...pointRows.map((row) => [
-              row.point,
-              row.title || "",
-              row.participants,
-              row.signedInParticipants ?? 0,
-              row.viewers,
-              row.qrScans,
-              row.audioPlays,
-            ]),
-            [],
-            ["Khung giờ", "Thiết bị", "Tương tác"],
-            ...hours.map((row) => [
-              hourLabel(row.hour),
-              row.visitors,
-              row.interactions,
-            ]),
-            [],
-            ["Ngày", "Phiên", "Thiết bị", "Mở QR", "Bắt đầu nghe"],
-            ...(data?.daily || []).map((row) => [
-              row.day,
-              row.sessions,
-              row.visitors,
-              row.qrScans,
-              row.audioPlays,
-            ]),
-          ]),
-    ];
-    download(
-      visitorsOnly ? "muses-visitors.csv" : "muses-statistics.csv",
-      "\uFEFF" +
-        csv(
-          rows.map((row) =>
-            row.map((value) =>
-              typeof value === "string" && /^[=+@-]/.test(value)
-                ? "'" + value
-                : value,
-            ),
-          ),
-        ),
-    );
-  }
   return (
     <div className="pg-workspace analytics">
       <Header
@@ -271,21 +203,11 @@ export default function Analytics({ mode = "overview", search = "" }) {
             : "Theo dõi hoạt động trên website và tại các điểm đọc."
         }
         action={
-          <div className="analytics-actions">
-            {isOverview ? (
-              <a className="primary" href="#Reports">
-                Xem báo cáo
-              </a>
-            ) : (
-              <button
-                className="primary"
-                disabled={!data}
-                onClick={() => exportData(false)}
-              >
-                Xuất CSV
-              </button>
-            )}
-          </div>
+          isOverview ? (
+            <a className="primary" href="#Reports">
+              Xem báo cáo
+            </a>
+          ) : null
         }
       />
       <div className="analytics-filters">
@@ -313,6 +235,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
           />
         </label>
         <button
+          aria-pressed={from === today() && to === today()}
           onClick={() => {
             setFrom(today());
             setTo(today());
@@ -321,6 +244,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
           Hôm nay
         </button>
         <button
+          aria-pressed={from === weekStart() && to === today()}
           onClick={() => {
             setFrom(weekStart());
             setTo(today());
@@ -328,7 +252,11 @@ export default function Analytics({ mode = "overview", search = "" }) {
         >
           7 ngày
         </button>
-        <button onClick={() => setAttempt((n) => n + 1)} disabled={loading}>
+        <button
+          onClick={() => setAttempt((n) => n + 1)}
+          disabled={loading}
+          aria-busy={loading}
+        >
           Làm mới
         </button>
         <span role="status">
@@ -391,13 +319,66 @@ export default function Analytics({ mode = "overview", search = "" }) {
         </p>
       )}
       <Panel
-        title="Khung giờ đông nhất"
-        subtitle="Thiết bị có tương tác theo từng giờ · giờ Việt Nam"
+        title="Báo cáo theo khung giờ"
+        subtitle="Áp dụng cho dữ liệu của mỗi ngày đã chọn · giờ Việt Nam"
       >
-        <p className="analytics-peak">{data ? peak : "—"}</p>
+        <div className="analytics-hour-filters">
+          <label>
+            Từ giờ
+            <select
+              value={fromHour}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                setFromHour(next);
+                if (next >= toHour) setToHour(next + 1);
+              }}
+            >
+              {Array.from({ length: 24 }, (_, h) => (
+                <option key={h} value={h}>
+                  {String(h).padStart(2, "0")}:00
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Đến giờ
+            <select
+              value={toHour}
+              onChange={(e) => setToHour(Number(e.target.value))}
+            >
+              {Array.from(
+                { length: 24 - fromHour },
+                (_, i) => fromHour + i + 1,
+              ).map((h) => (
+                <option key={h} value={h}>
+                  {String(h).padStart(2, "0")}:00
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            onClick={() => {
+              setFromHour(0);
+              setToHour(24);
+            }}
+            aria-pressed={fromHour === 0 && toHour === 24}
+          >
+            Cả ngày
+          </button>
+        </div>
+        <p className="analytics-hour-summary" role="status">
+          Đang hiển thị {String(fromHour).padStart(2, "0")}:00–
+          {String(toHour).padStart(2, "0")}:00
+        </p>
         <div className="analytics-chart-scroll">
           <div
             className="analytics-hours"
+            style={{
+              gridTemplateColumns: `repeat(${hours.length}, minmax(24px, 1fr))`,
+              minWidth: `${hours.length * 30}px`,
+              maxWidth:
+                hours.length < 6 ? `${hours.length * 100}px` : undefined,
+            }}
             role="img"
             aria-label="Số thiết bị truy cập theo từng giờ"
           >
@@ -506,17 +487,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
             showVisitors ? "Danh sách phiên truy cập" : "Phiên truy cập gần đây"
           }
           subtitle="Tối đa 100 phiên mới nhất trong khoảng ngày đã chọn"
-          action={
-            showVisitors && (
-              <button
-                className="primary"
-                disabled={!data}
-                onClick={() => exportData(true)}
-              >
-                Xuất CSV phiên truy cập
-              </button>
-            )
-          }
         >
           {showVisitors && (
             <div className="analytics-visitor-tools">

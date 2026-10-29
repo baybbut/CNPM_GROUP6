@@ -198,3 +198,44 @@
   margin-top: 6px;
   color: #70685c;
 }
+.analytics-filters button[aria-pressed="true"],
+.analytics-filters button[aria-busy="true"],
+.analytics-filters button:focus,
+.analytics-filters button:active,
+.analytics-hour-filters button[aria-pressed="true"],
+.analytics-hour-filters button:focus,
+.analytics-hour-filters button:active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+.analytics-hour-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.analytics-hour-filters label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.analytics-hour-filters select {
+  font: inherit;
+  color: #171710;
+  background: #fffaf0;
+  border: 1px solid #b7ae97;
+  border-radius: 8px;
+  padding: 9px 13px;
+}
+.analytics-hour-filters button {
+  border: 1px solid #b7ae97;
+  border-radius: 20px;
+  padding: 9px 15px;
+}
+.analytics-hour-summary {
+  font-size: 15px;
+  margin: 0 0 20px;
+  color: #62583f;
+}

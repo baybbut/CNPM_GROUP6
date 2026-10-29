@@ -35,7 +35,7 @@ Nếu backend khác cổng 3001, cấu hình `API_PROXY_TARGET` trong file `.env
 - Ở Admin, bấm Tạo QR điểm đọc, chọn tác phẩm từ DB, nhập mã điểm (ví dụ `san-vuon-01`) và địa chỉ website mà điện thoại truy cập được. Tải QR rồi quét trên điện thoại cùng Wi-Fi.
 - URL điểm đọc có dạng `/explore/artworks/17?lang=vi&source=qr&point=san-vuon-01`. Mỗi điểm dùng một mã ổn định; hai điểm có thể trỏ đến cùng tác phẩm.
 - Bấm Đọc văn bản để nghe. Chỉ sự kiện bắt đầu phát mới tăng lượt nghe; tạm dừng/tiếp tục không tạo lượt mới.
-- Quay lại Admin, bấm Làm mới hoặc chờ tối đa 30 giây. Kiểm tra thống kê từng điểm, giờ cao điểm, bộ lọc ngày, phiên mới nhất và CSV.
+- Quay lại Admin, bấm Làm mới hoặc chờ tối đa 30 giây. Kiểm tra thống kê từng điểm, giờ cao điểm, bộ lọc ngày, phiên mới nhất và bộ lọc giờ.
 - Thử đăng xuất và mở API `/api/admin/analytics`: phải bị từ chối. Tài khoản khách không có quyền đọc báo cáo Admin.
 
 ## Ý nghĩa chỉ số
@@ -54,4 +54,10 @@ Có thể đặt `COOKIE_SECURE=true` trong backend khi triển khai HTTPS. Cook
 
 ## Overview và quản lý QR
 
-Visitors đã gộp vào Overview: 5 số liệu tổng quan, biểu đồ giờ cao điểm và danh sách phiên có tìm kiếm/lọc trạng thái/xuất CSV. `#Visitors` cũ mở Overview. Menu QR Check-in đổi thành Quản lý QR, quản lý mã tác phẩm thực sự dùng trên web (tên, bật/tắt, xem/tải, lượt mở), theo [hướng dẫn QR](QR-MANAGEMENT.md). Thống kê chi tiết theo giờ/ngày/điểm đọc vẫn ở Reports. Phần cấu hình QR cần chạy lại `db:catalog` để thêm các cột trạng thái; việc gộp trang không thay đổi cách đếm khách. Các hướng dẫn tạo QR điểm đọc và menu cũ phía trên là mô tả phiên bản trước.
+Visitors đã gộp vào Overview: 5 số liệu tổng quan, biểu đồ giờ cao điểm và danh sách phiên có tìm kiếm/lọc trạng thái. `#Visitors` cũ mở Overview. Menu QR Check-in đổi thành Quản lý QR, quản lý mã tác phẩm thực sự dùng trên web (tên, bật/tắt, xem/tải, lượt mở), theo [hướng dẫn QR](QR-MANAGEMENT.md). Thống kê chi tiết theo giờ/ngày/điểm đọc vẫn ở Reports. Phần cấu hình QR cần chạy lại `db:catalog` để thêm các cột trạng thái; việc gộp trang không thay đổi cách đếm khách. Các hướng dẫn tạo QR điểm đọc và menu cũ phía trên là mô tả phiên bản trước.
+
+## Chọn khung giờ báo cáo
+
+Đã bỏ nút Báo cáo theo ngày trên thanh trên và các nút Xuất CSV. Hôm nay/7 ngày hiển thị đen khi được chọn; Làm mới có trạng thái nhấn/tải. Bộ chọn Từ giờ/Đến giờ (giờ Việt Nam, nguyên giờ) lọc dữ liệu lịch sử trong từng ngày của khoảng ngày đang chọn. Mặc định Cả ngày là [00:00,24:00); không hỗ trợ một khoảng đảo qua nửa đêm. Biểu đồ chỉ hiện các cột trong khoảng đã chọn, thay cho chuỗi liệt kê giờ cao điểm dài. Tổng phiên/thiết bị, lượt QR/nghe, bảng ngày/điểm đọc và danh sách phiên đều lấy cùng bộ lọc từ API. Phiên trong khoảng giờ là phiên có sự kiện trong khoảng đó; thời gian hoạt động cuối vẫn là giá trị mới nhất đã ghi nhận. Chỉ số Khách đang hoạt động giữ ý nghĩa thời gian thực trong 5 phút gần nhất.
+
+API nhận thêm fromHour (0–23), toHour (1–24, lớn hơn fromHour). Tham số được kiểm tra và truyền SQL có kiểu, lọc theo UTC+7 với đầu khoảng bao gồm/cuối khoảng loại trừ. Không có thay đổi schema hay migration cho lần chỉnh này. Các kiểm thử API và trình duyệt dùng DB adapter/dữ liệu giả, không thay thế việc kiểm tra trên SQL Server thật.

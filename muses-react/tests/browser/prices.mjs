@@ -74,6 +74,7 @@ async function intercept(p) {
   requests.push({
     path,
     method: p.request.method,
+    url: p.request.url,
     kind:
       path === "/api/activity" && p.request.postData
         ? JSON.parse(p.request.postData).kind
@@ -173,6 +174,25 @@ async function intercept(p) {
       trackingSince: "2026-10-30T00:00:00Z",
       updatedAt: "2026-10-30T00:00:00Z",
     };
+  if (path === "/api/admin/analytics") {
+    const params = new URL(p.request.url).searchParams;
+    const fromHour = Number(params.get("fromHour") || 0),
+      toHour = Number(params.get("toHour") || 24);
+    data.hours = [
+      { hour: 8, visitors: 20, interactions: 24 },
+      { hour: 12, visitors: 10, interactions: 15 },
+      { hour: 18, visitors: 20, interactions: 21 },
+    ].filter((r) => r.hour >= fromHour && r.hour < toHour);
+    data.fromHour = fromHour;
+    data.toHour = toHour;
+    if (fromHour !== 0 || toHour !== 24) {
+      data.summary.visitors = 10;
+      data.summary.sessions = 12;
+      data.summary.qrScans = 2;
+      data.summary.audioPlays = 1;
+      data.recent = data.recent.slice(0, 1);
+    }
+  }
   return call("Fetch.fulfillRequest", {
     requestId: p.requestId,
     responseCode: code,
@@ -383,13 +403,93 @@ try {
   await wait(
     "document.querySelectorAll('.analytics-visitor-list tbody tr').length===2",
   );
-  await ev(
-    "const original=URL.createObjectURL;URL.createObjectURL=(blob)=>{window.exportedCsv=blob;return original(blob)};document.querySelector('.analytics-visitor-list .pg-panel-head button').click();",
+  assert.equal(await ev("document.querySelector('.date-button')"), null);
+  assert.equal(
+    await ev(
+      "document.querySelector('.analytics').textContent.includes('Xuất CSV')",
+    ),
+    false,
   );
-  const csv = await ev("window.exportedCsv.text()");
-  assert.ok(csv.includes("session-b002"));
-  assert.equal(csv.includes("session-a001"), false);
-  assert.equal(csv.includes("Khung giờ"), false);
+  assert.equal(await ev("document.querySelector('.analytics-peak')"), null);
+  await ev(
+    "[...document.querySelectorAll('.analytics-filters button')].find(b=>b.textContent==='Hôm nay').click()",
+  );
+  await wait(
+    "[...document.querySelectorAll('.analytics-filters button')].some(b=>b.textContent==='Hôm nay' && b.getAttribute('aria-pressed')==='true')",
+  );
+  assert.equal(
+    await ev(
+      "getComputedStyle(document.querySelector('.analytics-filters button[aria-pressed=true]')).backgroundColor",
+    ),
+    "rgb(17, 17, 17)",
+  );
+  await ev(
+    "[...document.querySelectorAll('.analytics-filters button')].find(b=>b.textContent==='7 ngày').click()",
+  );
+  await wait(
+    "[...document.querySelectorAll('.analytics-filters button')].some(b=>b.textContent==='7 ngày' && b.getAttribute('aria-pressed')==='true')",
+  );
+  await ev(
+    "(()=>{const s=document.querySelector('.analytics-visitor-tools select');s.value='all';s.dispatchEvent(new Event('change',{bubbles:true}));})()",
+  );
+  await ev(
+    "(()=>{const s=document.querySelector('.analytics-hour-filters select');s.value='9';s.dispatchEvent(new Event('change',{bubbles:true}));})()",
+  );
+  await ev(
+    "(()=>{const s=document.querySelectorAll('.analytics-hour-filters select')[1];s.value='17';s.dispatchEvent(new Event('change',{bubbles:true}));})()",
+  );
+  await wait(
+    "document.querySelector('.analytics-hour-summary').textContent.includes('09:00–17:00') && document.querySelectorAll('.pg-stat strong')[1]?.textContent==='10'",
+  );
+  assert.equal(
+    await ev("document.querySelectorAll('.analytics-hours > div').length"),
+    8,
+  );
+  assert.equal(
+    await ev("document.querySelector('.pg-stat strong').textContent"),
+    "7",
+  );
+  assert.ok(
+    requests.some(
+      (r) =>
+        r.path === "/api/admin/analytics" &&
+        new URL(r.url).searchParams.get("fromHour") === "9" &&
+        new URL(r.url).searchParams.get("toHour") === "17",
+    ),
+  );
+  await viewport(1440);
+  writeFileSync(
+    "/tmp/muses-report-hours.png",
+    Buffer.from(
+      (await call("Page.captureScreenshot", { format: "png" })).data,
+      "base64",
+    ),
+  );
+  await viewport(375);
+  await ev(
+    "(()=>{const s=document.querySelector('.analytics-hour-filters select');s.value='23';s.dispatchEvent(new Event('change',{bubbles:true}));})()",
+  );
+  await wait(
+    "document.querySelector('.analytics-hour-summary').textContent.includes('23:00–24:00')",
+  );
+  assert.equal(
+    await ev("document.querySelectorAll('.analytics-hours > div').length"),
+    1,
+  );
+  await ev("document.querySelector('.analytics-hour-filters button').click()");
+  await wait(
+    "document.querySelectorAll('.analytics-hours > div').length===24 && document.querySelectorAll('.pg-stat strong')[1]?.textContent==='50'",
+  );
+  await ev("location.hash='Reports'");
+  await wait(
+    "document.querySelector('.sidebar [aria-current=page]')?.textContent==='Reports'",
+  );
+  assert.equal(
+    await ev(
+      "document.querySelector('.analytics').textContent.includes('Xuất CSV')",
+    ),
+    false,
+  );
   await ev("location.hash='Visitors'");
   await wait(
     "document.querySelector('.sidebar [aria-current=page]')?.textContent==='Overview'",
@@ -526,7 +626,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry, removed Admin ticket page/account cards, retained active visitor count, merged Overview visitor list and filtered CSV, real QR management/preview/rename/disable/re-enable/public gate; no checkout requests. Controlled API fixtures.",
+    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry, removed Admin ticket page/account cards, retained active visitor count, merged Overview visitor list, removed report/CSV buttons, black presets and Vietnam hour selection, real QR management/preview/rename/disable/re-enable/public gate; no checkout requests. Controlled API fixtures.",
   );
 } finally {
   ws.close();

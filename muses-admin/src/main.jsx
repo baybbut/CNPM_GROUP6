@@ -162,14 +162,6 @@ function App() {
               </div>
             )}
           </div>
-          <button
-            className="date-button"
-            onClick={() => navigate("Reports")}
-            aria-label="Xem báo cáo theo ngày"
-          >
-            <Icon name="calendar" />
-            Báo cáo theo ngày
-          </button>
         </header>
         <AdminPages page={active} search={search} />
         <footer className="page-footer">
