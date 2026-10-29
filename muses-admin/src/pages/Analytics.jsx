@@ -328,31 +328,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
             "people",
           ],
           [
-            "Tài khoản đang hoạt động",
-            s?.activeLoggedIn ?? "—",
-            "Khách đã đăng nhập",
-            "pink",
-            "user",
-          ],
-          [
-            "Tài khoản đã đăng nhập",
-            s?.loggedInUsers ?? "—",
-            "Tài khoản khác nhau trong kỳ",
-            "blue",
-            "user",
-          ],
-          [
-            "Tổng lượt đăng nhập",
-            s?.logins ?? "—",
-            "Đăng nhập thành công trong kỳ",
-            "yellow",
-            "chart",
-          ],
-        ]}
-      />
-      <Stats
-        items={[
-          [
             "Thiết bị truy cập",
             s?.visitors ?? "—",
             "Thiết bị khác nhau trong kỳ",

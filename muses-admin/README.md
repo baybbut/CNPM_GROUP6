@@ -21,5 +21,3 @@ Cập nhật DB bằng `npm --prefix muses-backend run db:catalog` từ gốc re
 Các component local demo cũ được giữ trong nguồn để tham khảo nhưng không còn là menu quản lý nội dung chính. Media dùng URL hợp lệ; chưa có dịch vụ upload file lên server.
 
 [Hướng dẫn chạy, backup, restore và kiểm thử](../docs/prd/RUN.md) · [Đối chiếu PRD](../docs/prd/ACCEPTANCE.md)
-
-- **Giá vé** (route `#Tickets`): nhập giá người lớn/ưu đãi/trẻ em, điều kiện và ngày áp dụng cho từng bảo tàng; bật công khai bảng giá để khách tra cứu. Trang này không xử lý đơn đặt vé. Xem [Ticket](../docs/TICKETS.md).

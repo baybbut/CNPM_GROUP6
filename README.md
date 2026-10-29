@@ -121,7 +121,7 @@ Kiểm tra thuật toán tách câu và vị trí từ: `npm --prefix muses-reac
 
 ## Ticket
 
-Trang `/tickets` là chức năng tra cứu giá vé theo bảo tàng, tìm theo tên/địa chỉ và so sánh giá theo đối tượng. Cấu hình trong Admin → Giá vé. Không có luồng đặt vé/thanh toán trên trang này; giá thiếu được ghi rõ chưa cập nhật. Xem [hướng dẫn Ticket](docs/TICKETS.md).
+Trang `/tickets` là chức năng tra cứu giá vé theo bảo tàng, tìm theo tên/địa chỉ và so sánh giá theo đối tượng. Mục Giá vé trong Admin đã được bỏ theo yêu cầu; web tiếp tục tra cứu dữ liệu giá đã lưu. Không có luồng đặt vé/thanh toán trên trang này; giá thiếu được ghi rõ chưa cập nhật. Xem [hướng dẫn Ticket](docs/TICKETS.md).
 
 Bản đồ tương tác TP.HCM, định vị khách và vị trí trưng bày tác phẩm: [hướng dẫn Maps](docs/MAPS.md).
 

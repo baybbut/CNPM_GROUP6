@@ -11,7 +11,7 @@ const museums = [
   { ...references[0], id: 31, isPublic: true, isDemo: false },
   { ...references[2], id: 32, isPublic: true, isDemo: false },
 ];
-let prices = museums.map((m) => ({
+const prices = museums.map((m) => ({
   ...m,
   adultPrice: m.id === 31 ? 60000 : 40000,
   concessionPrice: 20000,
@@ -56,17 +56,26 @@ async function intercept(p) {
     loggedIn = true;
     data = { user: { id: 1, name: "Admin", role: "Admin" } };
   }
-  if (path === "/api/admin/tickets/offers") data = prices;
-  if (path === "/api/admin/catalog/museums") data = museums;
-  if (
-    path.startsWith("/api/admin/tickets/offers/") &&
-    p.request.method === "PUT"
-  ) {
-    const body = JSON.parse(p.request.postData);
-    const key = Number(path.split("/").pop());
-    prices = prices.map((m) => (m.id === key ? { ...m, ...body } : m));
-    data = { message: "Saved" };
-  }
+  if (path === "/api/admin/analytics")
+    data = {
+      summary: {
+        activeVisitors: 7,
+        activeLoggedIn: 3,
+        loggedInUsers: 10,
+        logins: 20,
+        visitors: 50,
+        sessions: 60,
+        qrScans: 5,
+        audioPlays: 4,
+      },
+      hours: [],
+      peakHours: [],
+      points: [],
+      recent: [],
+      daily: [],
+      trackingSince: "2026-10-30T00:00:00Z",
+      updatedAt: "2026-10-30T00:00:00Z",
+    };
   return call("Fetch.fulfillRequest", {
     requestId: p.requestId,
     responseCode: code,
@@ -226,29 +235,57 @@ try {
   await input("[name=email]", "admin@fixture.test");
   await input("[name=password]", "test-password");
   await ev("document.querySelector('.catalog-auth form').requestSubmit()");
-  await wait("document.querySelector('.catalog-table-wrap button')");
-  assert.ok(
-    (await ev("document.querySelector('.pg-workspace').textContent")).includes(
-      "Giá vé bảo tàng",
-    ),
+  await wait("document.querySelector('.pg-stat strong')?.textContent === '7'");
+  assert.equal(await ev("document.querySelectorAll('.pg-stat').length"), 5);
+  const labels = await ev(
+    "[...document.querySelectorAll('.pg-stat small')].map(e=>e.textContent)",
   );
+  assert.ok(labels.includes("Khách đang hoạt động"));
+  for (const removed of [
+    "Tài khoản đang hoạt động",
+    "Tài khoản đã đăng nhập",
+    "Tổng lượt đăng nhập",
+  ])
+    assert.equal(labels.includes(removed), false);
   assert.equal(
-    requests.some((r) => r.path === "/api/admin/tickets/reservations"),
+    await ev(
+      "[...document.querySelectorAll('.sidebar .nav-item')].some(e=>/Giá vé|Tickets/.test(e.textContent))",
+    ),
     false,
   );
-  await ev("document.querySelector('.catalog-table-wrap button').click()");
-  await wait("document.querySelector('.catalog-form input[type=number]')");
-  await input(".catalog-form input[type=number]", "70000");
-  await ev("document.querySelector('.catalog-form').requestSubmit()");
-  await wait("!document.querySelector('.catalog-form')");
-  assert.ok(
-    requests.some(
-      (r) => r.method === "PUT" && r.path === "/api/admin/tickets/offers/31",
+  assert.equal(
+    await ev(
+      "document.querySelector('.sidebar [aria-current=page]')?.textContent",
     ),
+    "Overview",
+  );
+  for (const page of ["Visitors", "Reports", "QR Check-in"]) {
+    await ev(`location.hash=${JSON.stringify(page)}`);
+    await wait(
+      `document.querySelector('.sidebar [aria-current=page]')?.textContent===${JSON.stringify(page)}`,
+    );
+    assert.equal(await ev("document.querySelectorAll('.pg-stat').length"), 5);
+  }
+  await ev("location.hash='Overview'");
+  await wait(
+    "document.querySelector('.sidebar [aria-current=page]')?.textContent==='Overview'",
+  );
+  await viewport(1440);
+  writeFileSync(
+    "/tmp/muses-admin-trimmed.png",
+    Buffer.from(
+      (await call("Page.captureScreenshot", { format: "png" })).data,
+      "base64",
+    ),
+  );
+  await viewport(375);
+  assert.equal(
+    requests.some((r) => r.path.startsWith("/api/admin/tickets/")),
+    false,
   );
   await call("Page.navigate", { url: origin + "/tickets?museum=31&lang=vi" });
   await wait(
-    "document.querySelector('.price-feature strong')?.textContent.includes('70.000')",
+    "document.querySelector('.price-feature strong')?.textContent.includes('60.000')",
   );
   assert.equal(
     requests.some((r) => r.path === "/api/tickets/checkout"),
@@ -256,7 +293,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry and Admin price save; no checkout requests. Controlled API fixtures.",
+    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry, removed Admin ticket page/account cards, retained active visitor count; no checkout requests. Controlled API fixtures.",
   );
 } finally {
   ws.close();
