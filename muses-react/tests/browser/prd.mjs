@@ -1,5 +1,6 @@
 // UI integration with controlled API responses. This does NOT replace live SQL acceptance tests.
 import assert from "node:assert/strict";
+import { writeFile } from "node:fs/promises";
 const visitor = process.env.VISITOR_ORIGIN || "http://127.0.0.1:5186";
 const admin = process.env.ADMIN_ORIGIN || "http://127.0.0.1:5187";
 const target = await (
@@ -116,6 +117,28 @@ async function intercept(p) {
   else if (url.pathname === "/api/artworks") data = [work];
   else if (url.pathname.startsWith("/api/artworks/"))
     data = { ...work, requestedLanguage: url.searchParams.get("lang") || "vi" };
+  else if (url.pathname === "/api/places/hcm")
+    data = {
+      fetchedAt: "2026-10-29T00:00:00Z",
+      stale: false,
+      items: [
+        {
+          ...museum,
+          id: "osm-fixture-museum",
+          kind: "museum",
+          sourceUrl: "https://www.openstreetmap.org/node/1",
+        },
+        {
+          id: "osm-fixture-gallery",
+          name: "Gallery UI fixture",
+          address: "Gallery address",
+          latitude: 10.7,
+          longitude: 106.7,
+          kind: "gallery",
+          sourceUrl: "https://www.openstreetmap.org/node/2",
+        },
+      ],
+    };
   else if (url.pathname === "/api/museums") data = [museum];
   else if (url.pathname.startsWith("/api/museums/"))
     data = { ...museum, artworks: [work] };
@@ -166,7 +189,10 @@ ws.addEventListener("message", (event) => {
     if (msg.error) p.reject(Error(msg.error.message));
     else p.resolve(msg.result);
   } else if (msg.method === "Fetch.requestPaused")
-    intercept(msg.params).catch(error=>{if(!error.message.includes("Invalid InterceptionId")) console.error(error);});
+    intercept(msg.params).catch((error) => {
+      if (!error.message.includes("Invalid InterceptionId"))
+        console.error(error);
+    });
   else if (msg.method === "Runtime.exceptionThrown")
     exceptions.push(
       msg.params.exceptionDetails.text +
@@ -269,10 +295,56 @@ try {
   await until('document.querySelector(".museum-card")');
   assert.equal(
     await ev(
-      `document.querySelector('.museum-card a[href*="google.com/maps/dir"]').href.includes('destination=10.8%2C106.6')`,
+      `[...document.querySelectorAll('.museum-card a[href*="google.com/maps/dir"]')].some(a=>a.href.includes('destination=10.8%2C106.6'))`,
     ),
     true,
   );
+  assert.equal(
+    await ev("document.querySelectorAll('.venue-marker').length"),
+    2,
+  );
+  await ev(`document.querySelector('.museum-card h2 button').click()`);
+  await until("document.querySelector('.selected-place')");
+  assert.equal(
+    await ev("document.querySelectorAll('.museum-card.is-selected').length"),
+    1,
+  );
+  await ev(
+    `Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok,fail){fail({code:1})}}});document.querySelector('.museum-search > button').click()`,
+  );
+  await until("document.querySelector('.museum-search [role=status]')");
+  assert.equal(await ev("document.querySelectorAll('.museum-card').length"), 2);
+  await ev(
+    `Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok){ok({coords:{latitude:10.8,longitude:106.6}})}}});document.querySelector('.museum-search > button').click()`,
+  );
+  await until("document.querySelector('.place-distance')");
+  assert.ok(
+    (
+      await ev("document.querySelector('.place-distance').textContent")
+    ).includes("0.0 km"),
+  );
+  await ev(
+    `document.querySelector('.museum-search select').value='gallery';document.querySelector('.museum-search select').dispatchEvent(new Event('change',{bubbles:true}))`,
+  );
+  await until("document.querySelectorAll('.museum-card').length===1");
+  assert.equal(
+    await ev("document.querySelectorAll('.venue-marker').length"),
+    1,
+  );
+  for (const width of [375, 768, 1440]) {
+    await viewport(width);
+    assert.equal(
+      await ev("document.documentElement.scrollWidth<=innerWidth"),
+      true,
+      "map page overflow " + width,
+    );
+  }
+  await ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))");
+  await writeFile("/tmp/muses-places-desktop.png",Buffer.from((await call("Page.captureScreenshot",{format:"png"})).data,"base64"));
+  await viewport(375);
+  await ev("new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true))))");
+  await writeFile("/tmp/muses-places-mobile.png",Buffer.from((await call("Page.captureScreenshot",{format:"png"})).data,"base64"));
+  assert.equal(requests.some(r=>/latitude|longitude/.test(r.body || "")),false,"visitor GPS must not be sent to Muses APIs");
   await navigate(admin + "/#Artworks");
   await until('document.querySelector(".catalog-auth form")');
   await ev(
@@ -357,7 +429,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: five-language fallback/TTS, combined filters/page, map destination, protected Admin login, failed-save retention, one-form publication with prefilled Vietnamese, and widths 375/768/1440 (controlled API fixture).",
+    "PASS: five-language fallback/TTS, combined filters/page, interactive map pins, GPS denial/success, place type filtering, map destination, protected Admin login, failed-save retention, one-form publication with prefilled Vietnamese, and widths 375/768/1440 (controlled API fixture).",
   );
 } catch (e) {
   console.error(

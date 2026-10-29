@@ -1,6 +1,6 @@
 const base = (import.meta.env?.VITE_API_BASE_URL || "").replace(/\/$/, "");
-export async function catalog(path, signal) {
-  const timeout = AbortSignal.timeout(15000);
+export async function catalog(path, signal, timeoutMs = 15000) {
+  const timeout = AbortSignal.timeout(timeoutMs);
   const response = await fetch(base + path, {
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   });

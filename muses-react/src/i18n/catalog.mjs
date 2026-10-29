@@ -1,5 +1,123 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "Your location": ["Vị trí của bạn", "您的位置", "現在地", "내 위치"],
+  "The museum location has not been confirmed yet.": [
+    "Chưa xác nhận được vị trí bảo tàng.",
+    "博物馆位置尚未确认。",
+    "美術館の位置はまだ確認されていません。",
+    "박물관 위치가 아직 확인되지 않았습니다.",
+  ],
+  "Where to see this artwork": [
+    "Nơi đang trưng bày tác phẩm",
+    "作品当前展出地点",
+    "この作品の展示場所",
+    "이 작품의 현재 전시 장소",
+  ],
+  "Ho Chi Minh City": [
+    "TP. Hồ Chí Minh",
+    "胡志明市",
+    "ホーチミン市",
+    "호찌민시",
+  ],
+  "Museums & exhibition spaces": [
+    "Bảo tàng & không gian triển lãm",
+    "博物馆与展览空间",
+    "美術館・展示スペース",
+    "박물관 및 전시 공간",
+  ],
+  "Explore museums, galleries and art spaces in Ho Chi Minh City.": [
+    "Khám phá bảo tàng, phòng tranh và không gian nghệ thuật tại TP.HCM.",
+    "探索胡志明市的博物馆、画廊和艺术空间。",
+    "ホーチミン市の美術館、ギャラリー、アートスペースを探しましょう。",
+    "호찌민시의 박물관, 갤러리, 예술 공간을 둘러보세요.",
+  ],
+  "Search places": ["Tìm địa điểm", "搜索地点", "場所を検索", "장소 검색"],
+  "Name or address": [
+    "Tên hoặc địa chỉ",
+    "名称或地址",
+    "名称または住所",
+    "이름 또는 주소",
+  ],
+  "Place type": ["Loại địa điểm", "地点类型", "施設の種類", "장소 유형"],
+  "Galleries & art spaces": [
+    "Phòng tranh & không gian nghệ thuật",
+    "画廊与艺术空间",
+    "ギャラリー・アートスペース",
+    "갤러리 및 예술 공간",
+  ],
+  "Locating…": [
+    "Đang định vị…",
+    "正在定位…",
+    "現在地を取得中…",
+    "위치 확인 중…",
+  ],
+  "Use my location": [
+    "Dùng vị trí của tôi",
+    "使用我的位置",
+    "現在地を使う",
+    "내 위치 사용",
+  ],
+  "Reset to Ho Chi Minh City": [
+    "Về bản đồ TP.HCM",
+    "返回胡志明市",
+    "ホーチミン市に戻る",
+    "호찌민시 지도로 돌아가기",
+  ],
+  "Location needs a secure connection. You can still explore the map.": [
+    "Cần kết nối HTTPS để dùng định vị. Bạn vẫn có thể tìm địa điểm trên bản đồ.",
+    "定位需要安全连接。您仍可浏览地图。",
+    "現在地の取得には安全な接続が必要です。地図の閲覧はできます。",
+    "위치를 사용하려면 보안 연결이 필요합니다. 지도는 계속 볼 수 있습니다.",
+  ],
+  places: ["địa điểm", "个地点", "件の施設", "개 장소"],
+  "Nearest first": ["Gần bạn nhất", "距离最近优先", "近い順", "가까운 순"],
+  "Showing the last available map data.": [
+    "Đang hiển thị dữ liệu địa điểm được cập nhật gần nhất.",
+    "正在显示最近可用的地点数据。",
+    "直近の利用可能な地図データを表示しています。",
+    "최근 이용 가능한 지도 데이터를 표시합니다.",
+  ],
+  "Places could not be loaded. Please try again.": [
+    "Chưa tải được địa điểm. Vui lòng thử lại.",
+    "无法加载地点，请重试。",
+    "場所を読み込めませんでした。再試行してください。",
+    "장소를 불러올 수 없습니다. 다시 시도해 주세요.",
+  ],
+  "Search on Google Maps": [
+    "Tìm trên Google Maps",
+    "在 Google 地图上搜索",
+    "Google マップで検索",
+    "Google 지도에서 검색",
+  ],
+  "Search results": ["Kết quả tìm kiếm", "搜索结果", "検索結果", "검색 결과"],
+  "Straight-line distance": [
+    "Khoảng cách đường thẳng",
+    "直线距离",
+    "直線距離",
+    "직선 거리",
+  ],
+  "Show on map": [
+    "Xem trên bản đồ",
+    "在地图上显示",
+    "地図に表示",
+    "지도에서 보기",
+  ],
+  Website: ["Trang web", "官方网站", "ウェブサイト", "웹사이트"],
+  "Place information": [
+    "Thông tin địa điểm",
+    "地点信息",
+    "施設情報",
+    "장소 정보",
+  ],
+  "Art spaces are venues; check their website for current exhibitions and opening hours.":
+    [
+      "Xem website của địa điểm để biết lịch triển lãm và giờ mở cửa hiện tại.",
+      "请查看场馆网站，确认当前展览和开放时间。",
+      "現在の展示内容と開館時間は各施設のウェブサイトをご確認ください。",
+      "현재 전시와 운영 시간은 각 장소의 웹사이트에서 확인하세요.",
+    ],
+  Updated: ["Cập nhật", "更新于", "更新日", "업데이트"],
+
   "Speech could not start. Choose another voice or check your device speech settings.":
     [
       "Chưa phát được giọng đọc. Hãy chọn giọng khác hoặc kiểm tra cài đặt thiết bị.",

@@ -122,3 +122,5 @@ Kiểm tra thuật toán tách câu và vị trí từ: `npm --prefix muses-reac
 ## Ticket
 
 Trang `/tickets` có chọn ngày/loại vé, thông tin khách, kiểm tra đơn và QR minh họa theo yêu cầu. Cập nhật DB bằng `db:catalog` và cấu hình bảng giá trong Admin → Tickets. QR mẫu không thu tiền và không có giá trị vào cửa. Xem [hướng dẫn Ticket](docs/TICKETS.md).
+
+Bản đồ tương tác TP.HCM, định vị khách và vị trí trưng bày tác phẩm: [hướng dẫn Maps](docs/MAPS.md).

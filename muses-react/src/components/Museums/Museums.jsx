@@ -1,55 +1,36 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
-import { catalog, distanceKm, directionsUrl } from "../../api/catalog.mjs";
+import { catalog, directionsUrl } from "../../api/catalog.mjs";
 import { ArtworkImage } from "../explore/Artworks";
+import PlacesMap from "./PlacesMap";
+import {
+  hasCoordinates,
+  searchPlaces,
+  connectCatalogue,
+} from "./placeModel.mjs";
 import "./museums.css";
+
 export function MuseumMap({ museum }) {
   const { lang } = useLang(),
     t = (key) => label(lang, key);
-  const [attempt, setAttempt] = useState(0),
-    [failed, setFailed] = useState(false),
-    [loaded, setLoaded] = useState(false);
-  const timeout = useRef(null);
-  const lat = Number(museum.latitude),
-    lng = Number(museum.longitude);
-  useEffect(() => {
-    setFailed(false);
-    setLoaded(false);
-    timeout.current = setTimeout(() => setFailed(true), 12000);
-    return () => clearTimeout(timeout.current);
-  }, [attempt, museum.id, museum.museumId]);
-  const params = new URLSearchParams({
-    bbox: `${lng - 0.015},${lat - 0.01},${lng + 0.015},${lat + 0.01}`,
-    layer: "mapnik",
-    marker: `${lat},${lng}`,
-  });
+  const place = useMemo(
+    () => ({
+      ...museum,
+      id: `museum-${museum.museumId || museum.id}`,
+      kind: "museum",
+    }),
+    [museum],
+  );
+  const places = useMemo(() => [place], [place]);
+  if (!hasCoordinates(place))
+    return <p>{t("The museum location has not been confirmed yet.")}</p>;
+  const lat = Number(place.latitude),
+    lng = Number(place.longitude);
   return (
     <section className="museum-map" aria-label={t("Museum map")}>
-      {!failed && (
-        <iframe
-          key={`${lat}-${lng}-${attempt}`}
-          src={`https://www.openstreetmap.org/export/embed.html?${params}`}
-          title={`${t("Museum map")}: ${museum.name}`}
-          loading="lazy"
-          onLoad={() => {
-            clearTimeout(timeout.current);
-            setLoaded(true);
-            setFailed(false);
-          }}
-          onError={() => setFailed(true)}
-          referrerPolicy="no-referrer"
-        />
-      )}
-      {failed && !loaded && (
-        <p role="alert">
-          {t("Map unavailable. You can still use the address or directions.")}{" "}
-          <button onClick={() => setAttempt((n) => n + 1)}>
-            {t("Try again")}
-          </button>
-        </p>
-      )}
+      <PlacesMap places={places} title={`${t("Museum map")}: ${place.name}`} />
       <div className="museum-map-links">
         <a
           href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`}
@@ -59,15 +40,12 @@ export function MuseumMap({ museum }) {
           {t("Open map")}
         </a>
         <a
-          href={directionsUrl(museum)}
+          href={directionsUrl(place)}
           target="_blank"
           rel="noopener noreferrer"
         >
           {t("Directions")}
         </a>
-        <button onClick={() => setAttempt((n) => n + 1)}>
-          {t("Try again")}
-        </button>
       </div>
     </section>
   );
@@ -78,7 +56,7 @@ export function CurrentExhibition({ artwork }) {
     e = artwork.currentExhibition;
   return (
     <section className="current-exhibition">
-      <h2>{t("Current exhibition")}</h2>
+      <h2>{t("Where to see this artwork")}</h2>
       {e ? (
         <>
           <h3>
@@ -89,9 +67,12 @@ export function CurrentExhibition({ artwork }) {
             {t("From")}: {e.startDate}
             {e.endDate && ` · ${t("Until (exclusive)")}: ${e.endDate}`}
           </p>
-          <p>
-            {t("Source")}: {e.source} · {t("Verified on")}: {e.verifiedOn}
-          </p>
+          {(e.source || e.verifiedOn) && (
+            <p>
+              {e.source && `${t("Source")}: ${e.source}`}
+              {e.verifiedOn && ` · ${t("Verified on")}: ${e.verifiedOn}`}
+            </p>
+          )}
           {e.isDemo && (
             <p className="catalog-demo">
               {t("Demonstration data — not a real exhibition.")}
@@ -105,97 +86,283 @@ export function CurrentExhibition({ artwork }) {
     </section>
   );
 }
-export default function Museums() {
-  const { id } = useParams(),
-    { lang } = useLang(),
+function DiscoverMuseums() {
+  const { lang } = useLang(),
     t = (key) => label(lang, key);
   const [q, setQ] = useState(""),
+    [kind, setKind] = useState("all"),
     [data, setData] = useState(null),
+    [museums, setMuseums] = useState([]),
     [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0),
     [position, setPosition] = useState(null),
-    [gpsError, setGpsError] = useState(false),
-    [gpsBusy, setGpsBusy] = useState(false);
+    [gpsError, setGpsError] = useState(null),
+    [gpsBusy, setGpsBusy] = useState(false),
+    [selectedId, setSelectedId] = useState(null);
+  const gpsRun = useRef(0);
+  useEffect(
+    () => () => {
+      gpsRun.current++;
+    },
+    [],
+  );
   useEffect(() => {
     const c = new AbortController();
-    setData(null);
     setError(false);
-    const timer = setTimeout(
-      () =>
-        catalog(
-          id
-            ? `/api/museums/${id}?lang=${lang}`
-            : `/api/museums?q=${encodeURIComponent(q)}`,
-          c.signal,
-        )
-          .then(setData)
-          .catch((e) => {
-            if (e.name !== "AbortError") setError(true);
-          }),
-      200,
-    );
-    return () => {
-      clearTimeout(timer);
-      c.abort();
-    };
-  }, [id, q, lang, attempt]);
+    catalog("/api/places/hcm", c.signal, 30000)
+      .then(setData)
+      .catch((e) => {
+        if (e.name !== "AbortError") setError(true);
+      });
+    catalog("/api/museums", c.signal)
+      .then(setMuseums)
+      .catch(() => {});
+    return () => c.abort();
+  }, [attempt]);
   function locate() {
-    setGpsError(false);
-    setGpsBusy(true);
-    if (!navigator.geolocation) {
-      setGpsError(true);
-      setGpsBusy(false);
+    const run = ++gpsRun.current;
+    setGpsError(null);
+    if (!window.isSecureContext || !navigator.geolocation) {
+      setGpsError(
+        !window.isSecureContext
+          ? "Location needs a secure connection. You can still explore the map."
+          : "Location unavailable. You can still search by name.",
+      );
       return;
     }
+    setGpsBusy(true);
     navigator.geolocation.getCurrentPosition(
       (p) => {
-        setPosition({
+        if (run !== gpsRun.current) return;
+        const next = {
           latitude: p.coords.latitude,
           longitude: p.coords.longitude,
-        });
+        };
+        if (hasCoordinates(next)) setPosition(next);
+        else setGpsError("Location unavailable. You can still search by name.");
         setGpsBusy(false);
       },
       () => {
-        setGpsError(true);
+        if (run !== gpsRun.current) return;
         setGpsBusy(false);
+        setGpsError("Location unavailable. You can still search by name.");
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
     );
   }
-  const museums =
-    !id && data
-      ? [...data]
-          .map((m) => ({
-            ...m,
-            distance: position ? distanceKm(position, m) : null,
-          }))
-          .sort((a, b) => (position ? a.distance - b.distance : 0))
-      : [];
+  const allPlaces = useMemo(
+    () => connectCatalogue(data?.items || [], museums),
+    [data, museums],
+  );
+  const places = useMemo(
+    () => searchPlaces(allPlaces, { q, kind, position, lang }),
+    [allPlaces, q, kind, position, lang],
+  );
+  const selected = places.find((p) => p.id === selectedId);
+  const selectPlace = (id) => {
+    setSelectedId(id);
+  };
+  useEffect(() => {
+    if (selectedId && !places.some((p) => p.id === selectedId))
+      setSelectedId(null);
+  }, [places, selectedId]);
   return (
-    <main className="museum-page">
-      <p className="aw-eyebrow">MUSES · {t("Museums")}</p>
-      <h1>{id && data ? data.name : t("Museums")}</h1>
-      {!id && (
-        <div className="museum-search">
-          <label>
-            {t("Search museums")}
-            <input
-              type="search"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-            />
-          </label>
-          <button disabled={gpsBusy} onClick={locate}>
-            {gpsBusy ? t("Loading…") : t("Find nearby museums")}
+    <div className="museum-page discovery-page">
+      <p className="aw-eyebrow">MUSES · {t("Ho Chi Minh City")}</p>
+      <h1>{t("Museums & exhibition spaces")}</h1>
+      <p className="discovery-intro">
+        {t("Explore museums, galleries and art spaces in Ho Chi Minh City.")}
+      </p>
+      <div className="museum-search">
+        <label>
+          {t("Search places")}
+          <input
+            type="search"
+            value={q}
+            placeholder={t("Name or address")}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </label>
+        <label>
+          {t("Place type")}
+          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+            <option value="all">{t("All")}</option>
+            <option value="museum">{t("Museums")}</option>
+            <option value="gallery">{t("Galleries & art spaces")}</option>
+          </select>
+        </label>
+        <button disabled={gpsBusy} onClick={locate}>
+          {gpsBusy ? t("Locating…") : t("Use my location")}
+        </button>
+        {position && (
+          <button
+            onClick={() => {
+              gpsRun.current++;
+              setPosition(null);
+              setGpsBusy(false);
+              setGpsError(null);
+            }}
+          >
+            {t("Reset to Ho Chi Minh City")}
           </button>
-          <p>{t("Your location is used only to sort this list.")}</p>
-          {gpsError && (
-            <p role="alert">
-              {t("Location unavailable. You can still search by name.")}
-            </p>
+        )}
+        {gpsError && <p role="status">{t(gpsError)}</p>}
+      </div>
+      <div className="discovery-summary" aria-live="polite">
+        <span>
+          {places.length} {t("places")}
+          {position && ` · ${t("Nearest first")}`}
+        </span>
+        {!data && !error && <span>{t("Loading…")}</span>}
+        {data?.stale && (
+          <span>{t("Showing the last available map data.")}</span>
+        )}
+      </div>
+      {error && (
+        <p className="places-load-error" role="alert">
+          {t("Places could not be loaded. Please try again.")}{" "}
+          <button onClick={() => setAttempt((n) => n + 1)}>
+            {t("Try again")}
+          </button>{" "}
+          <a
+            href="https://www.google.com/maps/search/museums+art+galleries+Ho+Chi+Minh+City"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("Search on Google Maps")}
+          </a>
+        </p>
+      )}
+      <div className="discovery-layout">
+        <div className="discovery-results" aria-label={t("Search results")}>
+          {places.map((place) => (
+            <article
+              className={`museum-card ${selectedId === place.id ? "is-selected" : ""}`}
+              key={place.id}
+            >
+              <span className="place-kind">
+                {t(
+                  place.kind === "museum"
+                    ? "Museums"
+                    : "Galleries & art spaces",
+                )}
+              </span>
+              <h2>
+                <button
+                  onClick={() => selectPlace(place.id)}
+                  aria-pressed={selectedId === place.id}
+                >
+                  {place.name}
+                </button>
+              </h2>
+              <p>{place.address}</p>
+              {place.distance != null && (
+                <p className="place-distance">
+                  {place.distance.toFixed(1)} km · {t("Straight-line distance")}
+                </p>
+              )}
+              <div className="place-actions">
+                <button onClick={() => selectPlace(place.id)}>
+                  {t("Show on map")}
+                </button>
+                <a
+                  href={directionsUrl(place)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("Directions")}
+                </a>
+                {place.museumId && (
+                  <Link to={`/museums/${place.museumId}`}>
+                    {t("Currently on display")}
+                  </Link>
+                )}
+                {place.website && (
+                  <a
+                    href={place.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t("Website")}
+                  </a>
+                )}
+                <a
+                  href={place.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("Place information")}
+                </a>
+              </div>
+            </article>
+          ))}
+          {data && !places.length && <p>{t("No results found.")}</p>}
+        </div>
+        <div className="discovery-map">
+          <PlacesMap
+            places={places}
+            position={position}
+            selectedId={selectedId}
+            onSelect={selectPlace}
+          />
+          {selected && (
+            <div className="selected-place" aria-live="polite">
+              <strong>{selected.name}</strong>
+              <p>{selected.address}</p>
+              <a
+                href={directionsUrl(selected)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("Directions")}
+              </a>
+            </div>
           )}
         </div>
+      </div>
+      <p className="places-note">
+        {t(
+          "Art spaces are venues; check their website for current exhibitions and opening hours.",
+        )}
+      </p>
+      {data?.fetchedAt && (
+        <p className="places-source">
+          © OpenStreetMap contributors · {t("Updated")}:{" "}
+          {new Date(data.fetchedAt).toLocaleDateString(lang)} ·{" "}
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("Source")}
+          </a>
+        </p>
       )}
+    </div>
+  );
+}
+function MuseumDetail({ id }) {
+  const { lang } = useLang(),
+    t = (key) => label(lang, key);
+  const [data, setData] = useState(null),
+    [error, setError] = useState(false),
+    [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    const c = new AbortController();
+    setData(null);
+    setError(false);
+    catalog(`/api/museums/${id}?lang=${lang}`, c.signal)
+      .then(setData)
+      .catch((e) => {
+        if (e.name !== "AbortError") setError(true);
+      });
+    return () => c.abort();
+  }, [id, lang, attempt]);
+  return (
+    <div className="museum-page">
+      <p className="aw-eyebrow">
+        <Link to="/museums">MUSES · {t("Museums")}</Link>
+      </p>
       {error ? (
         <p role="alert">
           {t("Unable to load data. Please try again.")}{" "}
@@ -205,8 +372,9 @@ export default function Museums() {
         </p>
       ) : !data ? (
         <p role="status">{t("Loading…")}</p>
-      ) : id ? (
+      ) : (
         <>
+          <h1>{data.name}</h1>
           {data.isDemo && (
             <p className="catalog-demo">
               {t("Demonstration data — not a real exhibition.")}
@@ -223,10 +391,12 @@ export default function Museums() {
               {data.contact}
             </p>
           )}
-          <p>
-            <strong>{t("Source")}: </strong>
-            {data.source}
-          </p>
+          {data.source && (
+            <p>
+              <strong>{t("Source")}: </strong>
+              {data.source}
+            </p>
+          )}
           <MuseumMap museum={data} />
           <h2>{t("Currently on display")}</h2>
           {data.artworks.length ? (
@@ -261,34 +431,11 @@ export default function Museums() {
             <p>{t("No results found.")}</p>
           )}
         </>
-      ) : museums.length ? (
-        <div className="museum-grid">
-          {museums.map((m) => (
-            <article className="museum-card" key={m.id}>
-              <h2>
-                <Link to={`/museums/${m.id}`}>{m.name}</Link>
-              </h2>
-              {m.isDemo && (
-                <p className="catalog-demo">
-                  {t("Demonstration data — not a real exhibition.")}
-                </p>
-              )}
-              <p>{m.address}</p>
-              <p>{m.description}</p>
-              {m.distance != null && <p>{m.distance.toFixed(1)} km</p>}
-              <a
-                href={directionsUrl(m)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t("Directions")}
-              </a>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <p>{t("No results found.")}</p>
       )}
-    </main>
+    </div>
   );
+}
+export default function Museums() {
+  const { id } = useParams();
+  return id ? <MuseumDetail id={id} /> : <DiscoverMuseums />;
 }

@@ -2,6 +2,7 @@ import { ticketText } from "../Tickets/ticketText.mjs";
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { SvgIcon } from "../Icons";
+import { label } from "../../i18n/catalog.mjs";
 import { useState } from "react";
 import {
   OPENING,
@@ -209,7 +210,10 @@ export default function Visit() {
         <div className="v-row">
           <div className="v-text">
             <p>{t("Tips for finding your way around the Muses")}</p>
-            <More>{t("Finding your way around the Muses")}</More>
+            <Link className="v-link" to="/museums">
+              {label(lang, "Museums & exhibition spaces")}{" "}
+              <SvgIcon kind="arrow" size={18} />
+            </Link>
           </div>
           <div>
             {DIRECTIONS.map((d) => (
