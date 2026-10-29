@@ -14,7 +14,7 @@ const nav = [
   ["Languages & Audio", "audio"],
   ["Exhibitions & Events", "calendar"],
   ["VISITS"],
-  ["Tickets", "qr"],
+  ["Tickets", "list"],
   ["QR Check-in", "qr"],
   ["Museum Info & Maps", "map"],
 ];
@@ -80,13 +80,13 @@ function App() {
             icon ? (
               <button
                 key={name}
-                aria-label={name}
+                aria-label={name === "Tickets" ? "Giá vé" : name}
                 aria-current={active === name ? "page" : undefined}
                 className={`nav-item ${active === name ? "selected" : ""}`}
                 onClick={() => navigate(name)}
               >
                 <Icon name={icon} />
-                <span>{name}</span>
+                <span>{name === "Tickets" ? "Giá vé" : name}</span>
               </button>
             ) : (
               <div className="nav-label" key={name}>

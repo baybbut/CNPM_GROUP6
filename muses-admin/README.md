@@ -22,4 +22,4 @@ Các component local demo cũ được giữ trong nguồn để tham khảo nh�
 
 [Hướng dẫn chạy, backup, restore và kiểm thử](../docs/prd/RUN.md) · [Đối chiếu PRD](../docs/prd/ACCEPTANCE.md)
 
-- **Tickets**: giá vé/ngày nghỉ/điều kiện cho từng bảo tàng, bật nhận đặt vé và xem đơn. QR mẫu không thu tiền; không cho xác nhận nhận vé từ đơn demo. Xem [Ticket](../docs/TICKETS.md).
+- **Giá vé** (route `#Tickets`): nhập giá người lớn/ưu đãi/trẻ em, điều kiện và ngày áp dụng cho từng bảo tàng; bật công khai bảng giá để khách tra cứu. Trang này không xử lý đơn đặt vé. Xem [Ticket](../docs/TICKETS.md).

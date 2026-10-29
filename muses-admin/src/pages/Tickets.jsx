@@ -18,11 +18,10 @@ export default function Tickets({ search = "" }) {
     setError("");
     Promise.all([
       adminApi("/api/admin/tickets/offers", "GET", undefined, c.signal),
-      adminApi("/api/admin/tickets/reservations", "GET", undefined, c.signal),
       adminApi("/api/admin/catalog/museums", "GET", undefined, c.signal),
     ])
-      .then(([offers, orders, museums]) => {
-        if (!c.signal.aborted) setData({ offers, orders, museums });
+      .then(([offers, museums]) => {
+        if (!c.signal.aborted) setData({ offers, museums });
       })
       .catch((e) => {
         if (!c.signal.aborted) setError(e.message);
@@ -44,9 +43,9 @@ export default function Tickets({ search = "" }) {
         : {
             id: museum.id,
             name: museum.name,
-            adultPrice: 0,
-            concessionPrice: 0,
-            childPrice: 0,
+            adultPrice: "",
+            concessionPrice: "",
+            childPrice: "",
             terms: "",
             closedWeekdays: [],
             isEnabled: false,
@@ -72,25 +71,16 @@ export default function Tickets({ search = "" }) {
       setBusy(false);
     }
   }
-  async function checkin(row) {
-    if (!window.confirm(`Xác nhận nhận vé ${row.code}?`)) return;
-    try {
-      await adminApi(`/api/admin/tickets/reservations/${row.id}`, "PUT", {
-        status: "CheckedIn",
-      });
-      setAttempt((n) => n + 1);
-    } catch (e) {
-      setError(e.message);
-    }
-  }
-  const visible = (data?.orders || []).filter((r) =>
-    JSON.stringify(r).toLowerCase().includes(search.toLowerCase()),
+  const visible = (data?.museums || []).filter((m) =>
+    `${m.name} ${m.address}`
+      .toLocaleLowerCase("vi")
+      .includes(search.toLocaleLowerCase("vi")),
   );
   return (
     <div className="pg-workspace catalog-admin">
       <Header
-        title="Vé tham quan"
-        description="Cấu hình giá vé theo bảo tàng và theo dõi đơn đặt vé."
+        title="Giá vé bảo tàng"
+        description="Cập nhật giá vé và điều kiện để khách tra cứu theo từng bảo tàng."
       />
       {error && (
         <p role="alert">
@@ -102,7 +92,7 @@ export default function Tickets({ search = "" }) {
         <p role="status">Đang tải…</p>
       ) : (
         <>
-          <Panel title="Bảng giá & ngày nhận đặt vé">
+          <Panel title="Bảng giá tra cứu">
             <div className="catalog-table-wrap">
               <table>
                 <thead>
@@ -116,7 +106,7 @@ export default function Tickets({ search = "" }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.museums.map((m) => {
+                  {visible.map((m) => {
                     const offer = data.offers.find((o) => o.id === m.id);
                     return (
                       <tr key={m.id}>
@@ -131,7 +121,11 @@ export default function Tickets({ search = "" }) {
                         <td>{offer ? money(offer.adultPrice) : "—"}</td>
                         <td>{offer ? money(offer.concessionPrice) : "—"}</td>
                         <td>{offer ? money(offer.childPrice) : "—"}</td>
-                        <td>{offer?.isEnabled ? "Nhận đặt vé" : "Chưa mở"}</td>
+                        <td>
+                          {offer?.isEnabled
+                            ? "Công khai bảng giá"
+                            : "Chưa công khai"}
+                        </td>
                         <td>
                           <button onClick={() => launch(m)}>Cấu hình</button>
                         </td>
@@ -140,72 +134,12 @@ export default function Tickets({ search = "" }) {
                   })}
                 </tbody>
               </table>
+              {!!data.museums.length && !visible.length && (
+                <p>Không tìm thấy bảo tàng phù hợp.</p>
+              )}
               {!data.museums.length && (
                 <p>Tạo bảo tàng trước khi thiết lập bảng giá.</p>
               )}
-            </div>
-          </Panel>
-          <Panel title="Đơn đặt vé gần đây">
-            <div className="catalog-table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Mã đặt vé</th>
-                    <th>Khách</th>
-                    <th>Bảo tàng / ngày</th>
-                    <th>Số khách</th>
-                    <th>Tổng tiền</th>
-                    <th>Thanh toán</th>
-                    <th>Nhận vé</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visible.map((r) => (
-                    <tr key={r.id}>
-                      <td>
-                        {r.code}
-                        {r.isDemoPayment && (
-                          <small className="catalog-demo-badge">
-                            QR minh họa · chưa thu tiền
-                          </small>
-                        )}
-                      </td>
-                      <td>
-                        {r.name}
-                        <small style={{ display: "block" }}>{r.email}</small>
-                      </td>
-                      <td>
-                        {r.museum}
-                        <br />
-                        {r.visitDate}
-                      </td>
-                      <td>{r.guests}</td>
-                      <td>{money(r.total)}</td>
-                      <td>
-                        {{
-                          Paid: "Đã thanh toán",
-                          Pending: "Chưa thanh toán",
-                          Failed: "Chưa thành công",
-                          NotRequired: "Miễn phí",
-                        }[r.paymentState] || r.paymentState}
-                      </td>
-                      <td>
-                        {r.status === "CheckedIn" ? (
-                          "Đã nhận"
-                        ) : !r.isDemoPayment &&
-                          ["Paid", "NotRequired"].includes(r.paymentState) ? (
-                          <button onClick={() => checkin(r)}>
-                            Xác nhận nhận vé
-                          </button>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {!visible.length && <p>Chưa có đơn đặt vé phù hợp.</p>}
             </div>
           </Panel>
         </>
@@ -238,7 +172,7 @@ export default function Tickets({ search = "" }) {
                   />
                 </Field>
               ))}
-              <Field label="Điều kiện / độ tuổi / chính sách đổi hủy">
+              <Field label="Điều kiện áp dụng / độ tuổi / giấy tờ ưu đãi">
                 <textarea
                   required
                   maxLength={1500}
@@ -250,7 +184,7 @@ export default function Tickets({ search = "" }) {
                 />
               </Field>
               <fieldset>
-                <legend>Ngày không nhận đặt vé</legend>
+                <legend>Ngày không áp dụng bảng vé</legend>
                 <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                   {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day, n) => (
                     <label key={day}>
@@ -271,7 +205,7 @@ export default function Tickets({ search = "" }) {
                   ))}
                 </div>
               </fieldset>
-              <Field label="Nhận đặt vé (bảo tàng cũng cần công khai)">
+              <Field label="Công khai bảng giá (bảo tàng cũng cần công khai)">
                 <input
                   type="checkbox"
                   checked={edit.isEnabled}
