@@ -9,6 +9,7 @@ const cors = require("cors");
 const { attachActivityRoutes } = require("./activity.cjs");
 const sql = require("mssql");
 
+const { attachPlaceRoutes } = require("./places.cjs");
 const { attachTicketRoutes } = require("./tickets.cjs");
 const { attachCatalogRoutes } = require("./catalog.cjs");
 const app = express();
@@ -98,6 +99,7 @@ app.get("/api/health", async (req, res) => {
 
 attachCatalogRoutes(app, sql);
 attachTicketRoutes(app, sql);
+attachPlaceRoutes(app);
 
 // Stable homepage placement keys, independent of artwork ordering and language.
 app.get("/api/site-images", async (_req, res) => {
