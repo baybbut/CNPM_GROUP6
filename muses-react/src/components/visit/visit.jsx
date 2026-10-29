@@ -1,363 +1,511 @@
-import { ticketText } from "../Tickets/ticketText.mjs";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
+import { catalog, directionsUrl } from "../../api/catalog.mjs";
 import { SvgIcon } from "../Icons";
-import { label } from "../../i18n/catalog.mjs";
-import { useState } from "react";
+import { MuseumMap } from "../Museums/Museums";
+import { ArtworkImage } from "../explore/Artworks";
+import { ticketText } from "../Tickets/ticketText.mjs";
 import {
-  OPENING,
-  DIRECTIONS,
+  isClosed,
+  ticketToday,
+  ticketLastDay,
+} from "../Tickets/ticketModel.mjs";
+import {
+  VISIT_SECTIONS,
   FACILITIES,
-  SERVICES,
   ACCESS,
-  FAQ,
+  VISIT_FAQ,
 } from "../../data/visitData";
+import { visitText } from "./visitText.mjs";
+import {
+  visitDestinations,
+  visitTicketLink,
+  mapSearchUrl,
+} from "./visitModel.mjs";
+import galleryImage from "../../../background/muses4.jpg";
+import coffeeImage from "../../../background/musescoffee.jpg";
+import familyImage from "../../../background/muses9.jpg";
 import "./visit.css";
 
-/* Nếu chuỗi chưa có bản dịch, t() trả về chính chuỗi tiếng Anh */
-const Label = ({ id, color, children }) => (
-  <h3 id={id} className="v-label" style={{ color }}>
-    <span>{children}</span>
-    <i />
-  </h3>
-);
-const Pic = ({ src, color = "#8a6a4a", className = "" }) => (
-  <div
-    className={`v-pic ${className}`}
-    style={src ? { backgroundImage: `url("${src}")` } : { background: color }}
-  />
-);
-const More = ({ children }) => (
-  <a className="v-link" href="#">
-    {children} <SvgIcon kind="arrow" size={18} />
-  </a>
-);
-
-// click để scroll đến phần tương ứng
-const VISIT_MENU = [
-  { id: "hours", label: "Hours & admission" },
-  { id: "directions", label: "Map, entrances & directions" },
-  { id: "galleries", label: "List of available galleries" },
-  { id: "amenities", label: "Visitor amenities" },
-  { id: "restaurants", label: "Restaurants & cafés" },
-  { id: "family", label: "Visit as a family" },
-  { id: "group", label: "Visit as a group" },
-  { id: "accessibility", label: "Accessibility" },
-  { id: "faq", label: "FAQ" },
-];
-
+function SectionTitle({ id, number, children }) {
+  return (
+    <h2 className="v-label" id={id}>
+      <span className="v-number">{number}</span>
+      <span>{children}</span>
+      <i aria-hidden="true" />
+    </h2>
+  );
+}
+function ExternalLink({ href, children, className = "v-link" }) {
+  return (
+    <a
+      className={className}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+      <SvgIcon kind="arrow" size={18} />
+    </a>
+  );
+}
 export default function Visit() {
-  const { t, lang } = useLang();
-  const [activeTab, setActiveTab] = useState("hours");
-
-  const goToSection = (event, id) => {
-    const section = document.getElementById(id);
-
-    if (!section) return;
-
+  const { lang } = useLang(),
+    t = (key) => visitText(lang, key);
+  const [activeTab, setActiveTab] = useState("hours"),
+    [museums, setMuseums] = useState([]),
+    [offers, setOffers] = useState([]),
+    [paymentReady, setPaymentReady] = useState(false),
+    [ticketLoading, setTicketLoading] = useState(true),
+    [ticketError, setTicketError] = useState(false),
+    [attempt, setAttempt] = useState(0),
+    [selectedId, setSelectedId] = useState("hcm-reference-fine-arts"),
+    [date, setDate] = useState(ticketToday),
+    [artworks, setArtworks] = useState([]);
+  const tabs = useRef(null);
+  const destinations = useMemo(() => visitDestinations(museums), [museums]);
+  const place = useMemo(() => {
+    const item =
+      destinations.find((m) => m.id === selectedId) || destinations[0];
+    return { ...item, name: item.names?.[lang] || item.name };
+  }, [destinations, selectedId, lang]);
+  const offer = offers.find(
+    (o) => Number(o.id) === place.museumId && !o.isDemo,
+  );
+  const bookingUrl = visitTicketLink(place, date);
+  useEffect(() => {
+    const c = new AbortController();
+    setTicketError(false);
+    setTicketLoading(true);
+    catalog("/api/museums", c.signal)
+      .then((data) => {
+        if (Array.isArray(data)) setMuseums(data);
+      })
+      .catch(() => {});
+    catalog("/api/tickets/offers", c.signal)
+      .then((data) => {
+        if (!Array.isArray(data.items)) throw Error("INVALID_OFFERS");
+        setOffers(data.items);
+        setPaymentReady(Boolean(data.paymentReady));
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") setTicketError(true);
+      })
+      .finally(() => {
+        if (!c.signal.aborted) setTicketLoading(false);
+      });
+    return () => c.abort();
+  }, [attempt]);
+  useEffect(() => {
+    const c = new AbortController();
+    setArtworks([]);
+    catalog(`/api/catalog/artworks?lang=${lang}`, c.signal)
+      .then((data) => setArtworks((data.items || []).slice(0, 3)))
+      .catch(() => {});
+    return () => c.abort();
+  }, [lang]);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActiveTab(visible[0].target.id);
+      },
+      { rootMargin: "-90px 0px -55% 0px", threshold: 0 },
+    );
+    VISIT_SECTIONS.forEach(([id]) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    const nav = tabs.current,
+      link = nav?.querySelector(`[href="#${activeTab}"]`);
+    if (nav && link && nav.getBoundingClientRect().top <= 90)
+      nav.scrollTo({
+        left: link.offsetLeft - nav.clientWidth / 2 + link.clientWidth / 2,
+        behavior: "auto",
+      });
+  }, [activeTab]);
+  function jump(event, id) {
+    const element = document.getElementById(id);
+    if (!element) return;
     event.preventDefault();
     setActiveTab(id);
-
-    section.scrollIntoView({
-      behavior: "smooth",
+    element.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
       block: "start",
     });
-  };
+    window.history.replaceState(window.history.state, "", `#${id}`);
+  }
+  const money = (value) =>
+    new Intl.NumberFormat(lang, {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    }).format(value);
   return (
     <div className="visit">
-      {/* HERO */}
-      <section className="v-hero" data-scroll-intro>
+      <section
+        className="v-hero"
+        data-scroll-intro
+        style={{
+          backgroundImage: `linear-gradient(180deg,rgba(21,18,13,.25),rgba(21,18,13,.78)),url("${galleryImage}")`,
+        }}
+      >
         <div className="v-hero-text">
-          <h1>VISIT</h1>
-          <p>{t("Everything you need to know before visiting the museum")}</p>
-        </div>
-      </section>
-
-      {/* THANH MENU */}
-      <nav className="v-tabs" aria-label="Visit sections">
-        <div className="v-tabs-list">
-          <a
-            className={activeTab === "hours" ? "is-active" : ""}
-            href="#hours"
-            onClick={(event) => goToSection(event, "hours")}
-          >
-            {t("Hour & Admission")}
-          </a>
-          <a
-            className={activeTab === "directions" ? "is-active" : ""}
-            href="#directions"
-            onClick={(event) => goToSection(event, "directions")}
-          >
-            {t("Maps, Entrance & Direction")}
-          </a>
-          <a
-            className={activeTab === "galleries" ? "is-active" : ""}
-            href="#galleries"
-            onClick={(event) => goToSection(event, "galleries")}
-          >
-            {t("List of available gallery")}
-          </a>
-          <a
-            className={activeTab === "amenities" ? "is-active" : ""}
-            href="#amenities"
-            onClick={(event) => goToSection(event, "amenities")}
-          >
-            {t("Visitors amenities")}
-          </a>
-          <a
-            className={activeTab === "restaurants" ? "is-active" : ""}
-            href="#restaurants"
-            onClick={(event) => goToSection(event, "restaurants")}
-          >
-            {t("Restaurants & Café")}
-          </a>
-          <a
-            className={activeTab === "family" ? "is-active" : ""}
-            href="#family"
-            onClick={(event) => goToSection(event, "family")}
-          >
-            {t("Visit as a family")}
-          </a>
-          <a
-            className={activeTab === "group" ? "is-active" : ""}
-            href="#group"
-            onClick={(event) => goToSection(event, "group")}
-          >
-            {t("Visit as a group")}
-          </a>
-          <a
-            className={activeTab === "accessibility" ? "is-active" : ""}
-            href="#accessibility"
-            onClick={(event) => goToSection(event, "accessibility")}
-          >
-            {t("Accessibility")}
-          </a>
-          <a
-            className={activeTab === "faq" ? "is-active" : ""}
-            href="#faq"
-            onClick={(event) => goToSection(event, "faq")}
-          >
-            {t("FAQ")}
-          </a>
-        </div>
-      </nav>
-
-      {/* HOUR & ADMISSION */}
-      <section className="v-sec v-tan">
-        <Label id="hours" color="#e0245e">
-          {t("HOUR & ADMISSION")}
-        </Label>
-
-        <div className="v-row">
-          <div className="v-text">
-            <h4>{t("OPENING HOURS")}</h4>
-            <p>
-              {t(
-                "The museum is open daily except Wednesday. Last entry 1 hour before closure. Visitors will be asked to vacate the exhibition 30 minutes rooms before closure.",
-              )}
-            </p>
-          </div>
-          <div className="v-card center">
-            <h5>THE MUSES MUSEUM</h5>
-            <p className="v-open">
-              <b />
-              {t(OPENING.status)}
-            </p>
-            {OPENING.rows.map((r) => (
-              <div key={r.note} className="v-cell">
-                <div className="v-time">{r.time}</div>
-                <small>{t(r.note)}</small>
-              </div>
-            ))}
-            <div className="v-cell last">
-              <div className="v-time">{OPENING.closed.label}</div>
-              <small>{t(OPENING.closed.note)}</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="v-row">
-          <div className="v-text">
-            <h4>{t("TICKET PRICES")}</h4>
-            <p>
-              {t(
-                "Tickets can be used to access both the permanent collections and temporary exhibitions. Time-slot bookings are recommended, including for free-admission visitors.",
-              )}
-            </p>
-            <Link className="btn btn-brown" to="/tickets">
-              {t("bookTicket")}
+          <span className="v-eyebrow">MUSES · {t("visit")}</span>
+          <h1>{t("heroTitle")}</h1>
+          <p>{t("heroIntro")}</p>
+          <div className="v-actions">
+            <a
+              className="btn btn-brown"
+              href="#hours"
+              onClick={(e) => jump(e, "hours")}
+            >
+              {t("plan")}
+              <SvgIcon kind="arrow" size={20} />
+            </a>
+            <Link className="v-hero-link" to="/museums">
+              {t("map")}
+              <SvgIcon kind="pin" light size={20} />
             </Link>
           </div>
-          <div className="v-card">
-            <div className="v-ticket">
-              <div>
-                <h6>{ticketText(lang, "chooseMuseum")}</h6>
-                <small>{ticketText(lang, "secureNote")}</small>
+        </div>
+      </section>
+      <nav className="v-tabs" aria-label={t("plan")}>
+        <div className="v-tabs-list" ref={tabs}>
+          {VISIT_SECTIONS.map(([id, key]) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className={activeTab === id ? "is-active" : ""}
+              aria-current={activeTab === id ? "location" : undefined}
+              onClick={(e) => jump(e, id)}
+            >
+              {t(key)}
+            </a>
+          ))}
+        </div>
+      </nav>
+      <section className="v-sec v-tan">
+        <SectionTitle id="hours" number="01">
+          {t("hours")}
+        </SectionTitle>
+        <div className="v-row">
+          <div className="v-text">
+            <span className="v-eyebrow">{t("destination")}</span>
+            <h3>{t("plan")}</h3>
+            <p>{t("hoursTip")}</p>
+            <div className="v-planner">
+              <label htmlFor="visit-museum">
+                {t("choose")}
+                <select
+                  id="visit-museum"
+                  value={place.id}
+                  onChange={(e) => setSelectedId(e.target.value)}
+                >
+                  {destinations.map((m) => (
+                    <option value={m.id} key={m.id}>
+                      {m.names?.[lang] || m.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label htmlFor="visit-date">
+                {t("date")}
+                <input
+                  id="visit-date"
+                  type="date"
+                  min={ticketToday()}
+                  max={ticketLastDay()}
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
+          <div className="v-card v-destination-card">
+            <SvgIcon kind="logo" size={36} />
+            <h3>{place.name}</h3>
+            <p className="v-address">
+              <SvgIcon kind="pin" size={20} />
+              {place.address}
+            </p>
+            <ExternalLink href={mapSearchUrl(place)}>
+              {t("checkHours")}
+            </ExternalLink>
+          </div>
+        </div>
+        <div className="v-row v-admission-row">
+          <div className="v-text">
+            <h3>{t("prices")}</h3>
+            <p>{t("priceTip")}</p>
+            <Link className="btn btn-brown" to={bookingUrl}>
+              {t("tickets")}
+              <SvgIcon kind="ticket" light size={20} />
+            </Link>
+          </div>
+          <div className="v-card v-admission-card">
+            {ticketLoading ? (
+              <p role="status">{ticketText(lang, "loading")}</p>
+            ) : ticketError ? (
+              <div role="status">
+                <p>{t("unavailable")}</p>
+                <button
+                  className="v-link"
+                  onClick={() => setAttempt((n) => n + 1)}
+                >
+                  {t("retry")}
+                  <SvgIcon kind="arrow" size={18} />
+                </button>
               </div>
-              <Link className="btn btn-brown" to="/tickets">
-                {ticketText(lang, "tickets")}
+            ) : offer ? (
+              <>
+                {[
+                  ["adult", "adultPrice"],
+                  ["concession", "concessionPrice"],
+                  ["child", "childPrice"],
+                ].map(([key, price]) => (
+                  <div className="v-price-row" key={key}>
+                    <span>{ticketText(lang, key)}</span>
+                    <strong>{money(offer[price])}</strong>
+                  </div>
+                ))}
+                {date && isClosed(offer, date) && (
+                  <p role="status" className="v-admission-note">
+                    {t("closedDate")}
+                  </p>
+                )}
+                {offer.terms && (
+                  <p className="v-admission-note">{offer.terms}</p>
+                )}
+                {!paymentReady && <p className="v-demo-note">{t("demo")}</p>}
+              </>
+            ) : (
+              <>
+                <h4>{t("choose")}</h4>
+                <p>{t("noOffer")}</p>
+                <ExternalLink href={mapSearchUrl(place)}>
+                  {t("contact")}
+                </ExternalLink>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+      <section className="v-sec">
+        <SectionTitle id="directions" number="02">
+          {t("directions")}
+        </SectionTitle>
+        <div className="v-row">
+          <div className="v-text">
+            <h3>{t("routeTitle")}</h3>
+            <p>{t("routeTip")}</p>
+            <p className="v-venue-name">
+              {place.name}
+              <br />
+              {place.address}
+            </p>
+            <div className="v-actions">
+              <ExternalLink
+                className="btn btn-brown"
+                href={directionsUrl(place)}
+              >
+                {t("directionsButton")}
+              </ExternalLink>
+              <Link className="v-link" to="/museums">
+                {t("map")}
+                <SvgIcon kind="arrow" size={18} />
               </Link>
             </div>
           </div>
+          <MuseumMap museum={place} />
         </div>
       </section>
-
-      {/* MAP, ENTRANCES & DIRECTIONS */}
-      <section className="v-sec">
-        <Label id="directions" color="#2d9d6a">
-          {t("MAP, ENTRANCES & DIRECTIONS")}
-        </Label>
-        <div className="v-row">
-          <div className="v-text">
-            <p>{t("Tips for finding your way around the Muses")}</p>
-            <Link className="v-link" to="/museums">
-              {label(lang, "Museums & exhibition spaces")}{" "}
-              <SvgIcon kind="arrow" size={18} />
-            </Link>
-          </div>
-          <div>
-            {DIRECTIONS.map((d) => (
-              <div key={d.title} className="v-dir">
-                <Pic src={d.img} />
-                <div>
-                  <h6>{t(d.title)}</h6>
-                  <More>{t(d.link)}</More>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ROOM CLOSURES */}
       <section className="v-sec v-tan">
-        <Label id="galleries" color="#8a3ffc">
-          {t("LIST OF AVAILABLE GALLERIES")}
-        </Label>
-        <div className="v-row">
-          <div className="v-text">
-            <h4>{t("SCHEDULE OF ROOM CLOSURES")}</h4>
-            <p>
-              {t(
-                "Due to renovations, some rooms may be closed during the week. Please check the schedule of room closures to better plan your visit.",
-              )}
-            </p>
-            <More>{t("See list of available galleries")}</More>
-          </div>
-          <Pic className="tall" color="#6f6358" />
+        <SectionTitle id="galleries" number="03">
+          {t("galleries")}
+        </SectionTitle>
+        <div className="v-section-intro">
+          <h3>{t("collection")}</h3>
+          <p>{t("collectionTip")}</p>
+          <Link
+            className="v-link"
+            to={
+              place.museumId
+                ? `/museums/${place.museumId}`
+                : "/explore/collection"
+            }
+          >
+            {t(place.museumId ? "seeMuseum" : "seeCollection")}
+            <SvgIcon kind="arrow" size={18} />
+          </Link>
         </div>
-      </section>
-
-      {/* FACILITIES */}
-      <section className="v-sec v-dark">
-        <Label id="amenities" color="#8a3ffc">
-          {t("LIST OF AVAILABLE GALLERIES")}
-        </Label>
-        <div className="v-right">
-          <div className="v-grid3">
-            {FACILITIES.map((f) => (
-              <div key={f.label} className="v-fac">
-                <SvgIcon kind={f.icon} color={f.color} size={44} />
-                <small>{t(f.label)}</small>
-              </div>
+        {artworks.length > 0 ? (
+          <div className="v-artworks">
+            {artworks.map((a) => (
+              <Link
+                to={`/explore/artworks/${a.id}?lang=${lang}`}
+                key={a.id}
+                className="v-artwork"
+              >
+                <div>
+                  <ArtworkImage artwork={a} />
+                </div>
+                <h4>{a.title}</h4>
+                <p>{a.artist}</p>
+              </Link>
             ))}
           </div>
-          {SERVICES.map((s) => (
-            <div key={s.label} className="v-service">
-              <Pic src={s.img} color="#5c5148" />
-              <div>
-                <SvgIcon kind={s.icon} color="#fff" size={28} />{" "}
-                <span>{t(s.label)}</span>
-              </div>
-            </div>
+        ) : (
+          <Link className="v-gallery-feature" to="/explore/collection">
+            <img src={galleryImage} alt="" loading="lazy" />
+            <span>
+              {t("seeCollection")}
+              <SvgIcon kind="arrow" size={24} />
+            </span>
+          </Link>
+        )}
+        <div className="v-audio-feature">
+          <div>
+            <SvgIcon kind="headphones" size={40} />
+            <h3>{t("scanTitle")}</h3>
+            <p>{t("scanTip")}</p>
+          </div>
+          <Link className="btn btn-brown" to="/scan">
+            <SvgIcon kind="qr" size={22} />
+            {t("scan")}
+          </Link>
+        </div>
+      </section>
+      <section className="v-sec v-dark">
+        <SectionTitle id="amenities" number="04">
+          {t("amenities")}
+        </SectionTitle>
+        <div className="v-facilities">
+          {FACILITIES.map(([icon, title, tip]) => (
+            <article className="v-facility" key={title}>
+              <SvgIcon kind={icon} size={36} />
+              <h3>{t(title)}</h3>
+              <p>{t(tip)}</p>
+            </article>
           ))}
         </div>
       </section>
-
-      {/* RESTAURANTS & CAFE */}
-      <section className="v-sec v-cafe-wrap">
-        <Label id="restaurants" color="#f97316">
-          {t("RESTAURANTS & CAFÉ")}
-        </Label>
-      </section>
-      <section className="v-cafe">
-        <h4>{t("FANCY A BREAK AND SOMETHING TO EAT ?")}</h4>
-        <p>
-          {t(
-            "Choose from a wide range of restaurants, cafes and take-away counters in the beautiful palace setting and gardens.",
-          )}
-        </p>
-        <More>{t("See all cafes")}</More>
-      </section>
-
-      {/* FAMILY & GROUP */}
-      <section className="v-sec">
-        <Label id="family" color="#1aa5b8">
-          {t("VISIT AS A FAMILY")}
-        </Label>
-        <div className="v-row">
-          <p className="v-text">
-            {t(
-              "Enjoy the Muses experience with your children at no extra cost – admission to the permanent collections and temporary exhibitions is free for all visitors under the age of 18",
-            )}
-          </p>
-          <Pic className="wide" color="#7a4a2a" />
-        </div>
-        <Label id="group" color="#1aa5b8">
-          {t("VISIT AS A GROUP")}
-        </Label>
-        <div className="v-row">
-          <p className="v-text">
-            {t(
-              "The museum offers a range of activities and tools for visiting the museum with groups of school children, disabled visitors and more: how to organise your visit, training, etc.",
-            )}
-          </p>
-          <Pic className="wide" color="#5a3a2a" />
-        </div>
-      </section>
-
-      {/* ACCESSIBILITY */}
-      <section className="v-sec">
-        <Label id="accessibility" color="#1f3fff">
-          {t("ACCESSIBILITY")}
-        </Label>
+      <section className="v-sec v-cafe">
+        <SectionTitle id="restaurants" number="05">
+          {t("restaurants")}
+        </SectionTitle>
         <div className="v-row">
           <div className="v-text">
-            <h4>{t("OPEN TO ALL")}</h4>
-            <p>
-              {t(
-                "The Muses strives to make the museum accessible to all visitors. Measures are taken to ensure visitors find everything they need in the exhibition rooms and at each step of their itinerary.",
-              )}
-            </p>
-            <More>{t("More information")}</More>
+            <h3>{t("cafeTitle")}</h3>
+            <p>{t("cafeTip")}</p>
+            <ExternalLink
+              className="btn btn-brown"
+              href={mapSearchUrl(place, "cafes near")}
+            >
+              {t("cafeButton")}
+            </ExternalLink>
           </div>
-          <div className="v-grid2">
-            {ACCESS.map((a) => (
-              <div key={a.label} className="v-acc">
-                <SvgIcon kind={a.icon} size={44} />
-                <small>{t(a.label)}</small>
-              </div>
-            ))}
+          <div className="v-editorial-image">
+            <img src={coffeeImage} alt="" loading="lazy" />
           </div>
         </div>
       </section>
-
-      {/* FAQ */}
+      <section className="v-sec">
+        <SectionTitle id="family" number="06">
+          {t("family")}
+        </SectionTitle>
+        <div className="v-row">
+          <div className="v-text">
+            <h3>{t("familyTitle")}</h3>
+            <p>{t("familyTip")}</p>
+            <Link className="v-link" to={bookingUrl}>
+              {t("tickets")}
+              <SvgIcon kind="arrow" size={18} />
+            </Link>
+          </div>
+          <div className="v-editorial-image v-family-image">
+            <img src={familyImage} alt="" loading="lazy" />
+          </div>
+        </div>
+      </section>
+      <section className="v-sec v-tan">
+        <SectionTitle id="group" number="07">
+          {t("group")}
+        </SectionTitle>
+        <div className="v-row">
+          <div className="v-text">
+            <h3>{t("groupTitle")}</h3>
+            <p>{t("groupTip")}</p>
+            <ExternalLink href={mapSearchUrl(place)}>
+              {t("contact")}
+            </ExternalLink>
+          </div>
+          <div className="v-group-card">
+            <span>MUSES</span>
+            <h3>{place.name}</h3>
+            <p>{place.address}</p>
+            <Link className="btn btn-brown" to={bookingUrl}>
+              {t("tickets")}
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className="v-sec">
+        <SectionTitle id="accessibility" number="08">
+          {t("accessibility")}
+        </SectionTitle>
+        <div className="v-section-intro">
+          <h3>{t("pace")}</h3>
+          <p>{t("accessTip")}</p>
+        </div>
+        <div className="v-access-grid">
+          {ACCESS.map(([icon, title, tip]) => (
+            <article key={title}>
+              <SvgIcon kind={icon} size={36} />
+              <h3>{t(title)}</h3>
+              <p>{t(tip)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
       <section className="v-sec v-dark">
-        <Label id="faq" color="#22c55e">
-          FAQ
-        </Label>
+        <SectionTitle id="faq" number="09">
+          {t("faq")}
+        </SectionTitle>
         <div className="v-row">
           <div className="v-text">
-            <h4>{t("FREQUENTLY ASKED QUESTIONS")}</h4>
-            <p>{t("Answer from the Muses")}</p>
-            <More>{t("See FAQ")}</More>
+            <h3>{t("faqIntro")}</h3>
+            <Link className="v-link" to="/museums">
+              {t("map")}
+              <SvgIcon kind="arrow" size={18} />
+            </Link>
           </div>
-          <div>
-            {FAQ.map((f) => (
-              <details key={f.q} className="v-faq">
-                <summary>{t(f.q)}</summary>
-                <p>{t(f.a)}</p>
+          <div className="v-faq-list">
+            {VISIT_FAQ.map((key, index) => (
+              <details
+                key={key}
+                className="v-faq"
+                open={index === 0 ? true : undefined}
+              >
+                <summary>
+                  {t(`${key}Q`)}
+                  <span aria-hidden="true">+</span>
+                </summary>
+                <p>{t(`${key}A`)}</p>
+                {key === "qr" && (
+                  <Link className="v-link" to="/scan">
+                    {t("scan")}
+                    <SvgIcon kind="arrow" size={18} />
+                  </Link>
+                )}
               </details>
             ))}
           </div>

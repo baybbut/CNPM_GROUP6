@@ -131,7 +131,10 @@ export default function Tickets() {
     [loadError, setLoadError] = useState(false),
     [attempt, setAttempt] = useState(0);
   const [museumId, setMuseumId] = useState(params.get("museum") || ""),
-    [date, setDate] = useState(""),
+    [date, setDate] = useState(() => {
+      const value = params.get("date") || "";
+      return validVisitDate({}, value) ? value : "";
+    }),
     [counts, setCounts] = useState({ adults: 1, concessions: 0, children: 0 }),
     [contact, setContact] = useState({ name: "", email: "" }),
     [accepted, setAccepted] = useState(false),

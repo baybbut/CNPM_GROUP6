@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { InfoIcon } from "../Icons";
 import "./Prepare.css";
@@ -20,9 +21,9 @@ export default function Prepare() {
     >
       <h2>{t("prepare")}</h2>
       <p>{t("prepareDesc")}</p>
-      <button className="btn btn-grey">
+      <Link to="/visit" className="btn btn-grey">
         <InfoIcon /> {t("prepare")}
-      </button>
+      </Link>
     </section>
   );
 }
