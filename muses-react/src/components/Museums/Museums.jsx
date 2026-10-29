@@ -1,10 +1,14 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
 import { catalog } from "../../api/catalog.mjs";
 import { ArtworkImage } from "../explore/Artworks";
 import PlacesMap from "./PlacesMap";
+import {
+  LocationControls,
+  useMuseumLocation,
+} from "../../context/MuseumLocation";
 import Directions, { useDirections } from "./Directions";
 import {
   hasCoordinates,
@@ -13,6 +17,7 @@ import {
 } from "./placeModel.mjs";
 import referencePlaces from "../../data/hcmPlaces.json";
 import "./museums.css";
+import "./itinerary.css";
 
 export function MuseumMap({ museum }) {
   const { lang } = useLang(),
@@ -26,17 +31,19 @@ export function MuseumMap({ museum }) {
     [museum],
   );
   const places = useMemo(() => [place], [place]);
-  const directions = useDirections();
+  const { position } = useMuseumLocation();
+  const directions = useDirections(position);
   if (!hasCoordinates(place))
     return <p>{t("The museum location has not been confirmed yet.")}</p>;
   const lat = Number(place.latitude),
     lng = Number(place.longitude);
   return (
     <section className="museum-map" aria-label={t("Museum map")}>
+      <LocationControls />
       <PlacesMap
         places={places}
         route={directions.state?.route}
-        position={directions.state?.origin}
+        position={position}
         title={`${t("Museum map")}: ${place.name}`}
       />
       <Directions
@@ -52,7 +59,7 @@ export function MuseumMap({ museum }) {
         >
           {t("Open map")}
         </a>
-        <button onClick={() => directions.start(place)}>
+        <button disabled={!position} onClick={() => directions.start(place)}>
           {t("Directions")}
         </button>
       </div>
@@ -108,18 +115,9 @@ function DiscoverMuseums() {
     [museums, setMuseums] = useState([]),
     [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0),
-    [position, setPosition] = useState(null),
-    [gpsError, setGpsError] = useState(null),
-    [gpsBusy, setGpsBusy] = useState(false),
     [selectedId, setSelectedId] = useState(null);
-  const gpsRun = useRef(0);
+  const { position } = useMuseumLocation();
   const directions = useDirections(position);
-  useEffect(
-    () => () => {
-      gpsRun.current++;
-    },
-    [],
-  );
   useEffect(() => {
     const c = new AbortController();
     setError(false);
@@ -137,37 +135,6 @@ function DiscoverMuseums() {
       .catch(() => {});
     return () => c.abort();
   }, [attempt]);
-  function locate() {
-    const run = ++gpsRun.current;
-    setGpsError(null);
-    if (!window.isSecureContext || !navigator.geolocation) {
-      setGpsError(
-        !window.isSecureContext
-          ? "Location needs a secure connection. You can still explore the map."
-          : "Location unavailable. You can still search by name.",
-      );
-      return;
-    }
-    setGpsBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
-        if (run !== gpsRun.current) return;
-        const next = {
-          latitude: p.coords.latitude,
-          longitude: p.coords.longitude,
-        };
-        if (hasCoordinates(next)) setPosition(next);
-        else setGpsError("Location unavailable. You can still search by name.");
-        setGpsBusy(false);
-      },
-      () => {
-        if (run !== gpsRun.current) return;
-        setGpsBusy(false);
-        setGpsError("Location unavailable. You can still search by name.");
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
-    );
-  }
   const allPlaces = useMemo(
     () => connectCatalogue(data?.items || [], museums),
     [data, museums],
@@ -198,6 +165,9 @@ function DiscoverMuseums() {
       <p className="discovery-intro">
         {t("Explore museums, galleries and art spaces in Ho Chi Minh City.")}
       </p>
+      <Link className="planner-link" to="/museums/itinerary">
+        {t("Build a museum itinerary")} →
+      </Link>
       <div className="museum-search">
         <label>
           {t("Search places")}
@@ -216,22 +186,7 @@ function DiscoverMuseums() {
             <option value="gallery">{t("Galleries & art spaces")}</option>
           </select>
         </label>
-        <button disabled={gpsBusy} onClick={locate}>
-          {gpsBusy ? t("Locating…") : t("Use my location")}
-        </button>
-        {position && (
-          <button
-            onClick={() => {
-              gpsRun.current++;
-              setPosition(null);
-              setGpsBusy(false);
-              setGpsError(null);
-            }}
-          >
-            {t("Reset to Ho Chi Minh City")}
-          </button>
-        )}
-        {gpsError && <p role="status">{t(gpsError)}</p>}
+        <LocationControls />
       </div>
       <div className="discovery-summary" aria-live="polite">
         <span>
@@ -303,7 +258,10 @@ function DiscoverMuseums() {
                 <button onClick={() => selectPlace(place.id)}>
                   {t("Show on map")}
                 </button>
-                <button onClick={() => showDirections(place)}>
+                <button
+                  disabled={!position}
+                  onClick={() => showDirections(place)}
+                >
                   {t("Directions")}
                 </button>
                 {place.museumId && (
@@ -349,7 +307,10 @@ function DiscoverMuseums() {
             <div className="selected-place" aria-live="polite">
               <strong>{selected.name}</strong>
               <p>{selected.address}</p>
-              <button onClick={() => showDirections(selected)}>
+              <button
+                disabled={!position}
+                onClick={() => showDirections(selected)}
+              >
                 {t("Directions")}
               </button>
             </div>

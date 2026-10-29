@@ -76,7 +76,10 @@ async function intercept(p) {
   else if (path === "/api/artworks") data = [artwork];
   else if (path === "/api/places/hcm")
     data = { items: places, sourceType: "reference" };
-  else if (path === "/api/museums") data = [];
+  else if (path === "/api/museums")
+    data = [{ ...places[0], id: 31, isPublic: true, isDemo: false }];
+  else if (path === "/api/museums/31")
+    data = { ...places[0], id: 31, artworks: [artwork] };
   else if (path === "/api/auth/me") data = { user: null };
   return call("Fetch.fulfillRequest", {
     requestId: p.requestId,
@@ -145,7 +148,7 @@ try {
   await call("Page.enable");
   await call("Runtime.enable");
   await call("Page.addScriptToEvaluateOnNewDocument", {
-    source: `Object.defineProperty(navigator, 'geolocation', {value: {getCurrentPosition(ok, fail) { window.denyGPS ? fail({code:1}) : ok({coords:{latitude:10.77,longitude:106.69}}); }}});`,
+    source: `Object.defineProperty(navigator, 'geolocation', {value: {getCurrentPosition(ok, fail) { (window.gpsRequests=(window.gpsRequests||0)+1, window.denyGPS) ? fail({code:1}) : ok({coords:{latitude:10.77,longitude:106.69}}); }}});`,
   });
   await call("Fetch.enable", {
     patterns: [
@@ -221,6 +224,18 @@ try {
   await viewport(1440);
   await ev("document.querySelector('.venue-marker').click()");
   await wait("document.querySelector('.selected-place button')");
+  assert.equal(
+    await ev("document.querySelector('.selected-place button').disabled"),
+    true,
+  );
+  await ev("document.querySelector('.selected-place button').click()");
+  assert.equal(await ev("window.gpsRequests || 0"), 0);
+  assert.equal(
+    await ev("Boolean(document.querySelector('.map-directions'))"),
+    false,
+  );
+  await ev("document.querySelector('.use-my-location').click()");
+  await wait("!document.querySelector('.selected-place button').disabled");
   await ev("document.querySelector('.selected-place button').click()");
   await wait(
     "document.querySelector('.map-directions')?.textContent.includes('2.1 km')",
@@ -262,12 +277,96 @@ try {
     "document.querySelector('.map-directions')?.textContent.includes('2.1 km')",
   );
   await ev(
-    "document.querySelector('.map-directions-heading button').click(); window.denyGPS=true;",
+    "document.querySelector('.reset-my-location').click(); window.denyGPS=true;",
   );
-  await wait("!document.querySelector('.map-directions')");
-  await ev("document.querySelector('.selected-place button').click()");
   await wait(
-    "document.querySelector('.map-directions')?.textContent.includes('Chưa tìm được')",
+    "!document.querySelector('.map-directions') && document.querySelector('.selected-place button').disabled",
+  );
+  assert.equal(
+    await ev(
+      "Boolean(document.querySelector('.leaflet-overlay-pane path[stroke=\"#2563eb\"]'))",
+    ),
+    false,
+  );
+  await ev("document.querySelector('.use-my-location').click()");
+  await wait(
+    "document.querySelector('.museum-location-controls [role=status]')",
+  );
+  assert.equal(
+    await ev("document.querySelector('.selected-place button').disabled"),
+    true,
+  );
+  assert.equal(
+    await ev("Boolean(document.querySelector('.map-directions'))"),
+    false,
+  );
+  await call("Page.navigate", { url: origin + "/museums/itinerary?lang=vi" });
+  await wait("document.querySelectorAll('.itinerary-stops > li').length===4");
+  assert.equal(
+    await ev("document.querySelectorAll('.guide-diagram button').length"),
+    3,
+  );
+  await wait("document.querySelector('.guide-artworks a')");
+  assert.match(
+    await ev("document.querySelector('.guide-artworks a').href"),
+    /artworks\/17/,
+  );
+  assert.equal(
+    await ev("document.querySelector('.itinerary-tools button').disabled"),
+    true,
+  );
+  assert.equal(
+    await ev("document.querySelector('.guide-floorplan img')"),
+    null,
+  );
+  assert.ok(
+    (
+      await ev("document.querySelector('.guide-floorplan').textContent")
+    ).includes("Chưa có sơ đồ"),
+  );
+  await ev(
+    "document.querySelector('.itinerary-stops li .place-actions button:nth-child(2)').click()",
+  );
+  assert.ok(
+    (
+      await ev("document.querySelectorAll('.itinerary-name')[1].textContent")
+    ).includes("Mỹ thuật"),
+  );
+  await ev(
+    "const select=document.querySelector('.itinerary-stops select');select.value='90';select.dispatchEvent(new Event('change',{bubbles:true}));",
+  );
+  await wait(
+    "document.querySelector('.itinerary-total').textContent.includes('270')",
+  );
+  await ev("document.querySelector('.itinerary-pick input').click()");
+  await wait("document.querySelectorAll('.itinerary-stops > li').length===3");
+  await ev("document.querySelector('.use-my-location').click()");
+  await wait("!document.querySelector('.itinerary-tools button').disabled");
+  await ev("document.querySelector('.itinerary-tools button').click()");
+  await viewport(375);
+  for (const id of places.map((p) => p.id)) {
+    await ev(
+      `(()=>{const s=document.querySelector('.guide-select select');s.value=${JSON.stringify(id)};s.dispatchEvent(new Event('change',{bubbles:true}));})()`,
+    );
+    await wait(
+      `document.querySelector('.guide-select select').value===${JSON.stringify(id)}`,
+    );
+    assert.equal(
+      await ev("document.querySelectorAll('.guide-diagram button').length"),
+      3,
+    );
+  }
+  writeFileSync(
+    "/tmp/muses-itinerary.png",
+    Buffer.from(
+      (
+        await call("Page.captureScreenshot", {
+          format: "png",
+          captureBeyondViewport: true,
+        })
+      ).data,
+      "base64",
+    ),
   );
   catalogueFail = true;
   await call("Page.navigate", { url: origin + "/scan?lang=vi" });
@@ -287,7 +386,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: QR catalogue/search/retry, real generated QR decoded from image into full artwork detail, modal Escape/focus/mobile, inline route/polyline/summary, routing failure/retry and denied GPS. Controlled fixtures.",
+    "PASS: QR decoding into full detail, GPS enabled only via Use my location, gated directions/reset/denial, inline route/retry, four-museum planner/reordering/duration/themes and mobile layout. Controlled fixtures.",
   );
 } catch (error) {
   console.error({

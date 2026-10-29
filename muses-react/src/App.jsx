@@ -8,7 +8,8 @@ import CameraScanner from "./components/Scanner/CameraScanner";
 import Scanner from "./components/Scanner/Scanner";
 import { useLang } from "./context/LangContext";
 import { CONTENT_LANGUAGES } from "./api/contentLanguages.mjs";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { label } from "./i18n/catalog.mjs";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
@@ -20,9 +21,11 @@ import Collection from "./components/explore/collection";
 
 import ArtworkDetail from "./components/explore/ArtworkDetail";
 
+const Itinerary = lazy(() => import("./components/Museums/Itinerary"));
+
 export default function App() {
   const { pathname, hash, search } = useLocation();
-  const { setLang } = useLang();
+  const { setLang, lang } = useLang();
   useEffect(() => {
     const code = new URLSearchParams(search).get("lang");
     if (CONTENT_LANGUAGES.some((l) => l.code === code)) setLang(code);
@@ -47,6 +50,20 @@ export default function App() {
           <Route path="/tickets/confirmation/:id" element={<TicketReceipt />} />
           <Route path="/tickets/result" element={<TicketReceipt />} />
           <Route path="/museums" element={<Museums />} />
+          <Route
+            path="/museums/itinerary"
+            element={
+              <Suspense
+                fallback={
+                  <p className="aw-request" role="status">
+                    {label(lang, "Loading…")}
+                  </p>
+                }
+              >
+                <Itinerary />
+              </Suspense>
+            }
+          />
           <Route path="/museums/:id" element={<Museums />} />
           <Route path="/account" element={<VisitorAccount />} />
           <Route path="/news" element={<NewsIndex />} />

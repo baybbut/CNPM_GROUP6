@@ -2,38 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
 import { directionsUrl } from "../../api/catalog.mjs";
+import { hasCoordinates } from "./placeModel.mjs";
 import { routeUrl, readRoute } from "./routeModel.mjs";
 
 export function useDirections(position) {
   const [state, setState] = useState(null);
   const current = useRef(null);
-  useEffect(() => () => current.current?.abort(), []);
+  useEffect(() => {
+    current.current?.abort();
+    setState(null);
+    return () => current.current?.abort();
+  }, [position]);
   function clear() {
     current.current?.abort();
     setState(null);
   }
   async function start(place) {
+    if (!hasCoordinates(position)) return;
     current.current?.abort();
     const controller = new AbortController();
     current.current = controller;
     setState({ place, loading: true });
     try {
-      let origin = position;
-      if (!origin) {
-        if (!window.isSecureContext || !navigator.geolocation)
-          throw Error("LOCATION");
-        origin = await new Promise((resolve, reject) =>
-          navigator.geolocation.getCurrentPosition(
-            (p) =>
-              resolve({
-                latitude: p.coords.latitude,
-                longitude: p.coords.longitude,
-              }),
-            reject,
-            { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false },
-          ),
-        );
-      }
+      const origin = position;
       if (controller.signal.aborted) return;
       const response = await fetch(routeUrl(origin, place), {
         signal: AbortSignal.any([
@@ -50,7 +41,7 @@ export function useDirections(position) {
         setState({ place, loading: false, error: true });
     }
   }
-  return { state, start, clear };
+  return { state: hasCoordinates(position) ? state : null, start, clear };
 }
 
 export default function Directions({ state, onClose, onRetry }) {
