@@ -139,3 +139,32 @@
     gap: 8px;
   }
 }
+.analytics-visitor-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 5px 0 22px;
+}
+.analytics-visitor-tools label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.analytics-visitor-tools select {
+  padding: 9px 14px;
+  border: 1px solid #b7ae97;
+  background: #fffaf0;
+  color: #242218;
+  border-radius: 8px;
+  font: inherit;
+}
+.analytics-visitor-tools > span {
+  font-size: 13px;
+  color: #70685c;
+}
+.analytics-visitor-list code {
+  font-size: 12px;
+  white-space: nowrap;
+}

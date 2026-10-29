@@ -71,7 +71,29 @@ async function intercept(p) {
       hours: [],
       peakHours: [],
       points: [],
-      recent: [],
+      recent: [
+        {
+          id: "session-a001",
+          name: "Bình",
+          startedAt: "2026-10-30T00:00:00Z",
+          lastSeenAt: "2026-10-30T00:10:00Z",
+          active: 1,
+        },
+        {
+          id: "session-b002",
+          name: "An",
+          startedAt: "2026-10-30T00:00:00Z",
+          lastSeenAt: "2026-10-30T00:02:00Z",
+          active: 0,
+        },
+        {
+          id: "session-c003",
+          name: null,
+          startedAt: "2026-10-30T00:00:00Z",
+          lastSeenAt: "2026-10-30T00:01:00Z",
+          active: 0,
+        },
+      ],
       daily: [],
       trackingSince: "2026-10-30T00:00:00Z",
       updatedAt: "2026-10-30T00:00:00Z",
@@ -264,11 +286,66 @@ try {
     await wait(
       `document.querySelector('.sidebar [aria-current=page]')?.textContent===${JSON.stringify(page)}`,
     );
-    assert.equal(await ev("document.querySelectorAll('.pg-stat').length"), 5);
+    assert.equal(
+      await ev("document.querySelectorAll('.pg-stat').length"),
+      page === "Visitors" ? 0 : 5,
+    );
+    if (page === "Visitors") {
+      assert.equal(
+        await ev("document.querySelector('.analytics-hours')"),
+        null,
+      );
+      await wait(
+        "document.querySelectorAll('.analytics-visitor-list tbody tr').length===3",
+      );
+      assert.equal(
+        await ev("document.querySelectorAll('.analytics .pg-panel').length"),
+        1,
+      );
+      await input(".topbar input", "Binh");
+      await wait(
+        "document.querySelectorAll('.analytics-visitor-list tbody tr').length===1 && document.querySelector('.analytics-visitor-list tbody').textContent.includes('Bình')",
+      );
+      await ev(
+        "const s=document.querySelector('.analytics-visitor-tools select');s.value='inactive';s.dispatchEvent(new Event('change',{bubbles:true}));",
+      );
+      await wait(
+        "document.querySelector('.analytics-visitor-list tbody').textContent.includes('Chưa có phiên phù hợp')",
+      );
+      await input(".topbar input", "");
+      await wait(
+        "document.querySelectorAll('.analytics-visitor-list tbody tr').length===2",
+      );
+      await ev(
+        "const original=URL.createObjectURL;URL.createObjectURL=(blob)=>{window.exportedCsv=blob;return original(blob)};[...document.querySelectorAll('.analytics-actions button')].find(b=>b.textContent.includes('Xuất CSV')).click();",
+      );
+      const csv = await ev("window.exportedCsv.text()");
+      assert.ok(csv.includes("Mã phiên"));
+      assert.ok(csv.includes("session-b002"));
+      assert.equal(csv.includes("session-a001"), false);
+      assert.equal(csv.includes("Khung giờ"), false);
+      await viewport(1440);
+      writeFileSync(
+        "/tmp/muses-visitors-focused.png",
+        Buffer.from(
+          (await call("Page.captureScreenshot", { format: "png" })).data,
+          "base64",
+        ),
+      );
+      await viewport(375);
+    }
   }
   await ev("location.hash='Overview'");
   await wait(
     "document.querySelector('.sidebar [aria-current=page]')?.textContent==='Overview'",
+  );
+  assert.equal(
+    await ev("document.querySelectorAll('.analytics table').length"),
+    0,
+  );
+  assert.equal(
+    await ev("document.querySelectorAll('.analytics-hours').length"),
+    1,
   );
   await viewport(1440);
   writeFileSync(
@@ -293,7 +370,7 @@ try {
   );
   assert.deepEqual(exceptions, []);
   console.log(
-    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry, removed Admin ticket page/account cards, retained active visitor count; no checkout requests. Controlled API fixtures.",
+    "PASS: read-only price lookup, unknown vs free, search/group/sort, venue routing, five languages, 375/768/1440, API retry, removed Admin ticket page/account cards, retained active visitor count, compact Overview, focused Visitors with search/status and filtered CSV; no checkout requests. Controlled API fixtures.",
   );
 } finally {
   ws.close();

@@ -51,3 +51,7 @@ Nếu backend khác cổng 3001, cấu hình `API_PROXY_TARGET` trong file `.env
 - Hoạt động được ghi nhận từ thời điểm cài đặt, không thể khôi phục số liệu trước đó. Thống kê phụ thuộc việc thiết bị gửi được sự kiện tới máy chủ.
 
 Có thể đặt `COOKIE_SECURE=true` trong backend khi triển khai HTTPS. Cookie đăng nhập có HttpOnly, SameSite=Lax và hạn 12 giờ. API báo cáo kiểm tra quyền quản trị; cookie/mật khẩu không được lưu trong localStorage.
+
+## Bố cục Overview và Visitors
+
+Overview được rút gọn còn 5 chỉ số tổng quan và biểu đồ giờ đông nhất; nút Xem khách truy cập/Xem báo cáo đưa tới phần chi tiết. Visitors chỉ có danh sách phiên, ngày bắt đầu/hoạt động cuối, mã phiên và trạng thái, với tìm kiếm không dấu, lọc đang hoạt động/đã rời. Danh sách lấy tối đa 100 phiên mới nhất trong kỳ; không hiển thị như toàn bộ khách lịch sử. CSV của Visitors chỉ xuất các phiên khớp tìm kiếm và bộ lọc, không lẫn dữ liệu giờ/điểm đọc. Ba ô tài khoản đã được bỏ khỏi UI theo yêu cầu; các định nghĩa ở trên mô tả dữ liệu API cũ, không có nghĩa các ô đó còn hiển thị. Không cần migration DB cho thay đổi bố cục này.

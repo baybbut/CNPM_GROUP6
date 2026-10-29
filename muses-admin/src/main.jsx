@@ -120,11 +120,15 @@ function App() {
           </div>
           <input
             aria-label={`Search ${active.toLowerCase()}`}
-            disabled={active === "Reports"}
+            disabled={active === "Reports" || active === "Overview"}
             placeholder={
               active === "Reports"
                 ? "Muses reports"
-                : `Search ${active.toLowerCase()}…`
+                : active === "Overview"
+                  ? "Muses overview"
+                  : active === "Visitors"
+                    ? "Tìm khách hoặc mã phiên…"
+                    : `Search ${active.toLowerCase()}…`
             }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
