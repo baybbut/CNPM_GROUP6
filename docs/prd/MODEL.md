@@ -1,5 +1,7 @@
 # Mô hình triển khai PRD
 
+Đây là mô hình lõi dữ liệu; phạm vi sản phẩm và các giới hạn hiện tại ở [PRD](PRD.md).
+
 Các bảng cũ giữ nguyên tên/khóa để không cắt đứt ảnh, QR và thống kê. `Catalog.sql` thêm trạng thái và các quan hệ mới; không thay DB bằng một sơ đồ mới.
 
 ```mermaid
@@ -22,6 +24,10 @@ erDiagram
       string InformationSource
       string ImageSource
       boolean IsDemo
+      boolean QRIsEnabled
+      string QRLabel
+      datetime QRUpdatedAt
+      int QRUpdatedBy
     }
     ArtworkDescriptions {
       int ArtworkID FK
@@ -61,6 +67,7 @@ sequenceDiagram
     participant Web as Website
     participant API as Express API
     participant DB as SQL Server
+    participant Router as OSRM
     Guest->>Web: Tìm + lọc + chọn ngôn ngữ
     Web->>API: GET catalog/artworks (query có phân trang)
     API->>DB: Published + vi Published + bộ lọc + lịch hiện tại
@@ -68,10 +75,17 @@ sequenceDiagram
     API-->>Web: requestedLanguage, contentLanguage, isFallback, currentExhibition
     Guest->>Web: Nhấn nghe
     Web->>Web: Chọn voice khớp contentLanguage hoặc báo chưa hỗ trợ
+    Guest->>Web: Nhấn Dùng vị trí của tôi
+    Web->>Guest: Xin quyền lấy vị trí
+    Guest-->>Web: Cho phép, lấy tọa độ thành công
     Guest->>Web: Nhấn chỉ đường
-    Web->>Guest: Mở dịch vụ bản đồ với đích lat,lng đã lưu
+    Web->>Router: Yêu cầu tuyến với điểm đi và điểm đến
+    Router-->>Web: Hình học tuyến đường
+    Web-->>Guest: Vẽ tuyến trên map; giữ địa chỉ khi lỗi
 ```
 
 Xác nhận/sửa lịch: SQL SERIALIZABLE → khóa hàng Artworks của đúng hiện vật → khóa bảo tàng → khóa phạm vi lịch → kiểm tra `[start,end)` với end=null là vô hạn → lưu cùng nguồn/ngày kiểm chứng/UserID → commit. API cập nhật lịch và ẩn bảo tàng cùng khóa dữ liệu liên quan; lỗi/deadlock rollback, client giữ form để thử lại. Mọi API quản trị dùng cùng identity từ cookie session, không nhận role/UserID từ client.
 
 Nhập bản dịch nháp không làm thay đổi ngôn ngữ công khai. TTS chỉ sử dụng ngôn ngữ thực của nội dung; không gọi dịch vụ dịch tự động để tự công bố nội dung chưa duyệt.
+
+Cấu hình QR lưu trên Artworks; chỉ QR bật và nội dung công khai hợp lệ mới mở được luồng `source=qr`. Tắt QR không thay đổi PublicationStatus của tác phẩm. Tọa độ khách không lưu trong DB; chỉ giữ ở bộ nhớ và gửi tới dịch vụ định tuyến khi được yêu cầu.

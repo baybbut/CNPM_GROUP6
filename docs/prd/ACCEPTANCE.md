@@ -1,5 +1,7 @@
 # Đối chiếu PRD và biên bản kiểm thử
 
+> Đây là biên bản đối chiếu lần triển khai ngày 29/10/2026, được giữ để truy vết. Yêu cầu, menu và tiêu chí hiện hành ở [PRD cập nhật](PRD.md); cách chạy ở [README](../../README.md). Các mô tả cũ về bản đồ, Visitors/QR Check-in và số lượng bài test không đại diện cho bản hiện tại.
+
 Ngày thay đổi: 29/10/2026 (Asia/Ho_Chi_Minh). Nguồn: [PRD người dùng cung cấp](PRD-2026-10-29.txt). Người thực hiện kiểm thử tự động: Codex. Người kiểm tra nghiệm thu trên thiết bị/DB thật: **nhóm cần điền**.
 
 ## Phạm vi bằng chứng

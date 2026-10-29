@@ -1,5 +1,7 @@
 # Chạy Muses theo PRD
 
+Phạm vi hiện hành và tiêu chí nghiệm thu: [PRD cập nhật](PRD.md). Hướng dẫn tổng hợp: [README](../../README.md).
+
 Phạm vi mới: web tra cứu không cần tài khoản; Admin duyệt thủ công tác phẩm, bản dịch và lịch ở nhiều bảo tàng. Các ngôn ngữ: Việt, Anh, Trung, Nhật, Hàn. Không cần LibreTranslate cho MVP. Mobile Expo giữ nguyên, ngoài phạm vi website/Admin của PRD này.
 
 ## Lấy code và cài dependencies
@@ -26,7 +28,7 @@ Lệnh hỏi tài khoản SQL quản trị, mật khẩu ẩn và đường dẫ
 
 `Login failed for user 'sa'`: kiểm tra mật khẩu SQL, không dùng mật khẩu web Admin. Trong Docker Desktop → container SQL → Inspect → Config.Env có thể có MSSQL_SA_PASSWORD; đây là giá trị ban đầu, không chắc còn đúng nếu đã đổi mật khẩu. `DENY`: quản trị SQL cần kiểm tra quyền DENY/role db_denydatawriter của đúng database principal; GRANT không ghi đè DENY. Không đổi backend sang sa để né phân quyền.
 
-**Không chạy `MusesDB/MusesMuseumDB.sql` để nâng cấp:** script cũ có DROP DATABASE. `db:catalog` chỉ bổ sung bảng/cột/chỉ mục, giữ hiện vật và các bản dịch cũ ở trạng thái Draft để duyệt. Không tự xác nhận nơi trưng bày từ Notes hoặc tên bảo tàng sở hữu.
+**Không chạy `MusesDB/MusesMuseumDB.sql` để nâng cấp:** script cũ có DROP DATABASE. `db:catalog` chỉ bổ sung bảng/cột/chỉ mục, giữ dữ liệu và trạng thái hiện có; dữ liệu cũ chưa có trạng thái được khởi tạo Draft để duyệt. Không tự xác nhận nơi trưng bày từ Notes hoặc tên bảo tàng sở hữu.
 
 Tạo tài khoản web nếu chưa có:
 
@@ -76,8 +78,10 @@ Vite proxy `/api`, `/images` đến 3001, vì vậy cổng Vite khác vẫn dùn
 6. Exhibitions & Events: tạo lịch, nguồn, ngày kiểm chứng; chọn Confirmed. Khoảng ngày `[startDate,endDate)` theo Việt Nam; bỏ endDate nghĩa là vô hạn. Hệ thống từ chối lịch chồng nhau và không cho ẩn bảo tàng còn lịch hiện tại/tương lai đã xác nhận.
 7. Khách → Explore/Collection: tìm tên không phân biệt hoa thường, lọc đồng thời tác giả/chất liệu/bảo tàng hiện tại, chuyển trang; chọn hiện vật và đổi ngôn ngữ. Chỉ nội dung đã công bố được trả từ API. Thiếu bản dịch thì thông báo tiếng Việt và TTS đọc tiếng Việt, không đọc văn bản Việt bằng giọng khác.
 8. Chi tiết hiển thị đúng bảo tàng hiện tại, địa chỉ, nguồn và ngày kiểm chứng. Không có lịch hợp lệ thì báo chưa có; không suy diễn từ bảo tàng sở hữu/lịch cũ. Bản đồ dùng tọa độ lưu sẵn; mở chỉ đường tới đúng tọa độ. Khách không cần cho phép GPS để xem ghim.
-9. `/museums`: tìm tên; nút tìm gần tôi mới xin GPS. Vị trí chỉ ở RAM trình duyệt để tính khoảng cách, không gửi API hoặc lưu trong DB/localStorage. Có thể từ chối và tiếp tục tra cứu theo tên. Lộ trình trong một bảo tàng là thứ tự gợi ý từ danh sách hiện vật hiện tại, không phải định tuyến trong nhà/GPS.
-10. Visitors/Reports/QR Check-in: thống kê thiết bị, phiên, tài khoản tùy chọn và điểm đọc; không khẳng định số người có mặt vật lý. Chọn ngày và xuất báo cáo. Khách không cần đăng nhập để tra cứu/nghe/QR.
+9. `/museums`: tìm địa điểm; chỉ nút Dùng vị trí của tôi mới xin GPS. Sau khi lấy vị trí thành công mới được vẽ chỉ đường trong map Muses; reset vị trí xóa tuyến. Tọa độ giữ trong RAM, không ghi API/DB analytics Muses; khi yêu cầu tuyến đường, điểm đi/đến được gửi tới OSRM. `/museums/itinerary` cho chọn/thay thứ tự/thời lượng tại 4 bảo tàng tham khảo. Sơ đồ chủ đề chưa phải mặt bằng thật hoặc định tuyến trong nhà.
+10. Overview đã gộp danh sách khách truy cập; Reports hiển thị thống kê chi tiết. Chọn ngày và Từ giờ/Đến giờ theo Việt Nam; không còn xuất CSV hoặc nút Báo cáo theo ngày. Khách đang hoạt động vẫn tính theo 5 phút gần nhất. Số liệu không xác nhận người có mặt vật lý.
+11. Quản lý QR lấy danh sách mã tác phẩm đang dùng trên website: xem/tải, đổi tên, bật/tắt và lượt mở. Thử tắt rồi quét liên kết cũ: lần mở mới phải bị chặn, trong khi tác phẩm Published vẫn xem được qua bộ sưu tập. Chức năng cần các cột QR từ `db:catalog`; xem [hướng dẫn QR](../QR-MANAGEMENT.md).
+12. `/tickets` là tra cứu giá vé đã lưu, không phải mua vé/thanh toán. Chưa có giá hiện Chưa cập nhật, không tự thành miễn phí; Admin không còn mục chỉnh giá vé.
 
 ## Backup và phục hồi thử
 

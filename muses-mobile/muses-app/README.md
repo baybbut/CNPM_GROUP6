@@ -1,12 +1,18 @@
-# Muses Mobile (Expo / React Native)
+# MUSES Mobile — Expo / React Native
 
-## Chạy
+Đây là phần giao diện mobile phát triển riêng trong repository; chưa được nghiệm thu như một ứng dụng hoàn chỉnh tương đương website/Admin và toàn bộ API hiện hành.
+
+- Expo SDK 51, React Native 0.74.
+- Cần môi trường Expo Go/development build hoặc emulator tương thích SDK này.
+- Hình ảnh, dữ liệu và các luồng tích hợp cần được kiểm tra/bổ sung khi tiếp tục phát triển mobile.
+
+## Chạy trong thư mục muses-mobile/muses-app
+
 ```bash
-npm install
-npx expo install --fix      # đồng bộ version với Expo SDK
+npm ci
 npx expo start
 ```
 
-## Ảnh cần thêm vào src/assets/
-splash.jpg, hero.jpg, highlight1.jpg, highlight2.jpg, highlight3.jpg
-(export từ Figma)
+Không tự nâng SDK hoặc chạy đồng bộ phiên bản để xử lý lỗi khi chưa kiểm tra ma trận tương thích của Expo SDK 51.
+
+[README hệ thống](../../README.md) · [PRD hiện hành — phạm vi web/Admin](../../docs/prd/PRD.md)

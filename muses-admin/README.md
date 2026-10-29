@@ -1,6 +1,6 @@
 # MUSES Admin
 
-Dashboard React/Vite riêng, giữ sidebar đen, nền kem và thẻ pastel. Tất cả workspace nội dung chính hiện dùng API/SQL Server: tác phẩm, tác giả/chất liệu/thể loại, bản dịch thủ công, bảo tàng và lịch trưng bày. Overview/Visitors/Reports/QR Check-in dùng thống kê SQL đã có. Không dùng localStorage để công bố dữ liệu bảo tàng.
+Dashboard React/Vite riêng, giữ sidebar đen, nền kem và thẻ pastel. Tất cả workspace nội dung chính hiện dùng API/SQL Server: tác phẩm, tác giả/chất liệu/thể loại, bản dịch thủ công, bảo tàng và lịch trưng bày. Overview đã gộp danh sách phiên khách; Reports lọc thống kê theo ngày/giờ; Quản lý QR điều khiển mã tác phẩm trên web. Không dùng localStorage để công bố dữ liệu bảo tàng.
 
 ```sh
 npm ci
@@ -23,3 +23,5 @@ Cập nhật DB bằng `npm --prefix muses-backend run db:catalog` từ gốc re
 Các component local demo cũ được giữ trong nguồn để tham khảo nhưng không còn là menu quản lý nội dung chính. Media dùng URL hợp lệ; chưa có dịch vụ upload file lên server.
 
 [Hướng dẫn chạy, backup, restore và kiểm thử](../docs/prd/RUN.md) · [Đối chiếu PRD](../docs/prd/ACCEPTANCE.md)
+
+PRD hiện hành: [yêu cầu và nghiệm thu](../docs/prd/PRD.md). Cách chạy toàn bộ hệ thống: [README gốc](../README.md).

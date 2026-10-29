@@ -1,132 +1,281 @@
-# MUSES · CNPM_GROUP6
+# MUSES — Hệ thống tra cứu tác phẩm nghệ thuật
 
-Nhánh `develop` gộp các nhánh `muses/home`, `muses/admin`, `muses/backend` và `muses/mobile` để kiểm thử chung. Website và Admin chạy riêng, cùng dùng backend SQL Server; mobile giữ nguyên.
+Đồ án **CNPM_GROUP6** xây dựng website giúp khách tìm hiểu tác phẩm nghệ thuật, đọc và nghe thuyết minh theo ngôn ngữ, tìm bảo tàng đang trưng bày và lập kế hoạch tham quan. Trang Admin dùng để công bố nội dung, quản lý QR trên website và theo dõi hoạt động truy cập.
 
-**Bản theo PRD:** xem [hướng dẫn chạy/cập nhật DB](docs/prd/RUN.md), [đối chiếu và checklist nghiệm thu](docs/prd/ACCEPTANCE.md). Cần chạy `db:catalog` trước khi dùng API mới.
+**Tài liệu yêu cầu sản phẩm:** [PRD hiện hành](docs/prd/PRD.md). Bản này mô tả phạm vi đã được điều chỉnh đến **30/10/2026**, đối chiếu mã nguồn chức năng tại `978b0e0`.
 
-## Lấy bản gộp
+## 1. Phạm vi đồ án
 
-Commit hoặc stash thay đổi cá nhân trước khi chuyển nhánh:
+| Thành phần      | Vai trò                                                                      | Trạng thái                                                                      |
+| --------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Website khách   | Tra cứu tác phẩm, QR, đa ngôn ngữ, thuyết minh, bảo tàng, lộ trình và giá vé | Đã có giao diện và tích hợp API cho các chức năng dữ liệu chính                 |
+| Admin Dashboard | Quản lý nội dung, bảo tàng/lịch trưng bày, QR và báo cáo truy cập            | Đã nối API/SQL Server; Visitors đã gộp vào Overview                             |
+| Backend         | API, xác thực, quy tắc công bố, truy vấn và cập nhật dữ liệu                 | Node.js/Express + SQL Server                                                    |
+| Mobile          | Ứng dụng Expo/React Native trong repository                                  | Bản giao diện phát triển riêng; chưa coi là ứng dụng hoàn chỉnh tương đương web |
+
+Khách không cần tài khoản để tra cứu, nghe thuyết minh, xem bản đồ hoặc sử dụng QR. Tài khoản khách là tùy chọn; tài khoản Admin dùng để quản trị.
+
+## 2. Chức năng hiện có
+
+### Website khách
+
+- **Home:** banner, Highlight tác phẩm đã công bố, thông báo bảo tàng và liên kết tham quan. Thẻ Highlight được chọn mở rộng để hiện thông tin; mũi tên lặp vòng, có thao tác bàn phím và vuốt trên điện thoại.
+- **Explore/Collection:** tìm theo tên tác phẩm/tác giả, kết hợp lọc tác giả, chất liệu, bảo tàng đang trưng bày và phân trang 12 tác phẩm.
+- **Chi tiết tác phẩm:** ảnh, tên, tác giả, chất liệu, năm/khoảng năm, kích thước, mô tả, nội dung liên quan và nơi trưng bày hiện tại khi có lịch hợp lệ.
+- **Năm ngôn ngữ nội dung:** Việt (`vi`), Anh (`en`), Trung (`zh`), Nhật (`ja`), Hàn (`ko`). Dùng bản dịch đã công bố; thiếu bản dịch thì hiển thị nội dung tiếng Việt và thông báo phù hợp. Bản hiện tại không tự dịch qua Docker.
+- **Đọc văn bản thành tiếng:** đọc/tạm dừng/tiếp tục/dừng, chọn giọng/tốc độ, tô sáng và theo dõi phần văn bản đang đọc. Giọng dùng ngôn ngữ thực của nội dung; hỗ trợ giọng và sự kiện tô sáng phụ thuộc trình duyệt/thiết bị. Có thể phát bản thu âm khi dữ liệu cung cấp URL audio.
+- **QR:** trang `/scan` là danh sách tác phẩm có QR hoạt động. Chọn một tác phẩm để mở popup QR; quét mở chi tiết. `/scan/camera` hỗ trợ camera, ảnh QR hoặc dán nội dung mã.
+- **Bảo tàng/bản đồ:** tìm bảo tàng, không gian nghệ thuật tại TP.HCM; có 4 địa điểm tham khảo khi nguồn bản đồ chưa sẵn sàng. Chỉ vẽ chỉ đường trong Muses sau khi khách bấm **Dùng vị trí của tôi** và lấy vị trí thành công.
+- **Lộ trình tham quan:** chọn trong 4 bảo tàng tham khảo, thay thứ tự, giờ bắt đầu và thời lượng; có sơ đồ thứ tự/chủ đề tham quan. Chưa có sơ đồ mặt bằng thật được gắn cho các bảo tàng.
+- **Visit:** hướng dẫn tham quan, chọn điểm đến/ngày, bản đồ, tiện ích và câu hỏi thường gặp.
+- **Tin tức/Exhibition:** thông báo có trang bài viết; giao diện triển lãm/sự kiện có bộ lọc ngày. Nội dung hiện được cấu hình trong mã nguồn; phần sự kiện có dữ liệu minh họa. Lịch hiện vật trong Admin là dữ liệu riêng để xác định nơi trưng bày tác phẩm.
+- **Ticket:** tra cứu giá vé đã lưu theo bảo tàng/đối tượng, tìm kiếm và sắp xếp. Không có luồng mua vé/thanh toán công khai; không còn mục chỉnh giá vé trong Admin. Giá chưa có được ghi **Chưa cập nhật**, không tự coi là miễn phí.
+
+### Admin Dashboard
+
+| Mục                  | Chức năng                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| Overview             | Chỉ số truy cập, biểu đồ theo khung giờ và danh sách phiên; tìm khách/mã phiên, lọc trạng thái |
+| Reports              | Báo cáo theo khoảng ngày và khung giờ Việt Nam; thống kê ngày, giờ và điểm đọc                 |
+| Artworks             | Nhập thông tin và mô tả tiếng Việt ngay trong một form; lưu nháp/công bố/ẩn tác phẩm           |
+| Artists & Categories | Quản lý tác giả, chất liệu và thể loại                                                         |
+| Languages & Audio    | Quản lý bản dịch đã lưu DB, trạng thái công bố và URL audio; nghe thử TTS                      |
+| Exhibitions & Events | Quản lý lịch hiện vật trưng bày tại bảo tàng, kiểm tra chồng lịch                              |
+| Quản lý QR           | Danh sách QR tác phẩm, đổi tên, bật/tắt, xem/tải PNG, lượt mở và lần mở gần nhất               |
+| Museum Info & Maps   | Quản lý tên, địa chỉ, tọa độ, nguồn và trạng thái công khai của bảo tàng                       |
+
+Các nút **Báo cáo theo ngày**, **Xuất CSV** và menu Visitors riêng đã được bỏ theo phạm vi hiện tại.
+
+## 3. Công nghệ và kiến trúc
+
+| Lớp         | Công nghệ                                                     |
+| ----------- | ------------------------------------------------------------- |
+| Website     | React 18, Vite 5, React Router                                |
+| Admin       | React 18, Vite 5; điều hướng bằng hash                        |
+| API         | Node.js, Express 5, `mssql` dùng driver JavaScript            |
+| Dữ liệu     | Microsoft SQL Server; có thể chạy trong Docker                |
+| Bản đồ      | Leaflet, OpenStreetMap/Overpass, OSRM và liên kết Google Maps |
+| QR          | `qrcode` để tạo mã; `@zxing/browser` để đọc mã                |
+| Thuyết minh | Web Speech API và audio từ URL đã lưu                         |
+| Mobile      | Expo SDK 51, React Native 0.74                                |
+
+```mermaid
+flowchart LR
+    Guest[Khách] --> Web[Website React]
+    Manager[Quản trị viên] --> Admin[Admin React]
+    Web --> API[Express API]
+    Admin --> API
+    API --> DB[(SQL Server)]
+    API --> Places[Overpass: địa điểm]
+    Web --> Maps[OSM: nền bản đồ / OSRM: đường đi]
+    Web --> Speech[Web Speech / audio]
+```
+
+Vị trí của khách không được ghi vào DB hoặc API thống kê Muses. Khi khách yêu cầu chỉ đường, trình duyệt gửi điểm đi/đến tới OSRM để tính tuyến đường.
+
+## 4. Cấu trúc repository
+
+```text
+CNPM_GROUP6/
+├── muses-react/             # Website khách, tài nguyên ảnh/icon, kiểm thử web
+├── muses-admin/             # Admin Dashboard
+├── muses-backend/
+│   ├── server.cjs           # Khởi động API và phục vụ bản build website
+│   ├── catalog.cjs          # Catalogue, công bố nội dung, bảo tàng và lịch
+│   ├── activity.cjs         # Tài khoản, phiên truy cập và báo cáo
+│   ├── artwork-qr.cjs       # Cấu hình và kiểm tra QR
+│   ├── MusesDB/             # SQL dữ liệu nền và các migration
+│   ├── scripts/            # Setup DB, tạo Admin, kiểm tra ảnh/backup
+│   └── test/               # Kiểm thử backend
+├── muses-mobile/muses-app/  # Ứng dụng Expo phát triển riêng
+└── docs/                    # PRD, hướng dẫn từng chức năng và nghiệm thu
+```
+
+Nhánh `develop` là bản tích hợp để chạy thử. Các nhánh thành phần gồm `muses/home`, `muses/admin`, `muses/backend`; phần mobile được phát triển riêng. Hướng dẫn dưới đây chạy từ **thư mục gốc repository**, nơi chứa các thư mục `muses-*`.
+
+## 5. Cài đặt và chạy local
+
+### 5.1. Chuẩn bị
+
+- Git, npm; khuyến nghị Node.js 22 LTS hoặc 24 LTS cho web/backend.
+- SQL Server đang chạy và có thể kết nối; mặc định cổng `1433`.
+- Database nền `MusesMuseumDB` hoặc tên DB tương ứng đã được cấu hình.
+- Trình duyệt hiện đại; camera/GPS cần HTTPS hoặc `localhost`.
+
+Nếu máy mới chưa có database nền, khôi phục backup của nhóm vào môi trường SQL Server riêng. Migration `db:catalog` bổ sung mô hình hiện có, không thay thế toàn bộ bước tạo dữ liệu nền. Tệp `muses-backend/MusesDB/MusesMuseumDB.sql` có `DROP DATABASE`: chỉ dành cho khởi tạo trên môi trường thử có thể xóa, không dùng để nâng cấp DB đang có dữ liệu cần giữ.
+
+### 5.2. Lấy code và cài thư viện
 
 ```bash
-git fetch origin
+git clone https://github.com/baybbut/CNPM_GROUP6.git
+cd CNPM_GROUP6
 git switch develop
-git pull --ff-only origin develop
+npm --prefix muses-backend ci
+npm --prefix muses-react ci
+npm --prefix muses-admin ci
 ```
 
-## Web — terminal 1
+Với repository đã có, giữ lại thay đổi cá nhân và dùng `git pull --ff-only origin develop` khi đang ở `develop`. Hoàn tất rebase/xung đột đang có trước khi chuyển nhánh hoặc pull tiếp.
+
+### 5.3. Cấu hình backend
+
+Nếu chưa có `muses-backend/.env`, sao chép từ [`.env.example`](muses-backend/.env.example). Giữ nguyên file `.env` đang dùng và điền cấu hình thật của môi trường SQL:
+
+| Biến                          | Ý nghĩa                                                                           |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| `DB_SERVER`, `DB_PORT`        | Máy chủ/cổng SQL Server                                                           |
+| `DB_NAME`                     | Database của ứng dụng                                                             |
+| `DB_USER`, `DB_PASSWORD`      | SQL login của ứng dụng và mật khẩu tương ứng                                      |
+| `DB_ENCRYPT`                  | Bật mã hóa kết nối SQL                                                            |
+| `DB_TRUST_SERVER_CERTIFICATE` | `true` cho Docker local dùng certificate tự ký; production cần certificate hợp lệ |
+| `PORT`                        | Cổng backend, mặc định `3001`                                                     |
+| `CORS_ORIGINS`                | Các nguồn frontend được cho phép; mặc định localhost 5173/5174                    |
+
+Không đưa mật khẩu DB vào frontend hoặc biến `VITE_*`.
+
+**Ba loại tài khoản cần phân biệt:**
+
+| Tài khoản    | Dùng ở đâu                                                                                            |
+| ------------ | ----------------------------------------------------------------------------------------------------- |
+| SQL ứng dụng | `DB_USER`/`DB_PASSWORD` trong `.env`; không bắt buộc tên `muses_app`                                  |
+| SQL quản trị | Nhập tạm khi chạy setup/backup; cần quyền DDL và GRANT, thường là `sa` hoặc SQL administrator thực tế |
+| Web Admin    | Email/mật khẩu tạo bằng `admin:create`, dùng tại trang Admin; không có tài khoản mặc định             |
+
+### 5.4. Cập nhật database và tạo Admin
 
 ```bash
-cd muses-react
-npm ci
-npm run dev -- --port 5173
+npm --prefix muses-backend run db:catalog
+npm --prefix muses-backend run admin:create
 ```
 
-Các trang: `/`, `/visit`, `/exhibition`, `/explore`, `/explore/collection`, `/museums`, `/museums/:id`. Build: `npm run build`.
+- `db:catalog` hỏi SQL quản trị và đường dẫn backup bên trong SQL Server/container; có thể giữ đường dẫn mặc định nếu môi trường cho phép. Script tạo backup, kiểm tra backup rồi cập nhật mô hình, gồm cấu hình QR, và kiểm tra quyền của SQL user ứng dụng.
+- `admin:create` hỏi tên, email, mật khẩu web Admin và xác nhận mật khẩu. Chờ thông báo tạo thành công. Nếu đã có Admin thì bỏ qua bước này; script không đặt lại mật khẩu email đã tồn tại.
+- Để gắn bộ ảnh vào dữ liệu nền phù hợp, xem [ánh xạ ảnh](muses-backend/MusesDB/README.md) và [ảnh triển lãm](docs/EXHIBITION-IMAGES.md). Migration không tự công bố toàn bộ tác phẩm cũ.
 
-## Admin — terminal 2
+### 5.5. Chạy ba terminal
+
+Mỗi lệnh dưới đây chạy trong **một terminal riêng** tại thư mục gốc:
 
 ```bash
-cd muses-admin
-npm ci
-npm run dev -- --port 5174
+# Terminal 1 — giữ backend chạy
+npm --prefix muses-backend start
 ```
-
-Build: `npm run build`. Overview, Visitors, Reports và QR Check-in dùng API thống kê SQL Server; xem `docs/ADMIN-ANALYTICS.md` để cập nhật DB và tạo tài khoản Admin. Các workspace nội dung chính đã nối API: tác phẩm, tác giả/chất liệu, bản dịch, bảo tàng và lịch trưng bày. Xem thêm `muses-admin/README.md`.
-
-## Backend — terminal 3
-
-Backend dùng SQL authentication qua driver JavaScript mặc định của `mssql`, không cần ODBC/msnodesqlv8 trên Mac. SQL Server Docker phải đang chạy và publish cổng 1433.
 
 ```bash
-cd muses-backend
-npm ci
+# Terminal 2 — website khách
+npm --prefix muses-react run dev -- --host 0.0.0.0 --port 5173
 ```
-
-Tạo `.env` theo `.env.example` nếu chưa có (không ghi đè file đang dùng). Điền `DB_SERVER`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` bằng cấu hình SQL Server của bạn. `DB_USER` là SQL login, không phải tài khoản máy Mac. Không commit hoặc gửi mật khẩu lên chat. Với Docker local dùng certificate tự ký, đặt `DB_TRUST_SERVER_CERTIFICATE=true`; production dùng certificate hợp lệ và đặt `false`.
 
 ```bash
-npm start
+# Terminal 3 — Admin
+npm --prefix muses-admin run dev -- --port 5174
 ```
 
-Mở `http://localhost:3001/api/health` để xác nhận database. Vite cổng 5173 chuyển tiếp `/api` và `/images` đến backend cổng 3001. Web hiển thị tác phẩm API trên trang chủ và `/explore/collection`; bấm thẻ mở `/explore/artworks/:id`. Tìm kiếm/lọc theo dữ liệu API; mô tả và audio xuất hiện khi database cung cấp. API hỗ trợ `vi`/`en`/`zh`/`ja`/`ko`; chỉ dùng bản dịch Published, thiếu thì trả tiếng Việt và metadata fallback. Không gọi dịch tự động trong MVP.
+| Thành phần      | Địa chỉ                            |
+| --------------- | ---------------------------------- |
+| Website         | <http://localhost:5173>            |
+| Admin           | <http://localhost:5174>            |
+| Kiểm tra API/DB | <http://localhost:3001/api/health> |
 
-API: `/api/artworks?lang=vi`, `/api/artworks?lang=en`, `/api/artworks/1?lang=vi`. Đảm bảo đã có dữ liệu `ArtworkImages` cho ảnh; đường dẫn tương đối `/images/tranh/...` được backend phục vụ từ `muses-react/tranh`. Không cần sửa database chỉ để đổi địa chỉ host.
+Vite chuyển tiếp API tới `127.0.0.1:3001`; website còn chuyển tiếp `/images`. Đổi cổng backend thì cấu hình `API_PROXY_TARGET` ở `.env.local` của các frontend và khởi động lại Vite. Nếu đã `cd muses-react` thì dùng `npm run dev`, không thêm `--prefix muses-react` lần nữa.
 
-SQL nằm trong `muses-backend/MusesDB/`. **`MusesMuseumDB.sql` xóa database `MusesMuseumDB` đang tồn tại trước khi tạo lại.** Chỉ dùng với database kiểm thử có thể xóa, đã sao lưu dữ liệu cần giữ; sau đó chạy `ArtworkImages.sql` nếu cần dữ liệu ảnh. Không chạy script khởi tạo trên database thật.
+### 5.6. Chuẩn bị dữ liệu để demo
 
-## Mobile — terminal riêng
+1. Đăng nhập Admin bằng email/mật khẩu đã tạo.
+2. Kiểm tra tác giả, chất liệu, thể loại và dữ liệu bảo tàng.
+3. Trong Artworks, nhập tên, mô tả tiếng Việt và ảnh, rồi **Lưu và công bố**. Chỉ lưu nháp thì tác phẩm chưa xuất hiện công khai.
+4. Thêm bản dịch cần demo trong Languages & Audio và công bố bản dịch đó.
+5. Tạo lịch Confirmed nếu cần chứng minh tác phẩm đang được trưng bày tại một bảo tàng cụ thể.
+6. Vào Quản lý QR để kiểm tra mã hoạt động; quét trên web/điện thoại và thử bật/tắt.
+7. Mở website để phát sinh truy cập; xem Overview/Reports theo khoảng ngày và giờ Việt Nam.
+
+Có bộ dữ liệu minh họa tùy chọn bằng `npm --prefix muses-backend run db:demo`, cần SQL quản trị, backup và tài khoản Admin đã có. Dữ liệu được gắn nhãn minh họa, không được coi là nơi trưng bày thực tế.
+
+## 6. Các trang chính
+
+| Route website                     | Nội dung                                                                    |
+| --------------------------------- | --------------------------------------------------------------------------- |
+| `/`                               | Home                                                                        |
+| `/explore`, `/explore/collection` | Khám phá/bộ sưu tập                                                         |
+| `/explore/artworks/:id`           | Chi tiết tác phẩm; liên kết QR có thêm `source=qr` được kiểm tra trạng thái |
+| `/scan`, `/scan/camera`           | Danh sách QR và bộ đọc mã                                                   |
+| `/museums`, `/museums/:id`        | Tìm bảo tàng và chi tiết bảo tàng trong catalogue                           |
+| `/museums/itinerary`              | Xây dựng lộ trình tham quan 4 bảo tàng                                      |
+| `/visit`                          | Hướng dẫn tham quan                                                         |
+| `/exhibition`                     | Giao diện triển lãm/sự kiện                                                 |
+| `/news`, `/news/:slug`            | Danh sách thông báo/bài viết                                                |
+| `/tickets`                        | Tra cứu giá vé                                                              |
+| `/account`                        | Tài khoản khách tùy chọn                                                    |
+
+Admin dùng các hash như `#Overview`, `#Reports`, `#Artworks`, `#QR%20Codes`. Liên kết `#Visitors` cũ mở Overview; `#QR Check-in` cũ mở Quản lý QR. Các route biên nhận vé cũ còn trong mã để tương thích, không đại diện cho luồng thanh toán đang hoạt động.
+
+## 7. Quét QR và dùng vị trí trên điện thoại
+
+- Kết nối điện thoại và máy tính vào mạng cho phép truy cập lẫn nhau.
+- Trên máy tính, mở **Network URL** do Vite in ra, ví dụ `http://192.168.1.27:5173/scan`, rồi tạo QR. Mã tạo từ `localhost` sẽ trỏ về chính điện thoại khi quét.
+- Có thể dùng camera điện thoại để mở URL. Camera/GPS ngay trong trình duyệt trên địa chỉ IP HTTP thường bị giới hạn; dùng HTTPS để kiểm thử các quyền này trên điện thoại.
+- Khi chưa bật **Dùng vị trí của tôi**, web vẫn cho xem ghim/tìm bảo tàng nhưng không vẽ chỉ đường. Tắt vị trí sẽ xóa đường đi và hủy yêu cầu đang chờ.
+
+## 8. Kiểm thử và build
 
 ```bash
-cd muses-mobile/muses-app
-npm ci
-npx expo start
+npm --prefix muses-backend test
+npm --prefix muses-react test
+npm --prefix muses-react run build
+npm --prefix muses-admin run build
 ```
 
-App dùng Expo SDK 51: cần Expo Go tương thích SDK này hoặc development build/emulator tương thích. Ảnh hiện trong `src/assets/` là placeholder 8×8, cần thay bằng ảnh thiết kế khi hoàn thiện UI. Không tự nâng SDK hoặc chạy `expo install --fix` chỉ để merge.
+- Unit/API tests có adapter SQL được kiểm soát; chúng không thay thế kiểm thử SQL Server thật.
+- `npm --prefix muses-backend run test:sql` là kiểm thử opt-in trên DB thử riêng. Thiếu cấu hình sẽ SKIP, không có nghĩa đã nghiệm thu DB.
+- Bộ kiểm thử trình duyệt ở `muses-react/tests/browser/`; cần web 5186, Admin 5187 và Chromium CDP 9222. Các bài `prices.mjs`, `qr-directions.mjs`, `highlight.mjs` kiểm tra giao diện bằng dữ liệu API giả có kiểm soát.
+- Script `test:load` dành cho DB thử có ít nhất 1.000 tác phẩm đã công bố. Mục tiêu p95 ≤ 2 giây với 20 worker/200 yêu cầu là tiêu chí cần đo, chưa được xem là kết quả thực tế trên DB của nhóm.
+- Cần kiểm tra thêm TTS/loa thật, camera/QR điện thoại, GPS, nguồn bản đồ ngoài và SQL migration/backup trên môi trường nộp đồ án.
 
-## Chạy bản production và đưa lên website
+Kiểm tra ảnh khi backend đang chạy: `npm --prefix muses-backend run images:check`.
 
-Sau khi cài dependencies cho cả web và backend:
+## 9. Bản build triển khai
 
 ```bash
-cd muses-react
-npm run build
-cd ../muses-backend
-npm start
+npm --prefix muses-react run build
+npm --prefix muses-admin run build
+npm --prefix muses-backend start
 ```
 
-Mở `http://localhost:3001`: backend phục vụ cả build website, API và ảnh. Refresh trực tiếp trang chi tiết cũng hoạt động. Không dùng `npm run preview` thay cho backend khi kiểm thử full stack.
+Backend phục vụ `muses-react/dist` tại <http://localhost:3001>, cùng API và ảnh. Build Admin nằm ở `muses-admin/dist`, cần được phục vụ riêng bằng web server/reverse proxy; backend không tự phục vụ Admin tại một route riêng.
 
-Để public website, deploy `muses-backend` và `muses-react/dist` cùng cấu trúc thư mục, cấu hình biến môi trường DB trên server, cho backend truy cập SQL Server, rồi đặt reverse proxy/domain HTTPS tới cổng `PORT` của backend. `localhost` trên hosting là máy hosting, không phải Docker trên Mac của bạn. SQL Server local không tự truy cập được từ Internet; cần database mà server truy cập được. Không public cổng SQL Server của máy bạn chỉ để thử website.
+Khi triển khai, dùng HTTPS, database mà máy chủ truy cập được và cấu hình nguồn frontend/API phù hợp. Ưu tiên proxy `/api` cùng nguồn cho Admin để dùng cookie phiên. Việc build thành công không xác nhận đã triển khai website công khai.
 
-Nếu tách frontend/backend sang hai host: đặt `VITE_API_BASE_URL=https://api.example.com` trong môi trường build frontend, build lại, và đặt `CORS_ORIGINS=https://www.example.com` ở backend. Giá trị Vite là public; tuyệt đối không đặt DB password vào biến `VITE_*`. Static host cần rewrite route SPA về `index.html`. Không thể xác nhận deployment công khai khi chưa có hosting/domain và kết nối DB trên server.
+## 10. Giới hạn hiện tại
 
-## Kiểm thử
+- Bản dịch được quản trị/duyệt thủ công; các file LibreTranslate cũ không phải luồng dịch công khai hiện hành.
+- TTS phụ thuộc giọng trình duyệt; không sinh MP3 và không có căn chỉnh theo từ cho bản thu âm sẵn.
+- QR quản lý theo tác phẩm, các bản ngôn ngữ/điểm đọc cũ dùng chung trạng thái. Tắt QR không làm tác phẩm trở thành nội dung riêng tư trong bộ sưu tập.
+- Lộ trình là kế hoạch tham quan; chưa tính thời gian di chuyển, xếp hàng/nghỉ và không kiểm chứng giờ mở cửa. Sơ đồ chủ đề không thay cho sơ đồ phòng/tầng thật.
+- Giá vé, nơi trưng bày và số lượng tác phẩm phụ thuộc DB đã nhập/công bố; không khẳng định dữ liệu tham khảo là dữ liệu thực tế được xác minh.
+- Tin tức và giao diện sự kiện hiện có dữ liệu cục bộ; chưa có CMS tin tức/sự kiện đầy đủ. Nội dung lịch sử riêng của tác phẩm chưa được nối đầy đủ vào API chi tiết.
+- Chỉ số truy cập đo trình duyệt/phiên và tín hiệu website, không đếm số người có mặt tại bảo tàng. Không còn xuất CSV trong giao diện báo cáo hiện tại.
+- Mobile chưa được nghiệm thu như một sản phẩm hoàn chỉnh dùng chung toàn bộ luồng API.
 
-```bash
-cd muses-backend
-npm test
-```
+## 11. Xử lý lỗi thường gặp
 
-Test API sử dụng database adapter giả để kiểm tra contract, validation, lỗi DB, CORS và phục vụ ảnh; không thay thế kiểm thử SQL Server thật. Build web/admin: `npm run build` trong folder tương ứng. Mobile bundle Android đã export được trên bản gộp; chưa kiểm thử thiết bị. Admin đã nối API đăng nhập và thống kê ở Overview, Visitors, Reports, QR Check-in; các workspace nội dung khác vẫn dùng dữ liệu cục bộ.
+| Biểu hiện                                         | Cách kiểm tra                                                                                            |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Admin báo `ECONNREFUSED 127.0.0.1:3001`           | Backend chưa nghe cổng 3001 hoặc đã dừng; khởi động backend ở terminal riêng                             |
+| `Port 5173/5174 is already in use`                | Dùng server đã chạy hoặc dừng terminal cũ bằng Ctrl+C trước khi mở lại                                   |
+| `ENOENT .../muses-react/muses-react/package.json` | Đang ở trong thư mục con nhưng dùng `--prefix` lặp; trở về gốc hoặc chạy npm ngay trong thư mục hiện tại |
+| Web không có tác phẩm                             | Kiểm tra API/DB và trạng thái Published, nội dung tiếng Việt, ảnh; bản nháp chưa được công khai          |
+| QR báo cần cập nhật dữ liệu                       | Chạy `db:catalog` bằng SQL quản trị, rồi khởi động lại backend                                           |
+| `CREATE TABLE`/`INSERT permission denied`         | Kiểm tra quyền SQL user ứng dụng và bước setup; không dùng mật khẩu web ở câu hỏi SQL quản trị           |
+| `Login failed for user` khi setup                 | Kiểm tra đúng tài khoản/mật khẩu SQL; giá trị trong Docker Inspect có thể chỉ là mật khẩu ban đầu        |
+| QR quét trên điện thoại không mở                  | Kiểm tra QR dùng IP/domain truy cập được và web còn chạy; không dùng localhost trong mã                  |
+| Không có giọng đọc/bản dịch                       | Kiểm tra bản dịch Published và giọng khớp ngôn ngữ thực của văn bản trên thiết bị                        |
 
-## Đối chiếu ảnh database
+## 12. Tài liệu liên quan
 
-Xem [hướng dẫn và bảng ánh xạ 32 ảnh](muses-backend/MusesDB/README.md). Với database hiện có, chạy lần lượt `ArtworkImages.sql` và `HomeImages.sql`, không chạy lại script tạo/xóa database. Sau khi backend chạy, dùng `npm run images:check` trong `muses-backend` để kiểm tra từng ảnh trả về từ API.
-
-## Trang chi tiết tác phẩm
-
-Từ `/explore/collection`, bấm một tác phẩm để mở `/explore/artworks/:id`. Trang chi tiết dùng ảnh, tiêu đề, mô tả ngắn/đầy đủ, chất liệu, năm, kích thước và audio từ API; tác phẩm cùng nghệ sĩ được đối chiếu bằng `artistId` (fallback tên với API cũ), không bao gồm tác phẩm đang xem. Nút bản đồ dẫn tới `/visit#directions`. DB hiện chưa có trường lịch sử riêng, phần Lịch sử hiển thị trạng thái đang cập nhật thay vì suy diễn nội dung. Không cần chạy migration cho thay đổi giao diện này.
-
-## Highlight trên Home
-
-Dải 5 ảnh cuộn ngang; ảnh gần tâm khung nhất được nâng lên, ảnh rời tâm trở về vị trí cũ. Dùng mũi tên, bấm ảnh, phím trái/phải/Home/End hoặc vuốt trên điện thoại. Hiệu ứng tôn trọng thiết lập giảm chuyển động. Chạy lại `HomeImages.sql` để bổ sung slot DB `home.highlight.h5`, không cần tạo lại database.
-
-## Quy tắc hiển thị ảnh và icon
-
-Ảnh trong Highlight, Welcome, Explore, bộ sưu tập, chi tiết và banner dùng cover: phủ kín khung, giữ tỉ lệ và cắt phần dư ở giữa ảnh. Icon dùng contain để không bị cắt. Component `Icons.jsx` dùng file trong `muses-react/icon` cho các biểu tượng tương ứng (vé, tìm kiếm, lịch, tiện ích, mạng xã hội, breadcrumb, dropdown). Mũi tên điều hướng giữ vector vì thư mục icon không có asset mũi tên tương ứng. Icon có kích thước cố định và object-fit contain. Không đổi dữ liệu hay đường dẫn ảnh trong DB.
-
-## Đọc văn bản và chạy chữ theo giọng đọc
-
-Trên trang chi tiết tác phẩm, mục Mô tả có nút **Đọc văn bản**, **Tạm dừng / Tiếp tục**, **Dừng**, chọn giọng và tốc độ. Văn bản đang đọc được tô sáng và tự cuộn trong khung; có thể tắt tự cuộn. Ngôn ngữ giọng đọc dựa trên ngôn ngữ mô tả thực tế (`descriptionLanguage`), kể cả khi API fallback tiếng Việt.
-
-Tính năng dùng Web Speech API của trình duyệt, không cần API key, migration hoặc dịch vụ TTS backend. Giọng Việt/Anh phụ thuộc trình duyệt và giọng đã cài trên thiết bị. Trình duyệt không hỗ trợ hoặc phát thất bại sẽ hiện thông báo, vẫn giữ văn bản để đọc. Theo câu/đoạn dựa trên sự kiện bắt đầu và kết thúc giọng đọc; theo từ dựa trên `boundary` khi giọng có hỗ trợ, không dùng bộ đếm thời gian ước lượng.
-
-Điều hướng sang tác phẩm khác hoặc đóng cửa sổ nghe thử sẽ dừng giọng đọc. Phát audio có sẵn sẽ dừng TTS để tránh chồng tiếng. Audio thu sẵn chưa có timestamp/transcript alignment, nên tính năng tô sáng chỉ áp dụng cho giọng TTS từ văn bản. Không tạo hay lưu file MP3.
-
-Trong admin **Languages & Audio**, lưu mô tả rồi bấm **Read aloud** ở cột Translation để nghe thử cùng kiểu chạy chữ. Bản dịch admin hiện vẫn chỉ lưu localStorage, chưa cập nhật database.
-
-Kiểm tra thuật toán tách câu và vị trí từ: `npm --prefix muses-react test`. Cloud đã kiểm tra sự kiện điều khiển và highlight bằng speech engine mô phỏng; cloud không có giọng cài sẵn nên chưa xác nhận âm thanh phát qua loa trên thiết bị thật.
-
-## Ticket
-
-Trang `/tickets` là chức năng tra cứu giá vé theo bảo tàng, tìm theo tên/địa chỉ và so sánh giá theo đối tượng. Mục Giá vé trong Admin đã được bỏ theo yêu cầu; web tiếp tục tra cứu dữ liệu giá đã lưu. Không có luồng đặt vé/thanh toán trên trang này; giá thiếu được ghi rõ chưa cập nhật. Xem [hướng dẫn Ticket](docs/TICKETS.md).
-
-Bản đồ tương tác TP.HCM, định vị khách và vị trí trưng bày tác phẩm: [hướng dẫn Maps](docs/MAPS.md).
-
-Scan QR hiển thị danh sách tác phẩm; chọn tác phẩm để hiện popup QR, quét mở trang chi tiết: [hướng dẫn QR tác phẩm và thử trên điện thoại](docs/ARTWORK-QR.md).
-
-Trang Visit hoàn thiện và luồng chọn điểm đến/ngày sang Ticket: [hướng dẫn Visit](docs/VISIT.md).
-
-Overview đã gộp danh sách khách truy cập. Admin → Quản lý QR quản lý mã QR tác phẩm trên web: [cập nhật DB và sử dụng](docs/QR-MANAGEMENT.md).
+- [PRD hiện hành](docs/prd/PRD.md) — mục tiêu, yêu cầu và tiêu chí nghiệm thu.
+- [Hướng dẫn setup/backup và kiểm thử SQL](docs/prd/RUN.md).
+- [Đối chiếu nghiệm thu ban đầu](docs/prd/ACCEPTANCE.md) — ghi nhận lần triển khai PRD gốc, không thay thế yêu cầu hiện hành.
+- [Quản lý QR](docs/QR-MANAGEMENT.md), [QR tác phẩm](docs/ARTWORK-QR.md).
+- [Bản đồ và lộ trình](docs/MAPS.md), [Visit](docs/VISIT.md).
+- [Báo cáo truy cập](docs/ADMIN-ANALYTICS.md), [giá vé](docs/TICKETS.md).
+- [Highlight](docs/HIGHLIGHT.md), [ảnh triển lãm](docs/EXHIBITION-IMAGES.md), [ánh xạ ảnh DB](muses-backend/MusesDB/README.md).
