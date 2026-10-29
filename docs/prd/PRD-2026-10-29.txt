@@ -1,0 +1,193 @@
+PRD
+1 Tổng quan sản phẩm
+Muses hỗ trợ người dùng tìm tác phẩm nghệ thuật, đọc thông tin theo ngôn ngữ lựa chọn, chuyển đổi ngôn ngữ website, nghe nội dung bằng giọng nói được lựa chọn ngôn ngữ và xác định bảo tàng hiện đang trưng bày tác phẩm. Từ trang chi tiết, người dùng xem địa chỉ, ghim bảo tàng trên bản đồ và mở định vị bảo tàng trên bản đồ. 
+Đối với Admin, quản lý các dữ liệu trên Admin Dashboard, hỗ trợ quản lý người truy cập trong khoảng thời gian cụ thể.
+
+
+2 Phạm vi và giả định
+Tên đề tài: Xây dựng hệ thống tra cứu tác phẩm nghệ thuật Muses
+Khách sử dụng không cần tài khoản. Quản trị viên quản lý nội dung cho từng tác phẩm. Hệ thống bao gồm website và trang quản trị, định vị các tác phẩm, lộ trình tham quan đề xuất và phiên âm audio trong phạm vi cụ thể
+Năm ngôn ngữ mục tiêu tạm đề xuất là Việt, Anh, Trung, Nhật và Hàn. 
+3 Mục tiêu và người dùng
+Vấn đề: Các tác phẩm của một nghệ sĩ thuờng không chỉ trưng bày ở một bảo tàng cố định, thuờng bị tách rời và trưng bày ở nhiều nơi khác nhau. Muses cung cấp một hệ thống tra cứu tác phẩm, tác giả để khách tìm hiểu tác phẩm, lên kế hoạch tham quan cụ thể ở một bảo tàng, tránh được tình trạng khách bị hoang mang trong quá trình lên kế hoạch tham quan.
+Vai trò
+Nhu cầu
+Khách tra cứu
+Tìm tác phẩm, xem và nghe thông tin,chuyển đổi ngôn ngữ khi tra cứu,  xem nơi trưng bày và bản đồ.
+Quản trị viên
+Quản lý dữ liệu tác phẩm, bảo tàng, bản dịch và lịch trưng bày.
+
+Mục tiêu nghiệm thu đề xuất: bộ dữ liệu tối thiểu 20 tác phẩm và 3 bảo tàng; ít nhất 5 tác phẩm có nội dung đủ 5 ngôn ngữ để chứng minh luồng đa ngôn ngữ.
+4 Hành trình người dùng chính
+Tra cứu và nghe thông tin: khách nhập từ khóa, lọc kết quả, mở tác phẩm, chọn ngôn ngữ và nhấn nghe. Khi thiếu bản dịch, hệ thống thông báo dùng tiếng Việt hoặc tiếng Anh; giọng đọc phải khớp với nội dung thực tế.
+Xác định nơi trưng bày: khách xem bảo tàng hiện tại và ngày trưng bày, mở bản đồ rồi chọn chỉ đường. Nếu tác phẩm chưa được công bố trưng bày, hệ thống sẽ thông báo rằng hiện tại tác phẩm chưa được trưng bày tại bảo tàng.
+Quản trị nội dung: admin đăng nhập, cập nhật thông tin bảo tàng và tác phẩm, nhập bản dịch, xác nhận lịch trưng bày rồi công bố. Hệ thống kiểm tra dữ liệu trước khi lưu.
+5 Yêu cầu chức năng
+Mã và UC
+Chức năng
+Mức
+Tiêu chí chấp nhận
+FR01 / UC01
+Tra cứu tác phẩm
+P0
+Tìm theo tên, không phân biệt hoa thường; lọc kết hợp tác giả, chất liệu, bảo tàng đang trưng bày; phân trang; không có kết quả thì thông báo.
+FR02 / UC02
+Xem chi tiết tác phẩm
+P0
+Hiện ảnh, tên, tác giả, năm hoặc khoảng năm, chất liệu, mô tả và nguồn thông tin; chỉ trả tác phẩm đã công bố.
+FR03 / UC03
+Chuyển ngôn ngữ
+P0
+Có 5 ngôn ngữ mục tiêu; đổi nhãn giao diện và nội dung; thiếu bản dịch công bố thì dùng tiếng Việt và báo ngôn ngữ thực tế.
+FR04 / UC04
+Nghe văn bản
+P0
+Khách nhấn nghe để bắt đầu; phát, tạm dừng, tiếp tục, dừng; đọc bằng ngôn ngữ nội dung thực tế; đổi tác phẩm hoặc ngôn ngữ thì dừng bản cũ; có lỗi và thử lại.
+FR05 / UC05
+Xem nơi trưng bày
+P0
+Trả kết quả bảo tàng đang trưng bày và thời gian trưng bày; chưa công ​​bố trưng bày thì báo chưa có thông tin hiện tại.
+FR06 / UC06
+Tra cứu bảo tàng
+P0
+Tra cứu theo tên, xem địa chỉ, mô tả và liên hệ của bào tàng, cho phép tra cứu các bảo tàng theo vị trí định vị của khách.
+FR07 / UC07
+Xem bản đồ bảo tàng
+P0
+Ghim theo tọa độ đã lưu; có tên và địa chỉ; có thể yêu cầu GPS khách để tra cứu các bảo tàng có vị trí gần; tải lỗi sẽ hiển thị thông báo thử lại.
+FR08 / UC08
+Mở bản đồ chỉ đường
+P0
+Mở dịch vụ bản đồ với đích đến đúng bảo tàng; dịch vụ bản đồ xử lý điểm xuất phát và quyền vị trí nếu cần.
+FR09 / UC09
+Đăng nhập quản trị
+P0
+Tài khoản hợp lệ vào trang quản trị; sai thông tin báo lỗi chung; API quản trị chặn người chưa xác thực.
+FR10 / UC10
+Quản lý tác phẩm
+P0
+Thêm, sửa, xóa, công bố và ẩn; kiểm tra nội dung mặc định trước công bố; giữ dữ liệu nhập khi lưu lỗi.
+FR11 / UC11
+Quản lý bản dịch
+P0
+Lưu theo tác phẩm và mã ngôn ngữ; không trùng cặp; bản dịch có trạng thái nháp hoặc công bố; nhập và duyệt thủ công trong MVP.
+FR12 / UC12
+Quản lý bảo tàng
+P0
+Thêm, sửa và ẩn; kiểm tra địa chỉ và miền giá trị tọa độ; không cho ẩn bảo tàng còn lịch hiện tại hoặc tương lai đã xác nhận.
+FR13 / UC13
+Quản lý trưng bày
+P0
+Lập và sửa lịch; kiểm tra ngày bắt đầu trước ngày kết thúc; từ chối các khoảng đã xác nhận chồng nhau cho cùng tác phẩm.
+FR14 / UC14
+Quản lý dữ liệu phân loại
+P1
+Thêm, sửa tác giả và chất liệu; chặn xóa mục đang được tham chiếu.
+FR15 / UC15
+Đăng xuất
+P0
+Kết thúc phiên; thông tin xác thực cũ không truy cập được API quản trị theo cơ chế phiên đã chọn.
+
+
+
+6 Quy tắc nghiệp vụ
+Mã
+Quy tắc
+BR01
+Nội dung công khai phải ở trạng thái công bố. API phải áp dụng quy tắc, không chỉ ẩn nút trên UI.
+BR02
+Tiếng Việt hoặc Tiếng Anh  là ngôn ngữ mặc định đề xuất. Mỗi tác phẩm cần tên và mô tả tiếng Việt đã công bố trước khi công bố tác phẩm.
+BR03
+Mỗi cặp tác phẩm và ngôn ngữ chỉ có một bản dịch. Fallback trả requestedLanguage, contentLanguage và isFallback.
+BR04
+TTS dùng contentLanguage. Nếu không có giọng phù hợp, báo chưa hỗ trợ đọc; không dùng giọng ngôn ngữ khác để đọc thay.
+BR05
+Mỗi tác phẩm trong MVP biểu diễn một hiện vật vật lý. Bản sao hoặc phiên bản khác phải là bản ghi riêng.
+BR06
+Trưng bày hiện tại là lịch đã xác nhận, bảo tàng đang công khai, có startDate ≤ ngày hiện tại và endDate rỗng hoặc ngày hiện tại < endDate. Ngày tính theo Asia/Ho_Chi_Minh; khoảng thời gian là [bắt đầu, kết thúc).
+BR07
+Các lịch đã xác nhận của cùng tác phẩm không được chồng thời gian, kể cả cùng bảo tàng; kiểm tra trong giao dịch để tránh hai lần lưu đồng thời.
+BR08
+Lịch nháp hoặc bị hủy không dùng xác định nơi hiện tại. Lịch tương lai hiển thị riêng nếu cần, không gắn nhãn đang trưng bày.
+BR09
+Bảo tàng sở hữu và nơi đang trưng bày là hai quan hệ khác nhau. Không suy ra nơi hiện tại từ bảo tàng sở hữu hoặc lịch gần nhất đã kết thúc.
+BR10
+Mỗi lịch có nguồn, ngày kiểm chứng và người cập nhật. Chưa xác nhận được dữ liệu thì không công bố như thông tin hiện tại.
+BR11
+Vĩ độ trong [-90,90], kinh độ trong [-180,180]; quản trị viên phải kiểm tra ghim khớp địa chỉ trước khi công khai bảo tàng.
+BR12
+Không xin vị trí khách để hiện ghim bảo tàng. Không tự phát giọng nói khi mở trang.
+BR13
+Không xóa cứng dữ liệu có lịch sử tham chiếu. Dùng ẩn hoặc hủy theo nghiệp vụ; tác phẩm ẩn không xuất hiện trong danh sách bảo tàng công khai.
+
+7 Yêu cầu phi chức năng
+Mã
+Yêu cầu và cách kiểm tra
+NFR01
+API tra cứu có p95 ≤ 2 giây với 20 người dùng đồng thời trên môi trường demo và 1000 tác phẩm mẫu; đo API riêng, không tính độ trễ dịch vụ TTS/bản đồ.
+NFR02
+Giao diện dùng được ở chiều rộng 375, 768 và 1440 px, không cuộn ngang toàn trang.
+NFR03
+Nút có nhãn, thao tác chính dùng bàn phím, ảnh có văn bản thay thế và trạng thái tải/lỗi dễ nhận biết.
+NFR04
+Mật khẩu lưu dạng băm phù hợp; kiểm tra quyền ở backend; câu truy vấn có tham số; bí mật đặt trong cấu hình môi trường; giới hạn thử đăng nhập.
+NFR05
+API trả lỗi nhất quán và không lộ stack trace; lỗi TTS/bản đồ không làm mất nội dung tác phẩm.
+NFR06
+Sao lưu DB trước migration, có hướng dẫn phục hồi và thực hiện một lần phục hồi thử trước nghiệm thu.
+NFR07
+Kiểm thử chức năng chính trên Chrome và Safari của thiết bị nhóm đang có; ghi rõ phiên bản thực tế trong biên bản.
+NFR08
+Ảnh và nội dung có nguồn; chỉ dùng tài nguyên được phép sử dụng. Không lưu vị trí cá nhân của khách trong MVP.
+
+
+
+8 Tiêu chí nghiệm thu và kiểm thử
+Yêu cầu
+Sơ đồ liên quan
+Kiểm thử nghiệm thu
+FR01 FR02
+UC khách; Activity tra cứu; Sequence
+TC01 tìm đúng; TC02 không có kết quả; TC03 nháp bị chặn khi truy cập trực tiếp.
+FR03 FR04
+Activity nghe; Sequence; ERD bản dịch
+TC04 đủ 5 ngôn ngữ; TC05 thiếu bản dịch; TC06 thiếu giọng; TC07 lỗi mạng; TC08 đổi ngôn ngữ dừng audio cũ.
+FR05 FR13
+Activity trưng bày; ERD
+TC09 lịch hiện tại; TC10 lịch quá khứ/tương lai; TC11 không có lịch; TC12 trùng lịch và hai lần lưu đồng thời.
+FR06 FR07 FR08
+Activity tra cứu; kiến trúc
+TC13 ghim đúng bảo tàng; TC14 từ chối GPS vẫn xem ghim; TC15 bản đồ lỗi vẫn có địa chỉ; TC16 mở đúng đích chỉ đường.
+FR09 FR15
+UC admin; kiến trúc
+TC17 sai mật khẩu; TC18 gọi API khi chưa đăng nhập; TC19 đăng xuất rồi gọi lại API.
+FR10 FR11 FR12
+UC admin; ERD
+TC20 công bố thiếu tiếng Việt; TC21 bản dịch trùng; TC22 tọa độ sai; TC23 ẩn bảo tàng còn lịch hiệu lực bị chặn.
+
+Mỗi test case chi tiết cần có dữ liệu đầu vào, bước thực hiện, kết quả mong đợi, kết quả thực tế và người kiểm tra. Đặc biệt kiểm tra tại đúng ngày bắt đầu và ngày kết thúc theo khoảng [bắt đầu, kết thúc), cùng trường hợp bảo tàng sở hữu khác nơi trưng bày.
+9 Rủi ro và quyết định cần chốt
+Rủi ro hoặc điểm cần chốt
+Cách xử lý đề xuất
+Thiếu dữ liệu trưng bày đáng tin
+Ghi nguồn và ngày kiểm chứng; dữ liệu giả lập phải có nhãn demo, không khẳng định nơi trưng bày thực tế.
+TTS không đủ 5 ngôn ngữ hoặc phát sinh chi phí
+Thử nghiệm tuần 1; chọn nhà cung cấp sau khi đo và kiểm tra ngân sách; dùng audio chuẩn bị sẵn nếu được nhóm chấp nhận, cập nhật PRD tương ứng.
+Bản đồ phụ thuộc dịch vụ ngoài
+Giữ địa chỉ và liên kết chỉ đường khi bản đồ không tải; kiểm tra cấu hình và hạn mức trước demo.
+Quá nhiều nội dung dịch
+Chốt bộ demo nhỏ có kiểm tra; chưa đưa dịch tự động vào MVP.
+Code và DB cũ khác mô hình
+Rà soát trước migration; sao lưu; chia migration nhỏ, không thay thế DB theo sơ đồ một cách trực tiếp.
+Cần nhóm xác nhận
+Chốt 5 ngôn ngữ, hạn nộp, số tác phẩm demo, nhà cung cấp TTS/bản đồ, một tác phẩm một hiện vật và cách xác thực admin.
+
+
+
+10 Điều kiện hoàn thành phiên bản
+Tất cả yêu cầu P0 được triển khai và đạt kiểm thử; không còn lỗi nghiêm trọng làm gián đoạn tra cứu, đọc nội dung, xác định nơi trưng bày hoặc quản trị.
+Luồng demo xuyên suốt hoạt động: admin công bố tác phẩm và lịch trưng bày; khách tìm thấy tác phẩm, đổi ngôn ngữ, nghe nội dung, xem đúng bảo tàng và mở chỉ đường.
+Dữ liệu demo có nguồn hoặc được ghi nhãn minh họa. Trường hợp thiếu bản dịch, không có nơi trưng bày, lỗi TTS và lỗi bản đồ đều có thông báo và cách tiếp tục sử dụng.
+Có hướng dẫn chạy, cấu hình môi trường, bộ dữ liệu mẫu, kết quả kiểm thử và phương án sao lưu phục hồi. Năm ngôn ngữ, quy mô dữ liệu và công cụ TTS, bản đồ được nhóm xác nhận trước nghiệm thu.
+11 Quản lý thay đổi yêu cầu
+Khi thay đổi chức năng hoặc phạm vi, nhóm ghi ngày, nội dung thay đổi, lý do và tác động đến giao diện, API, dữ liệu, sơ đồ, kiểm thử. Giữ ổn định các mã FR và BR; yêu cầu mới dùng mã mới. 

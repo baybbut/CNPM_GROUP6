@@ -1,3 +1,5 @@
+> Cập nhật PRD 29/10/2026: dùng [hướng dẫn mới](prd/RUN.md). Migration chính là `db:catalog`; bản dịch MVP nhập/duyệt thủ công, 5 ngôn ngữ vi/en/zh/ja/ko. Các phần LibreTranslate và workspace cũ dưới đây là tài liệu lịch sử.
+
 # Quét QR và dịch tự động local
 
 Nhánh `muses/admin`. Website khách: `muses-react`; backend: `muses-backend`.

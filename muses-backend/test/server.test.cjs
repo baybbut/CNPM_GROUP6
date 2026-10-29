@@ -12,6 +12,7 @@ const artwork = {
   imageUrl: "/images/tranh/EMTHUY.jpeg",
   description: "Mô tả tác phẩm.",
   descriptionLanguage: "vi",
+  contentLanguage: "vi",
   audioUrl: null,
 };
 app.locals.pool = {
@@ -56,15 +57,23 @@ test("health checks the database connection", async () => {
 test("list and detail return artwork API data and bind language and id", async () => {
   const r = await fetch(`${origin}/api/artworks?lang=en`);
   assert.equal(r.status, 200);
-  assert.deepEqual(await r.json(), [artwork]);
+  assert.deepEqual(await r.json(), [
+    {
+      ...artwork,
+      requestedLanguage: "en",
+      isFallback: true,
+      currentExhibition: null,
+    },
+  ]);
   assert.equal(calls.at(-1).lang, "en");
   const detail = await fetch(`${origin}/api/artworks/1?lang=vi`);
   assert.equal(detail.status, 200);
   assert.equal((await detail.json()).id, 1);
-  assert.deepEqual(calls.at(-1), { lang: "vi", id: 1 });
+  assert.equal(calls.at(-1).lang, "vi");
+  assert.equal(calls.at(-1).id, 1);
 });
 test("all five content languages bind safely", async () => {
-  for (const lang of ["vi", "en", "fr", "ja", "zh"]) {
+  for (const lang of ["vi", "en", "ko", "ja", "zh"]) {
     const response = await fetch(`${origin}/api/artworks?lang=${lang}`);
     assert.equal(response.status, 200);
     assert.equal(calls.at(-1).lang, lang);
@@ -113,7 +122,7 @@ test("database failure returns an error response, not sample data", async () => 
     },
   };
   try {
-    assert.equal((await fetch(`${origin}/api/artworks`)).status, 500);
+    assert.equal((await fetch(`${origin}/api/artworks`)).status, 503);
     assert.equal((await fetch(`${origin}/api/health`)).status, 503);
   } finally {
     app.locals.pool = pool;

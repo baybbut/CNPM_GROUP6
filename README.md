@@ -1,6 +1,8 @@
 # MUSES · CNPM_GROUP6
 
-Nhánh `develop` gộp các nhánh `muses/home`, `muses/admin`, `muses/backend` và `muses/mobile` để kiểm thử chung. Các ứng dụng vẫn chạy riêng; việc merge chưa kết nối dashboard admin/mobile với API.
+Nhánh `develop` gộp các nhánh `muses/home`, `muses/admin`, `muses/backend` và `muses/mobile` để kiểm thử chung. Website và Admin chạy riêng, cùng dùng backend SQL Server; mobile giữ nguyên.
+
+**Bản theo PRD:** xem [hướng dẫn chạy/cập nhật DB](docs/prd/RUN.md), [đối chiếu và checklist nghiệm thu](docs/prd/ACCEPTANCE.md). Cần chạy `db:catalog` trước khi dùng API mới.
 
 ## Lấy bản gộp
 
@@ -20,7 +22,7 @@ npm ci
 npm run dev -- --port 5173
 ```
 
-Các trang: `/`, `/visit`, `/exhibition`, `/explore`, `/explore/collection`. Build: `npm run build`.
+Các trang: `/`, `/visit`, `/exhibition`, `/explore`, `/explore/collection`, `/museums`, `/museums/:id`. Build: `npm run build`.
 
 ## Admin — terminal 2
 
@@ -30,7 +32,7 @@ npm ci
 npm run dev -- --port 5174
 ```
 
-Build: `npm run build`. Overview, Visitors, Reports và QR Check-in dùng API thống kê SQL Server; xem `docs/ADMIN-ANALYTICS.md` để cập nhật DB và tạo tài khoản Admin. Các workspace nội dung khác vẫn lưu cục bộ. Xem thêm `muses-admin/README.md`.
+Build: `npm run build`. Overview, Visitors, Reports và QR Check-in dùng API thống kê SQL Server; xem `docs/ADMIN-ANALYTICS.md` để cập nhật DB và tạo tài khoản Admin. Các workspace nội dung chính đã nối API: tác phẩm, tác giả/chất liệu, bản dịch, bảo tàng và lịch trưng bày. Xem thêm `muses-admin/README.md`.
 
 ## Backend — terminal 3
 
@@ -47,7 +49,7 @@ Tạo `.env` theo `.env.example` nếu chưa có (không ghi đè file đang dù
 npm start
 ```
 
-Mở `http://localhost:3001/api/health` để xác nhận database. Vite cổng 5173 chuyển tiếp `/api` và `/images` đến backend cổng 3001. Web hiển thị tác phẩm API trên trang chủ và `/explore/collection`; bấm thẻ mở `/explore/artworks/:id`. Tìm kiếm/lọc theo dữ liệu API; mô tả và audio xuất hiện khi database cung cấp. API hỗ trợ `vi`/`en`; các ngôn ngữ khác dùng nội dung tác phẩm tiếng Anh (mô tả thiếu bản dịch có thể fallback tiếng Việt).
+Mở `http://localhost:3001/api/health` để xác nhận database. Vite cổng 5173 chuyển tiếp `/api` và `/images` đến backend cổng 3001. Web hiển thị tác phẩm API trên trang chủ và `/explore/collection`; bấm thẻ mở `/explore/artworks/:id`. Tìm kiếm/lọc theo dữ liệu API; mô tả và audio xuất hiện khi database cung cấp. API hỗ trợ `vi`/`en`/`zh`/`ja`/`ko`; chỉ dùng bản dịch Published, thiếu thì trả tiếng Việt và metadata fallback. Không gọi dịch tự động trong MVP.
 
 API: `/api/artworks?lang=vi`, `/api/artworks?lang=en`, `/api/artworks/1?lang=vi`. Đảm bảo đã có dữ liệu `ArtworkImages` cho ảnh; đường dẫn tương đối `/images/tranh/...` được backend phục vụ từ `muses-react/tranh`. Không cần sửa database chỉ để đổi địa chỉ host.
 

@@ -10,7 +10,12 @@
     "images:check": "node scripts/check-images.cjs",
     "db:migrate": "node scripts/migrate-activity.cjs",
     "admin:create": "node scripts/create-admin.cjs",
-    "db:setup": "node scripts/setup-activity.cjs"
+    "db:setup": "node scripts/setup-activity.cjs",
+    "db:catalog": "node scripts/setup-catalog.cjs",
+    "db:demo": "node scripts/setup-catalog.cjs --demo",
+    "db:restore-check": "node scripts/restore-check.cjs",
+    "test:load": "node scripts/load-catalog.cjs",
+    "test:sql": "node --test test/catalog-sql.test.cjs"
   },
   "keywords": [],
   "author": "",

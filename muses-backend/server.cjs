@@ -9,17 +9,43 @@ const cors = require("cors");
 const { attachActivityRoutes } = require("./activity.cjs");
 const sql = require("mssql");
 
-const { SUPPORTED, createTranslator } = require("./translation.cjs");
-const translator = createTranslator();
+const { attachCatalogRoutes } = require("./catalog.cjs");
 const app = express();
-app.get("/api/translation/health", async (_req, res) => res.json(await translator.health()));
+app.get("/api/translation/health", (_req, res) =>
+  res.json({ mode: "manual", languages: ["vi", "en", "zh", "ja", "ko"] }),
+);
 const PORT = Number(process.env.PORT || 3001);
+app.use("/api", (_req, res, next) => {
+  const json = res.json.bind(res);
+  res.json = (body) =>
+    json(
+      res.statusCode >= 400 && body?.message && !body.code
+        ? {
+            ...body,
+            code:
+              {
+                400: "BAD_REQUEST",
+                401: "UNAUTHENTICATED",
+                403: "FORBIDDEN",
+                404: "NOT_FOUND",
+                409: "CONFLICT",
+                429: "TOO_MANY_REQUESTS",
+                503: "UNAVAILABLE",
+              }[res.statusCode] || "INTERNAL_ERROR",
+          }
+        : body,
+    );
+  next();
+});
 
 // Cho trình duyệt lấy ảnh trong muses-react/tranh.
 const tranhDirectory = path.join(__dirname, "..", "muses-react", "tranh");
 
 app.use("/images/tranh", express.static(tranhDirectory));
-app.use("/images/background", express.static(path.join(__dirname, "..", "muses-react", "background")));
+app.use(
+  "/images/background",
+  express.static(path.join(__dirname, "..", "muses-react", "background")),
+);
 const allowedOrigins = (
   process.env.CORS_ORIGINS || "http://localhost:5173,http://localhost:5174"
 )
@@ -27,11 +53,13 @@ const allowedOrigins = (
   .map((origin) => origin.trim())
   .filter(Boolean);
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use("/api", express.json({ limit: "16kb" }));
+app.use("/api", express.json({ limit: "64kb" }));
 attachActivityRoutes(app, sql);
 app.use("/api", (err, _req, res, next) => {
-  if (err.type === "entity.parse.failed") return res.status(400).json({ message: "Nội dung gửi lên không hợp lệ." });
-  if (err.status === 413) return res.status(413).json({ message: "Nội dung gửi lên quá lớn." });
+  if (err.type === "entity.parse.failed")
+    return res.status(400).json({ message: "Nội dung gửi lên không hợp lệ." });
+  if (err.status === 413)
+    return res.status(413).json({ message: "Nội dung gửi lên quá lớn." });
   next(err);
 });
 
@@ -46,106 +74,6 @@ const dbConfig = {
     trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === "true",
   },
 };
-
-// Truy vấn đúng cấu trúc MusesMuseumDB.
-async function getArtworks(lang, id = null) {
-  const result = await app.locals.pool
-    .request()
-    .input("lang", sql.VarChar(10), lang)
-    .input("id", sql.Int, id).query(`
-      SELECT
-        a.ArtworkID AS id,
-        a.ArtworkName AS title,
-        ar.ArtistName AS artist,
-        ar.ArtistID AS artistId,
-        c.CategoryID AS categoryId,
-        c.CategoryName AS category,
-        a.Material AS material,
-        a.CreationPeriod AS creationPeriod,
-        a.Dimensions AS dimensions,
-        a.IsNationalTreasure AS isNationalTreasure,
-        a.TreasureYear AS treasureYear,
-
-        COALESCE(
-          d.FullDescription,
-          d.ShortDescription,
-          vi.FullDescription,
-          vi.ShortDescription
-        ) AS description,
-
-        COALESCE(
-          d.ShortDescription,
-          d.FullDescription,
-          vi.ShortDescription
-        ) AS shortDescription,
-
-        CASE
-          WHEN d.FullDescription IS NOT NULL
-            OR d.ShortDescription IS NOT NULL
-            THEN @lang
-          WHEN vi.FullDescription IS NOT NULL
-            OR vi.ShortDescription IS NOT NULL
-            THEN 'vi'
-          ELSE NULL
-        END AS descriptionLanguage,
-
-        d.AudioURL AS audioUrl,
-        img.ImageURL AS imageUrl
-
-      FROM dbo.Artworks AS a
-
-      JOIN dbo.Artists AS ar
-        ON a.ArtistID = ar.ArtistID
-
-      JOIN dbo.Categories AS c
-        ON a.CategoryID = c.CategoryID
-
-      LEFT JOIN dbo.Languages AS langRequested
-        ON langRequested.LanguageCode = @lang
-
-      LEFT JOIN dbo.ArtworkDescriptions AS d
-        ON d.ArtworkID = a.ArtworkID
-        AND d.LanguageID = langRequested.LanguageID
-
-      LEFT JOIN dbo.Languages AS langVi
-        ON langVi.LanguageCode = 'vi'
-
-      LEFT JOIN dbo.ArtworkDescriptions AS vi
-        ON vi.ArtworkID = a.ArtworkID
-        AND vi.LanguageID = langVi.LanguageID
-
-      OUTER APPLY (
-        SELECT TOP (1)
-          i.ImageURL
-        FROM dbo.ArtworkImages AS i
-        WHERE i.ArtworkID = a.ArtworkID
-        ORDER BY
-          i.IsPrimary DESC,
-          i.DisplayOrder ASC,
-          i.ImageID ASC
-      ) AS img
-
-      WHERE (@id IS NULL OR a.ArtworkID = @id)
-
-      ORDER BY a.ArtworkID;
-    `);
-
-  return result.recordset;
-}
-
-// Kiểm tra ngôn ngữ gửi đến API.
-function validateLanguage(req, res, next) {
-  const lang = req.query.lang || "vi";
-
-  if (!SUPPORTED.includes(lang)) {
-    return res.status(400).json({
-      message: "Hiện hỗ trợ vi, en, fr, ja, zh.",
-    });
-  }
-
-  req.artworkLanguage = lang;
-  next();
-}
 
 // Kiểm tra backend đang kết nối DB nào.
 app.get("/api/health", async (req, res) => {
@@ -167,53 +95,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// Danh sách tác phẩm.
-app.get("/api/artworks", validateLanguage, async (req, res) => {
-  try {
-    const artworks = await getArtworks(req.artworkLanguage);
-    res.json(artworks);
-  } catch (err) {
-    console.error("Lỗi lấy danh sách tác phẩm:", err.message);
-
-    res.status(500).json({
-      message: "Không lấy được danh sách tác phẩm.",
-    });
-  }
-});
-
-// Chi tiết một tác phẩm.
-app.get("/api/artworks/:id", validateLanguage, async (req, res) => {
-  const rawId = req.params.id;
-  const id = Number(rawId);
-
-  if (
-    !/^[1-9][0-9]*$/.test(rawId) ||
-    !Number.isInteger(id) ||
-    id > 2147483647
-  ) {
-    return res.status(400).json({
-      message: "Mã tác phẩm không hợp lệ.",
-    });
-  }
-
-  try {
-    const artworks = await getArtworks(req.artworkLanguage, id);
-
-    if (artworks.length === 0) {
-      return res.status(404).json({
-        message: "Không tìm thấy tác phẩm.",
-      });
-    }
-
-    res.json(await translator.artwork(artworks[0], req.artworkLanguage));
-  } catch (err) {
-    console.error("Lỗi lấy chi tiết tác phẩm:", err.message);
-
-    res.status(500).json({
-      message: "Không lấy được chi tiết tác phẩm.",
-    });
-  }
-});
+attachCatalogRoutes(app, sql);
 
 // Stable homepage placement keys, independent of artwork ordering and language.
 app.get("/api/site-images", async (_req, res) => {

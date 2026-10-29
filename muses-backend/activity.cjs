@@ -118,6 +118,7 @@ function attachActivityRoutes(app, sql) {
       );
     return result.recordset[0] || null;
   }
+  app.locals.identity = identity;
   app.post(
     "/api/auth/register",
     wrap(async (req, res) => {

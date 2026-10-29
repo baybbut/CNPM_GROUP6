@@ -1,3 +1,5 @@
+> Cập nhật PRD 29/10/2026: dùng [hướng dẫn mới](prd/RUN.md). Migration chính là `db:catalog`; bản dịch MVP nhập/duyệt thủ công, 5 ngôn ngữ vi/en/zh/ja/ko. Các phần LibreTranslate và workspace cũ dưới đây là tài liệu lịch sử.
+
 # Thống kê Admin
 
 Các mục Overview, Visitors, Reports và QR Check-in lấy dữ liệu từ backend, không dùng số mẫu. Các khu vực quản lý nội dung khác vẫn giữ nguyên trạng thái trước đây.
