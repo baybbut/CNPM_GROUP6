@@ -14,6 +14,16 @@ PRD này mô tả yêu cầu sản phẩm hiện hành và phân biệt phần �
 
 [Bộ sơ đồ phân tích](diagrams/README.md) đã được vẽ lại theo phạm vi này, gồm **Use Case tổng quát, 21 Use Case chi tiết và ERD chia 3 nhóm**. Hình được chèn ở mục 5, 8 và 13; mỗi nhóm có file draw.io chỉnh sửa được. Ba file người dùng cung cấp ban đầu được lưu riêng để đối chiếu.
 
+## Truy cập bản demo bằng QR
+
+<a href="http://192.168.31.88:5173/">
+  <img src="assets/muses-website-qr.png" alt="QR truy cập trang chủ Muses tại 192.168.31.88:5173" width="240">
+</a>
+
+**Website:** <http://192.168.31.88:5173/> · [Tải QR PNG](assets/muses-website-qr.png) · [Tải QR SVG](assets/muses-website-qr.svg).
+
+QR mở trang chủ của bản demo trong mạng Wi-Fi. Điện thoại và máy tính có IP `192.168.31.88` cần cùng mạng; website phải chạy ở cổng `5173`, backend chạy để tải dữ liệu. Xem [cách chạy trên mạng nội bộ](../../README.md#7-quét-qr-và-dùng-vị-trí-trên-điện-thoại). Khi đổi IP/cổng, cần tạo lại QR.
+
 ## 1. Tổng quan sản phẩm
 
 Muses tập hợp thông tin tác phẩm nghệ thuật và nơi trưng bày để khách có thể tra cứu trước hoặc trong chuyến tham quan. Khách tìm tác phẩm theo tên/tác giả, đọc nội dung bằng ngôn ngữ phù hợp, nghe thuyết minh, mở QR, xem bảo tàng hiện đang trưng bày và xây dựng lộ trình tham quan tại TP.HCM.

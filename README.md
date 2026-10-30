@@ -6,6 +6,16 @@
 
 **Sơ đồ phân tích:** [Use Case tổng quát, 21 Use Case chi tiết và ERD](docs/prd/diagrams/README.md) đã được vẽ lại theo phạm vi hiện hành. Hình PNG được chèn trong PRD; có bản SVG và file draw.io để chỉnh sửa.
 
+## Truy cập website bằng QR
+
+<a href="http://192.168.31.88:5173/">
+  <img src="docs/prd/assets/muses-website-qr.png" alt="Quét QR để mở trang chủ Muses tại 192.168.31.88:5173" width="240">
+</a>
+
+Địa chỉ: <http://192.168.31.88:5173/> · [Tải QR PNG](docs/prd/assets/muses-website-qr.png) · [Tải QR SVG](docs/prd/assets/muses-website-qr.svg).
+
+Điện thoại cần cùng Wi-Fi với máy tính có IP `192.168.31.88`, và website phải đang chạy ở cổng `5173`. Cách khởi động để quét bằng điện thoại nằm ở mục 7 bên dưới. Nếu IP hoặc cổng thay đổi, cần tạo lại mã QR.
+
 ## 1. Phạm vi đồ án
 
 | Thành phần      | Vai trò                                                                      | Trạng thái                                                                      |
@@ -212,6 +222,14 @@ Có bộ dữ liệu minh họa tùy chọn bằng `npm --prefix muses-backend r
 Admin dùng các hash như `#Overview`, `#Reports`, `#Artworks`, `#QR%20Codes`. Liên kết `#Visitors` cũ mở Overview; `#QR Check-in` cũ mở Quản lý QR. Các route biên nhận vé cũ còn trong mã để tương thích, không đại diện cho luồng thanh toán đang hoạt động.
 
 ## 7. Quét QR và dùng vị trí trên điện thoại
+
+Để dùng QR truy cập trang chủ ở đầu tài liệu, mở một terminal tại thư mục gốc project và giữ website chạy bằng lệnh:
+
+```bash
+npm --prefix muses-react run dev -- --host 0.0.0.0 --port 5173 --strictPort
+```
+
+Giữ backend chạy ở terminal khác theo mục 5 để website tải được dữ liệu. `--strictPort` giúp báo rõ khi cổng 5173 đang bận, tránh tự chuyển sang cổng khác với địa chỉ trong QR.
 
 - Kết nối điện thoại và máy tính vào mạng cho phép truy cập lẫn nhau.
 - Trên máy tính, mở **Network URL** do Vite in ra, ví dụ `http://192.168.1.27:5173/scan`, rồi tạo QR. Mã tạo từ `localhost` sẽ trỏ về chính điện thoại khi quét.
