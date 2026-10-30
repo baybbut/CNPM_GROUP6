@@ -3,25 +3,40 @@ import { Header, Panel, Stats, Field } from "./shared";
 import "./analytics.css";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 async function api(path, body, signal) {
-  const response = await fetch(base + path, {
-    method: body ? "POST" : "GET",
-    credentials: "include",
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-    signal,
-  });
-  let data;
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  if (signal?.aborted) abort();
+  signal?.addEventListener("abort", abort, { once: true });
+  const timeout = setTimeout(abort, 15000);
   try {
-    data = await response.json();
-  } catch {
-    throw Error("Không kết nối được backend.");
-  }
-  if (!response.ok) {
-    const error = Error(data.message || "Không tải được dữ liệu.");
-    error.status = response.status;
+    const response = await fetch(base + path, {
+      method: body ? "POST" : "GET",
+      credentials: "include",
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw Error("Không kết nối được backend.");
+    }
+    if (!response.ok) {
+      const error = Error(data.message || "Không tải được dữ liệu.");
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    if (error.name === "AbortError" && !signal?.aborted)
+      throw Error("Kết nối backend hết thời gian chờ. Vui lòng thử lại.");
     throw error;
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener("abort", abort);
   }
-  return data;
 }
 const today = () =>
   new Date(Date.now() + 420 * 60000).toISOString().slice(0, 10);
@@ -89,12 +104,17 @@ export default function Analytics({ mode = "overview", search = "" }) {
     }
     setData(null);
     void refresh();
-    const timer = setInterval(() => {
+    const refreshVisible = () => {
       if (document.visibilityState === "visible") void refresh();
-    }, 30000);
+    };
+    const timer = setInterval(refreshVisible, 5000);
+    window.addEventListener("focus", refreshVisible);
+    document.addEventListener("visibilitychange", refreshVisible);
     return () => {
       controller.abort();
       clearInterval(timer);
+      window.removeEventListener("focus", refreshVisible);
+      document.removeEventListener("visibilitychange", refreshVisible);
     };
   }, [user, from, to, fromHour, toHour, attempt]);
   async function login(e) {
@@ -266,11 +286,19 @@ export default function Analytics({ mode = "overview", search = "" }) {
               ? `Cập nhật ${clock(data.updatedAt)}`
               : ""}
         </span>
+        <small>Tự cập nhật mỗi 5 giây khi đang xem trang</small>
       </div>
       {error && (
         <p className="analytics-error" role="alert">
           {error}{" "}
           <button onClick={() => setAttempt((n) => n + 1)}>Thử lại</button>
+        </p>
+      )}
+      {s?.trackingReady === 0 && (
+        <p className="analytics-error" role="alert">
+          Tài khoản SQL của backend chưa đủ quyền ghi nhận truy cập. Cần cập
+          nhật quyền cho các bảng AnalyticsSessions và AnalyticsEvents bằng
+          lệnh db:setup trong muses-backend.
         </p>
       )}
       <Stats

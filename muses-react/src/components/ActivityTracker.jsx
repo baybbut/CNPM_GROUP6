@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { trackActivity } from "../api/activity.mjs";
+import { retryActivityDelivery, trackActivity } from "../api/activity.mjs";
 export default function ActivityTracker() {
   const { pathname, search } = useLocation(),
     last = useRef("");
@@ -24,14 +24,19 @@ export default function ActivityTracker() {
   }, [pathname, search]);
   useEffect(() => {
     const beat = () => {
-      if (document.visibilityState === "visible") trackActivity("heartbeat");
+      if (document.visibilityState === "visible") {
+        void retryActivityDelivery();
+        void trackActivity("heartbeat");
+      }
     };
     const timer = setInterval(beat, 60000);
     window.addEventListener("muses-auth-change", beat);
+    window.addEventListener("online", beat);
     document.addEventListener("visibilitychange", beat);
     return () => {
       clearInterval(timer);
       window.removeEventListener("muses-auth-change", beat);
+      window.removeEventListener("online", beat);
       document.removeEventListener("visibilitychange", beat);
     };
   }, []);
