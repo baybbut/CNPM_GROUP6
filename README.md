@@ -16,8 +16,6 @@
 
 Điện thoại cần cùng Wi-Fi với máy tính có IP `192.168.31.88`, và website phải đang chạy ở cổng `5173`. Cách khởi động để quét bằng điện thoại nằm ở mục 7 bên dưới. Nếu IP hoặc cổng thay đổi, cần tạo lại mã QR.
 
-**Cho điện thoại dùng Wi-Fi khác hoặc 4G/5G:** xem [cách tạo link HTTPS và QR công khai tạm thời](docs/PUBLIC-DEMO.md). Sau khi cài `cloudflared`, chạy `npm --prefix muses-backend run share` trên máy có DB, mở link HTTPS được cấp rồi lấy QR trong `/scan`.
-
 ## 1. Phạm vi đồ án
 
 | Thành phần      | Vai trò                                                                      | Trạng thái                                                                      |

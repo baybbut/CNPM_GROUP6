@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server.cjs",
     "dev": "node --watch server.cjs",
-    "share": "node scripts/share-web.cjs",
     "test": "node --test",
     "images:check": "node scripts/check-images.cjs",
     "db:migrate": "node scripts/migrate-activity.cjs",
