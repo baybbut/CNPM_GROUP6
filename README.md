@@ -2,9 +2,9 @@
 
 Đồ án **CNPM_GROUP6** xây dựng website giúp khách tìm hiểu tác phẩm nghệ thuật, đọc và nghe thuyết minh theo ngôn ngữ, tìm bảo tàng đang trưng bày và lập kế hoạch tham quan. Trang Admin dùng để công bố nội dung, quản lý QR trên website và theo dõi hoạt động truy cập.
 
-**Tài liệu yêu cầu sản phẩm:** [PRD hiện hành](docs/prd/PRD.md). Bản này mô tả phạm vi đã được điều chỉnh đến **30/10/2026**, đối chiếu mã nguồn chức năng tại `978b0e0`.
+**Tài liệu yêu cầu sản phẩm:** [PRD hiện hành](docs/prd/PRD.md). Bản này mô tả phạm vi đã được điều chỉnh đến **30/10/2026**, đối chiếu mã nguồn chức năng tại `31e2715`.
 
-**Sơ đồ phân tích:** [Use Case tổng quát, 21 Use Case chi tiết và ERD](docs/prd/diagrams/README.md) đã được vẽ lại theo phạm vi hiện hành. Hình PNG được chèn trong PRD; có bản SVG và file draw.io để chỉnh sửa.
+**Sơ đồ phân tích:** [Use Case tổng quát, 22 Use Case chi tiết và ERD](docs/prd/diagrams/README.md) đã được vẽ lại theo phạm vi hiện hành. Hình PNG được chèn trong PRD; có bản SVG và file draw.io để chỉnh sửa.
 
 ## Truy cập website bằng QR
 

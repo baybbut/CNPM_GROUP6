@@ -1,14 +1,14 @@
 # Sơ đồ phân tích MUSES
 
-Bộ sơ đồ được vẽ lại theo [PRD hiện hành](../PRD.md) và mã nguồn chức năng `978b0e0`, ngày **30/10/2026**. Có **25 hình**: 1 Use Case tổng quát, 21 Use Case chi tiết và 3 ERD theo nhóm dữ liệu. Ảnh PNG đã được chèn trực tiếp trong PRD; SVG dùng để phóng to hoặc đưa vào báo cáo mà không vỡ hình.
+Bộ sơ đồ được vẽ lại theo [PRD hiện hành](../PRD.md) và mã nguồn chức năng `31e2715`, ngày **30/10/2026**. Có **27 hình**: 1 Use Case tổng quát, 22 Use Case chi tiết và 4 ERD (3 nhóm chính, 1 trang tương thích). Ảnh PNG đã được chèn trực tiếp trong PRD; SVG dùng để phóng to hoặc đưa vào báo cáo mà không vỡ hình.
 
 ## 1. File chỉnh sửa và nguồn đối chiếu
 
 | Bộ sơ đồ mới | Số trang draw.io | File chỉnh sửa |
 | --- | ---: | --- |
 | Use Case tổng quát | 1 | [Muses_UseCase_TongQuat.drawio](source/Muses_UseCase_TongQuat.drawio) |
-| Use Case chi tiết | 21 | [Muses_UseCase_ChiTiet.drawio](source/Muses_UseCase_ChiTiet.drawio) |
-| ERD | 3 | [Muses_ERD.drawio](source/Muses_ERD.drawio) |
+| Use Case chi tiết | 22 | [Muses_UseCase_ChiTiet.drawio](source/Muses_UseCase_ChiTiet.drawio) |
+| ERD | 4 | [Muses_ERD.drawio](source/Muses_ERD.drawio) |
 
 Mở file bằng ứng dụng draw.io/diagrams.net, chọn **File → Open From → Device** rồi chọn trang ở thanh tab phía dưới. Từng thực thể, Use Case, đường nối và nhãn đều chỉnh sửa được; file không chỉ chứa một ảnh nền. Khi sửa nội dung, cần xuất lại cả PNG/SVG tương ứng và thay ảnh trong `images/`.
 
@@ -18,7 +18,7 @@ Ba file nhận ban đầu được giữ nguyên trong `originals/` để đối
 - [ERD ban đầu](originals/Muses_ERD.drawio).
 - [15 Use Case chi tiết ban đầu](originals/Muses_15_UseCase_ChiTiet.drawio).
 
-Bản trong `source/` là bản vẽ lại để sử dụng cùng PRD. Mã UC01–UC15 tiếp tục tương ứng các chủ đề cũ; UC16–UC21 bổ sung phạm vi đã thay đổi. Sáu hành trình ở mục 5 của PRD được đặt tên **Luồng 01–06** để tránh nhầm với bộ mã sơ đồ.
+Bản trong `source/` là bản vẽ lại để sử dụng cùng PRD. Mã UC01–UC15 tiếp tục tương ứng các chủ đề cũ; UC16–UC22 bổ sung phạm vi đã thay đổi. Sáu hành trình ở mục 5 của PRD được đặt tên **Luồng 01–06** để tránh nhầm với bộ mã sơ đồ.
 
 ## 2. Use Case tổng quát
 
@@ -32,11 +32,12 @@ Hai tác nhân chính là **Khách truy cập** và **Quản trị viên**. Tài
 
 | Hình | Nội dung | Tải hình |
 | --- | --- | --- |
-| ERD 1/3 | Artworks, Artists, Categories, Materials, ArtworkDescriptions, Languages, ArtworkImages, SiteImages; tham chiếu Museums | [PNG](images/erd-catalogue.png) · [SVG](images/erd-catalogue.svg) |
-| ERD 2/3 | Museums, DisplaySchedules, TicketOffers; tham chiếu Artworks/Users | [PNG](images/erd-museums.png) · [SVG](images/erd-museums.svg) |
-| ERD 3/3 | Users, AuthSessions, AuthLoginEvents, AnalyticsSessions, AnalyticsEvents; tham chiếu Artworks | [PNG](images/erd-activity.png) · [SVG](images/erd-activity.svg) |
+| ERD 1/4 | Artworks, Artists, Categories, Materials, ArtworkDescriptions, Languages, ArtworkImages, SiteImages; tham chiếu Museums | [PNG](images/erd-catalogue.png) · [SVG](images/erd-catalogue.svg) |
+| ERD 2/4 | Museums, DisplaySchedules, TicketOffers; tham chiếu Artworks/Users | [PNG](images/erd-museums.png) · [SVG](images/erd-museums.svg) |
+| ERD 3/4 | Users, AuthSessions, AuthLoginEvents, AnalyticsSessions, AnalyticsEvents; tham chiếu Artworks | [PNG](images/erd-activity.png) · [SVG](images/erd-activity.svg) |
+| ERD 4/4 | TicketReservations và Museums tham chiếu; phần tương thích cũ | [PNG](images/erd-legacy-tickets.png) · [SVG](images/erd-legacy-tickets.svg) |
 
-Xem ba hình trực tiếp tại [mục 8 của PRD](../PRD.md#8-dữ-liệu-và-tích-hợp). Bảng mang nhãn **tham chiếu** là cùng thực thể xuất hiện trên nhiều trang; không tạo thêm bảng trong DB.
+Xem bốn hình trực tiếp tại [mục 8 của PRD](../PRD.md#8-dữ-liệu-và-tích-hợp). Bảng mang nhãn **tham chiếu** là cùng thực thể xuất hiện trên nhiều trang; không tạo thêm bảng trong DB.
 
 Những điểm đã chỉnh so với ERD gửi ban đầu:
 
@@ -45,9 +46,9 @@ Những điểm đã chỉnh so với ERD gửi ban đầu:
 - `ArtworkDisplays` được thay bằng `DisplaySchedules`; bảo tàng sở hữu (`OwnerMuseumID`) được tách khỏi bảo tàng đang trưng bày theo lịch.
 - Ảnh tác phẩm nằm ở `ArtworkImages`, ảnh theo vị trí giao diện ở `SiteImages`. Không thêm `MuseumTranslations` vào sơ đồ vì schema hiện hành chưa có bảng này.
 - QR dùng các cột trong `Artworks`. `QRUpdatedBy` hiện là tham chiếu logic do code ghi, chưa có FK trong migration; không vẽ như một ràng buộc SQL đã tồn tại.
-- Bổ sung phiên/sự kiện truy cập và bảng giá tra cứu. `TicketReservations` cũ nằm ngoài luồng chức năng hiện hành; không mô tả mua vé/thanh toán như tính năng đã có. GPS khách không lưu trong DB này.
+- Bổ sung phiên/sự kiện truy cập và bảng giá tra cứu. `TicketReservations` có ở trang 4 để đủ schema, nhưng nằm ngoài luồng chức năng hiện hành; không mô tả mua vé/thanh toán như tính năng đã có. GPS khách không lưu trong DB này.
 
-ERD dùng ký pháp chân quạ: `1`, `0..1`, `0..n`; `PK`/`FK`/`UQ` lần lượt là khóa chính/khóa ngoại/duy nhất. Kiểu dữ liệu được đối chiếu từ SQL, một số dòng gộp các cột cùng kiểu để hình gọn; không phải bản sao đầy đủ mọi CHECK/default/index. Đối chiếu với các migration, không dùng hình này để tự thay thế/reset database.
+ERD dùng ký pháp chân quạ: `1`, `0..1`, `0..n`; `PK`/`FK`/`UQ` lần lượt là khóa chính/khóa ngoại/duy nhất. Các trang ghi kiểu dữ liệu, nullability, IDENTITY, CHECK/default và ON DELETE; khung xanh thuộc SQL, khung vàng thuộc API hoặc giới hạn hiện tại. Tổng cộng **17 bảng, 20 FK, 6 UNIQUE, 15 biểu thức CHECK**. Xem [báo cáo rà soát](CONSTRAINT-REVIEW.md) để biết chi tiết và những ràng buộc chưa có. Không dùng hình để tự thay thế/reset database.
 
 Nguồn đối chiếu schema:
 
@@ -83,7 +84,10 @@ Mở liên kết ở cột **Use Case** để xem hình ngay trong PRD. Có th�
 | UC19 | [Tra cứu giá vé bảo tàng](../PRD.md#uc19) | Khách truy cập | `WEB-15 / BR-08` | [PNG](images/uc19.png) · [SVG](images/uc19.svg) |
 | UC20 | [Xem Overview và Reports](../PRD.md#uc20) | Quản trị viên | `ADM-08 / ADM-09 / BR-06 / BR-07` | [PNG](images/uc20.png) · [SVG](images/uc20.svg) |
 | UC21 | [Xem thông tin tham quan](../PRD.md#uc21) | Khách truy cập | `WEB-01 / WEB-13 / WEB-14` | [PNG](images/uc21.png) · [SVG](images/uc21.svg) |
+| UC22 | [Chia sẻ QR truy cập website](../PRD.md#uc22) | Khách truy cập | `WEB-17` | [PNG](images/uc22.png) · [SVG](images/uc22.svg) |
 
 Các Use Case quản trị có tiền điều kiện phiên Admin hợp lệ, thay vì vẽ `include Đăng nhập` vào mọi thao tác. Đăng nhập là một Use Case độc lập; người đã có phiên không cần nhập lại tài khoản mỗi lần lưu.
 
 Các giới hạn vẫn được thể hiện trong hình: chỉ đường cần lấy vị trí thành công, planner chưa có mặt bằng thật, QR tắt không làm ẩn tác phẩm, số liệu phiên không phải số người có mặt, giá vé chỉ tra cứu và chưa có CMS tin tức đầy đủ.
+
+UC09 đã tách đăng ký thành ca sử dụng độc lập, không dùng quan hệ extend tới đăng nhập.

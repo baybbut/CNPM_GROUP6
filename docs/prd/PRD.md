@@ -6,13 +6,13 @@
 | Nhóm               | CNPM_GROUP6                                                                       |
 | Ngày cập nhật      | 30/10/2026, giờ Việt Nam                                                          |
 | Phạm vi tài liệu   | Website khách, Admin Dashboard và backend của bản MVP hiện tại                    |
-| Mã nguồn đối chiếu | `978b0e0` trên nhánh `develop` — trước đợt cập nhật tài liệu này                  |
+| Mã nguồn đối chiếu | `31e2715` trên nhánh `develop` — trước đợt cập nhật tài liệu này                  |
 | Căn cứ             | [PRD gốc](PRD-2026-10-29.txt), mã nguồn và các điều chỉnh chức năng đã thống nhất |
 | Tài liệu cài đặt   | [README](../../README.md)                                                         |
 
 PRD này mô tả yêu cầu sản phẩm hiện hành và phân biệt phần đã có trong mã nguồn với phần còn cần dữ liệu hoặc nghiệm thu thực tế. PRD gốc được giữ nguyên để truy vết thay đổi. “Đã triển khai” không đồng nghĩa đã nghiệm thu trên SQL Server, điện thoại hoặc môi trường triển khai công khai.
 
-[Bộ sơ đồ phân tích](diagrams/README.md) đã được vẽ lại theo phạm vi này, gồm **Use Case tổng quát, 21 Use Case chi tiết và ERD chia 3 nhóm**. Hình được chèn ở mục 5, 8 và 13; mỗi nhóm có file draw.io chỉnh sửa được. Ba file người dùng cung cấp ban đầu được lưu riêng để đối chiếu.
+[Bộ sơ đồ phân tích](diagrams/README.md) đã được vẽ lại theo phạm vi này, gồm **Use Case tổng quát, 22 Use Case chi tiết và 4 trang ERD (3 nhóm chính và phần đặt vé cũ)**. Hình được chèn ở mục 5, 8 và 13; mỗi nhóm có file draw.io chỉnh sửa được. Ba file người dùng cung cấp ban đầu được lưu riêng để đối chiếu.
 
 ## Truy cập bản demo bằng QR
 
@@ -103,7 +103,7 @@ Tài khoản SQL quản trị dùng cho setup/backup không phải một role ng
 
 [Mở SVG để phóng to](diagrams/images/usecase-tong-quat.svg) · [File draw.io](diagrams/source/Muses_UseCase_TongQuat.drawio).
 
-Mã **UC01–UC21** dùng cho các sơ đồ chi tiết ở mục 13. Sáu luồng dưới đây tổng hợp nhiều Use Case thành hành trình sử dụng; không phải bộ mã Use Case riêng. Khách không bắt buộc đăng nhập để tra cứu; mọi chức năng quản trị yêu cầu phiên và role hợp lệ.
+Mã **UC01–UC22** dùng cho các sơ đồ chi tiết ở mục 13. Sáu luồng dưới đây tổng hợp nhiều Use Case thành hành trình sử dụng; không phải bộ mã Use Case riêng. Khách không bắt buộc đăng nhập để tra cứu; mọi chức năng quản trị yêu cầu phiên và role hợp lệ.
 
 ### Luồng 01. Tìm hiểu một tác phẩm
 
@@ -153,6 +153,7 @@ Admin mở Overview hoặc Reports → chọn khoảng ngày và khung giờ →
 | WEB-14 | P1      | Tin tức có danh sách và bài viết; sự kiện có bộ lọc ngày/thể loại                                                | Link mở đúng bài; dữ liệu minh họa được phân biệt; không gọi đây là CMS hoàn chỉnh                         |
 | WEB-15 | P1      | Tra cứu giá vé theo tên/địa chỉ bảo tàng và đối tượng; sắp xếp giá                                               | `0` là miễn phí; thiếu giá hiện Chưa cập nhật; không phát sinh đơn mua vé/thanh toán                       |
 | WEB-16 | P1      | Cho phép đăng ký/đăng nhập/đăng xuất khách tùy chọn                                                              | Không bắt buộc đăng nhập ở các luồng tra cứu; client không tự chọn được role quản trị                      |
+| WEB-17 | P1 | Hiển thị QR truy cập trang chủ tại /scan, tải PNG và mở trang chủ | QR dùng địa chỉ HTTP(S) truy cập được từ thiết bị khách; không tính thành lượt quét QR tác phẩm |
 
 ### 6.2. Admin Dashboard
 
@@ -256,7 +257,7 @@ Các bảng/route đặt vé cũ có thể còn để tương thích mã nguồn
 
 ![ERD tác phẩm, danh mục, bản mô tả theo ngôn ngữ và hình ảnh](diagrams/images/erd-catalogue.png)
 
-[Mở SVG](diagrams/images/erd-catalogue.svg) · [File ERD draw.io — 3 trang](diagrams/source/Muses_ERD.drawio).
+[Mở SVG](diagrams/images/erd-catalogue.svg) · [File ERD draw.io — 4 trang](diagrams/source/Muses_ERD.drawio).
 
 ### 8.2. ERD bảo tàng, lịch trưng bày và giá vé
 
@@ -270,9 +271,15 @@ Các bảng/route đặt vé cũ có thể còn để tương thích mã nguồn
 
 [Mở SVG](diagrams/images/erd-activity.svg).
 
+### 8.4. ERD phần đặt vé cũ (tương thích)
+
+![ERD TicketReservations — phần tương thích cũ](diagrams/images/erd-legacy-tickets.png)
+
+[Mở SVG](diagrams/images/erd-legacy-tickets.svg). Bảng còn trong schema nhưng không thuộc luồng mua vé hiện hành; Ticket hiện dùng để tra cứu giá vé.
+
 ERD dùng tên bảng thực tế: `Users`, `ArtworkDescriptions`, `DisplaySchedules` và `Languages.LanguageID`. Nhãn **tham chiếu** là cùng bảng được lặp lại ở nhóm khác để đọc quan hệ, không phải bảng mới. `PK` là khóa chính, `FK` là khóa ngoại, `UQ` là ràng buộc duy nhất; chân quạ biểu thị nhiều và vòng tròn biểu thị có thể không có quan hệ.
 
-Cấu hình QR nằm trên `Artworks`; `QRUpdatedBy` được code ghi bằng UserID nhưng migration hiện tại chưa tạo FK, nên được ghi rõ là tham chiếu logic. Không thêm bảng `AdminUsers`, `MuseumTranslations` hoặc bảng QR giả vào mô hình hiện hành. `TicketReservations` là phần tương thích cũ được loại khỏi phạm vi ERD chức năng đang dùng; tọa độ khách không lưu trong DB này. Một số dòng gộp hai cột cùng kiểu để trình bày gọn; đây không phải script tạo DB hay danh sách đầy đủ các index/CHECK/default.
+Cấu hình QR nằm trên `Artworks`; `QRUpdatedBy` được code ghi bằng UserID nhưng migration hiện tại chưa tạo FK, nên được ghi rõ là tham chiếu logic. Không thêm bảng `AdminUsers`, `MuseumTranslations` hoặc bảng QR giả vào mô hình hiện hành. `TicketReservations` được đưa vào trang tương thích để đủ **17 bảng, 20 FK, 6 UNIQUE và 15 biểu thức CHECK** của schema. Tọa độ khách không lưu trong DB này. Các khung xanh ghi CHECK/default và hành vi xóa của SQL; khung vàng ghi quy tắc backend và giới hạn chưa được SQL ràng buộc. Xem [báo cáo rà soát ràng buộc](diagrams/CONSTRAINT-REVIEW.md) để đối chiếu từng quan hệ. Hình không thay thế script migration.
 
 ## 9. Yêu cầu phi chức năng
 
@@ -316,6 +323,7 @@ Các tiêu chí dưới đây là đầu việc kiểm chứng, không phải bi
 | AT-18 | Chọn 09:00–17:00, 23:00–24:00 và Cả ngày                              | API nhận đúng khung giờ Việt Nam; số liệu lịch sử/biểu đồ khớp bộ lọc; số khách hoạt động vẫn theo 5 phút gần nhất |
 | AT-19 | Mở lại link Admin Visitors/QR Check-in cũ                             | Mở Overview/Quản lý QR tương ứng; không còn menu Visitors, Giá vé hoặc nút CSV/Báo cáo theo ngày                   |
 | AT-20 | Lỗi API, nguồn bản đồ, ảnh hoặc thiết bị chặn quyền                   | Có trạng thái lỗi và đường tiếp tục phù hợp, không thay bằng dữ liệu giả                                           |
+| AT-21 | Quét QR trang chủ bằng điện thoại, tải PNG hoặc mở trang chủ | Mở đúng trang chủ bằng địa chỉ truy cập được; không ghi nhận nhầm thành lượt QR tác phẩm |
 
 ### Điều kiện trước khi nộp/triển khai
 
@@ -354,11 +362,11 @@ Bằng chứng tự động nằm trong `muses-backend/test`, `muses-react/tests
 
 ## 13. Sơ đồ Use Case chi tiết
 
-Bộ mới giữ thứ tự UC01–UC15 của tài liệu gửi ban đầu, cập nhật nội dung theo PRD và bổ sung UC16–UC21 cho QR, lộ trình, tra cứu giá vé, báo cáo và thông tin tham quan. Các sơ đồ mô tả yêu cầu/luồng đang xét; không thay thế biên bản nghiệm thu.
+Bộ mới giữ thứ tự UC01–UC15 của tài liệu gửi ban đầu, cập nhật nội dung theo PRD và bổ sung UC16–UC22 cho QR, lộ trình, tra cứu giá vé, báo cáo và thông tin tham quan. Các sơ đồ mô tả yêu cầu/luồng đang xét; không thay thế biên bản nghiệm thu.
 
 Bấm tên từng Use Case để mở hình. `«include»` đi từ ca sử dụng chính đến hành vi bắt buộc; `«extend»` đi từ hành vi mở rộng về ca sử dụng chính, với điều kiện ghi trong `[ ]`. Các quy tắc và trường hợp lỗi được ghi trong khung chú thích của từng hình.
 
-[File draw.io gồm 21 trang](diagrams/source/Muses_UseCase_ChiTiet.drawio) · [Bảng truy vết và toàn bộ file hình](diagrams/README.md).
+[File draw.io gồm 22 trang](diagrams/source/Muses_UseCase_ChiTiet.drawio) · [Bảng truy vết và toàn bộ file hình](diagrams/README.md).
 
 <a id="uc01"></a>
 <details>
@@ -609,5 +617,17 @@ Bấm tên từng Use Case để mở hình. `«include»` đi từ ca sử dụ
 ![UC21 — Xem thông tin tham quan](diagrams/images/uc21.png)
 
 [Mở SVG](diagrams/images/uc21.svg) · [Mở riêng PNG](diagrams/images/uc21.png).
+
+</details>
+
+<a id="uc22"></a>
+<details>
+<summary>UC22 — Chia sẻ QR truy cập website</summary>
+
+**Tác nhân:** Khách truy cập. **Yêu cầu liên quan:** `WEB-17`.
+
+![UC22 — Chia sẻ QR truy cập website](diagrams/images/uc22.png)
+
+[Mở SVG](diagrams/images/uc22.svg) · [Mở riêng PNG](diagrams/images/uc22.png).
 
 </details>

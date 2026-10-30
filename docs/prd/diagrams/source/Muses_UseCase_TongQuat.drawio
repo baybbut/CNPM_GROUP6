@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net">
   <diagram id="usecase-tong-quat" name="Use Case tổng quát — MUSES">
     <mxGraphModel dx="3197" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2040" pageHeight="1790" math="0" shadow="0">
@@ -22,43 +23,43 @@
         <mxCell id="n11" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;align=center;strokeWidth=2;fontSize=21;spacingTop=12;" value="Quản trị viên" vertex="1">
           <mxGeometry height="150" width="110" x="1860" y="760" as="geometry" />
         </mxCell>
-        <mxCell id="n12" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC01–02&#xa;Tra cứu và xem chi tiết tác phẩm" vertex="1">
+        <mxCell id="n12" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC01–02&#10;Tra cứu và xem chi tiết tác phẩm" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="322" as="geometry" />
         </mxCell>
         <mxCell id="e13" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n12" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n14" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC03–04&#xa;Ngôn ngữ và thuyết minh" vertex="1">
+        <mxCell id="n14" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC03–04&#10;Ngôn ngữ và thuyết minh" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="461" as="geometry" />
         </mxCell>
         <mxCell id="e15" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n14" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n16" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC05–08&#xa;Bảo tàng, bản đồ và chỉ đường" vertex="1">
+        <mxCell id="n16" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC05–08&#10;Bảo tàng, bản đồ và chỉ đường" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="600" as="geometry" />
         </mxCell>
         <mxCell id="e17" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n16" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n18" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC16&#xa;Xem và quét QR tác phẩm" vertex="1">
+        <mxCell id="n18" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC16 / UC22&#10;QR tác phẩm và QR truy cập website" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="739" as="geometry" />
         </mxCell>
         <mxCell id="e19" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n18" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n20" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC18&#xa;Xây dựng lộ trình tham quan" vertex="1">
+        <mxCell id="n20" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC18&#10;Xây dựng lộ trình tham quan" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="878" as="geometry" />
         </mxCell>
         <mxCell id="e21" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n20" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n22" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC19&#xa;Tra cứu giá vé bảo tàng" vertex="1">
+        <mxCell id="n22" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC19&#10;Tra cứu giá vé bảo tàng" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="1017" as="geometry" />
         </mxCell>
         <mxCell id="e23" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n22" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n24" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC21&#xa;Visit, tin tức và sự kiện" vertex="1">
+        <mxCell id="n24" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC21&#10;Visit, tin tức và sự kiện" vertex="1">
           <mxGeometry height="107" width="570" x="365" y="1156" as="geometry" />
         </mxCell>
         <mxCell id="e25" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n24" value="">
@@ -67,43 +68,43 @@
         <mxCell id="9NfH1IF2zf7YCRN54q3E-1" edge="1" parent="1" source="n26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="n9" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n26" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC10&#xa;Quản lý và công bố tác phẩm" vertex="1">
+        <mxCell id="n26" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC10&#10;Quản lý và công bố tác phẩm" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="322" as="geometry" />
         </mxCell>
         <mxCell id="e27" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n26" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n28" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC11&#xa;Quản lý bản dịch và URL audio" vertex="1">
+        <mxCell id="n28" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC11&#10;Quản lý bản dịch và URL audio" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="461" as="geometry" />
         </mxCell>
         <mxCell id="e29" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n28" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n30" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC12–13&#xa;Bảo tàng và lịch trưng bày" vertex="1">
+        <mxCell id="n30" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC12–13&#10;Bảo tàng và lịch trưng bày" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="600" as="geometry" />
         </mxCell>
         <mxCell id="e31" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n30" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n32" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC14&#xa;Tác giả, chất liệu và thể loại" vertex="1">
+        <mxCell id="n32" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC14&#10;Tác giả, chất liệu và thể loại" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="739" as="geometry" />
         </mxCell>
         <mxCell id="e33" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n32" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n34" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC17&#xa;Quản lý QR đang hoạt động" vertex="1">
+        <mxCell id="n34" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC17&#10;Quản lý QR đang hoạt động" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="878" as="geometry" />
         </mxCell>
         <mxCell id="e35" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n34" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n36" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC20&#xa;Overview và Reports theo ngày/giờ" vertex="1">
+        <mxCell id="n36" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC20&#10;Overview và Reports theo ngày/giờ" vertex="1">
           <mxGeometry height="107" width="570" x="1110" y="1017" as="geometry" />
         </mxCell>
         <mxCell id="e37" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;edgeStyle=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="n36" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n38" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC09 / UC15&#xa;Đăng nhập và đăng xuất" vertex="1">
+        <mxCell id="n38" parent="1" style="fontFamily=Arial;html=0;convertToSvg=1;svgWhiteSpace=wrap;ellipse;whiteSpace=wrap;align=center;verticalAlign=middle;strokeWidth=2;fontSize=23;spacing=15;" value="UC09 / UC15&#10;Đăng nhập và đăng xuất" vertex="1">
           <mxGeometry height="110" width="640" x="700" y="1370" as="geometry" />
         </mxCell>
         <mxCell id="e39" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=30;html=0;convertToSvg=1;fontFamily=Arial;fontSize=19;fontColor=#172B3A;strokeWidth=1.5;endArrow=none;labelBackgroundColor=#FFFFFF;entryX=0;entryY=0.5;" target="n38" value="">
