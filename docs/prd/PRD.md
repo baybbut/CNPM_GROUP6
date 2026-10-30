@@ -24,6 +24,8 @@ PRD này mô tả yêu cầu sản phẩm hiện hành và phân biệt phần �
 
 QR mở trang chủ của bản demo trong mạng Wi-Fi. Điện thoại và máy tính có IP `192.168.31.88` cần cùng mạng; website phải chạy ở cổng `5173`, backend chạy để tải dữ liệu. Xem [cách chạy trên mạng nội bộ](../../README.md#7-quét-qr-và-dùng-vị-trí-trên-điện-thoại). Khi đổi IP/cổng, cần tạo lại QR.
 
+Trên website, **Quét QR → QR truy cập website** cũng hiển thị mã trang chủ, địa chỉ đích và nút tải PNG. Mã được tạo tại trình duyệt từ địa chỉ web đang mở; khi dùng localhost thì dùng địa chỉ demo ở trên, hoặc địa chỉ được cấu hình bằng `VITE_VISITOR_BASE_URL`. Mã trang chủ hoạt động độc lập với danh sách QR tác phẩm và không cộng lượt mở QR tác phẩm.
+
 ## 1. Tổng quan sản phẩm
 
 Muses tập hợp thông tin tác phẩm nghệ thuật và nơi trưng bày để khách có thể tra cứu trước hoặc trong chuyến tham quan. Khách tìm tác phẩm theo tên/tác giả, đọc nội dung bằng ngôn ngữ phù hợp, nghe thuyết minh, mở QR, xem bảo tàng hiện đang trưng bày và xây dựng lộ trình tham quan tại TP.HCM.

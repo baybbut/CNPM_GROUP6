@@ -3,6 +3,7 @@ import { useLang } from "../../context/LangContext";
 import { CONTENT_LANGUAGES } from "../../api/contentLanguages.mjs";
 import { label } from "../../i18n/catalog.mjs";
 import { ArtworkCollection } from "../explore/Artworks";
+import WebsiteQR from "./WebsiteQR";
 import "./scanner.css";
 
 export default function Scanner() {
@@ -19,6 +20,7 @@ export default function Scanner() {
           )}
         </p>
       </div>
+      <WebsiteQR />
       <div className="scan-catalogue-tools">
         <label>
           {t("Content language")}

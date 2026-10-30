@@ -36,7 +36,7 @@ Khách không cần tài khoản để tra cứu, nghe thuyết minh, xem bản 
 - **Chi tiết tác phẩm:** ảnh, tên, tác giả, chất liệu, năm/khoảng năm, kích thước, mô tả, nội dung liên quan và nơi trưng bày hiện tại khi có lịch hợp lệ.
 - **Năm ngôn ngữ nội dung:** Việt (`vi`), Anh (`en`), Trung (`zh`), Nhật (`ja`), Hàn (`ko`). Dùng bản dịch đã công bố; thiếu bản dịch thì hiển thị nội dung tiếng Việt và thông báo phù hợp. Bản hiện tại không tự dịch qua Docker.
 - **Đọc văn bản thành tiếng:** đọc/tạm dừng/tiếp tục/dừng, chọn giọng/tốc độ, tô sáng và theo dõi phần văn bản đang đọc. Giọng dùng ngôn ngữ thực của nội dung; hỗ trợ giọng và sự kiện tô sáng phụ thuộc trình duyệt/thiết bị. Có thể phát bản thu âm khi dữ liệu cung cấp URL audio.
-- **QR:** trang `/scan` là danh sách tác phẩm có QR hoạt động. Chọn một tác phẩm để mở popup QR; quét mở chi tiết. `/scan/camera` hỗ trợ camera, ảnh QR hoặc dán nội dung mã.
+- **QR:** trang `/scan` có mục **QR truy cập website** để quét/tải mã mở trang chủ, kèm danh sách tác phẩm có QR hoạt động. Chọn một tác phẩm để mở popup QR; quét mở chi tiết. `/scan/camera` hỗ trợ camera, ảnh QR hoặc dán nội dung mã tác phẩm.
 - **Bảo tàng/bản đồ:** tìm bảo tàng, không gian nghệ thuật tại TP.HCM; có 4 địa điểm tham khảo khi nguồn bản đồ chưa sẵn sàng. Chỉ vẽ chỉ đường trong Muses sau khi khách bấm **Dùng vị trí của tôi** và lấy vị trí thành công.
 - **Lộ trình tham quan:** chọn trong 4 bảo tàng tham khảo, thay thứ tự, giờ bắt đầu và thời lượng; có sơ đồ thứ tự/chủ đề tham quan. Chưa có sơ đồ mặt bằng thật được gắn cho các bảo tàng.
 - **Visit:** hướng dẫn tham quan, chọn điểm đến/ngày, bản đồ, tiện ích và câu hỏi thường gặp.
