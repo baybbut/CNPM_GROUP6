@@ -1,5 +1,7 @@
 # MUSES — Hệ thống tra cứu tác phẩm nghệ thuật
 
+**Chạy bằng Docker trên Windows/macOS/Linux:** [Hướng dẫn Docker Compose](docs/DOCKER.md). Chạy website, Admin và backend trong container, kết nối SQL Server hiện có hoặc DB chung của nhóm.
+
 Đồ án **CNPM_GROUP6** xây dựng website giúp khách tìm hiểu tác phẩm nghệ thuật, đọc và nghe thuyết minh theo ngôn ngữ, tìm bảo tàng đang trưng bày và lập kế hoạch tham quan. Trang Admin dùng để công bố nội dung, quản lý QR trên website và theo dõi hoạt động truy cập.
 
 **Tài liệu yêu cầu sản phẩm:** [PRD hiện hành](docs/prd/PRD.md). Bản này mô tả phạm vi đã được điều chỉnh đến **30/10/2026**, đối chiếu mã nguồn chức năng tại `31e2715`.
