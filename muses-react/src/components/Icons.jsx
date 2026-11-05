@@ -106,6 +106,25 @@ export function SvgIcon({
         <path d="M6 6h1v1H6zM17 6h1v1h-1zM6 17h1v1H6z" />
       </svg>
     );
+  if (kind === "chevron")
+    return (
+      <svg
+        className={`asset-icon ${className}`}
+        width={size}
+        height={size}
+        viewBox="0 0 12 8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
+        style={{ flexShrink: 0, verticalAlign: "middle", ...style }}
+      >
+        <path d="m1 1 5 5 5-5" />
+      </svg>
+    );
   // No arrow file exists in icon/: retain a simple directional vector.
   if (kind === "arrow")
     return (

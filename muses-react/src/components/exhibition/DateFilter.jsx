@@ -37,7 +37,7 @@ export default function DateFilter({ value, onChange, vi, allLabel }) {
       >
         <SvgIcon kind="calendar" size={30} />
         <span>{label}</span>
-        <SvgIcon kind="chevron" size={18} />
+        <SvgIcon kind="chevron" size={18} className="dropdown-chevron" />
       </button>
       {open && (
         <div id="ex-date-picker" className="ex-date-picker">

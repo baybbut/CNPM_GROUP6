@@ -172,7 +172,6 @@ function ExhibitionContent() {
                     </option>
                   ))}
                 </select>
-                <SvgIcon kind="chevron" size={18} />
               </label>
             </div>
 

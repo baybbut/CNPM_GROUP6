@@ -2,13 +2,16 @@
 .lang-toggle{
   display:inline-flex;
   align-items:center;
-  gap:6px;
+  gap:.5em;
   text-transform:uppercase;
   font-size:14px;
   border-bottom:1px solid #222;
 }
 .lang-arrow{
   transition:transform .25s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  .lang-arrow{transition:none}
 }
 .lang-arrow.open{
   transform:rotate(180deg);

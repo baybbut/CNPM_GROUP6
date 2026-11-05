@@ -1,6 +1,7 @@
 /* Style dùng chung: biến, reset, nút, tiêu đề */
 @import url('https://fonts.googleapis.com/css2?family=Kalnia:wght@400&display=swap'); /*tải font Kalnia về */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');/* font poppins */
+@import "./styles/dropdowns.css";
 
 :root{
   --cream:#ecebc4; --sand:#9c9474; --brown:#8a6a3b; --dark:#3b3022; --black:#000;
