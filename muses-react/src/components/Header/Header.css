@@ -2,9 +2,10 @@
   position: absolute;
   inset: 0 0 auto;
   z-index: 5;
-  height: 80px;
+  height: 112px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 68px 44px;
   align-items: center;
   column-gap: 24px;
   padding-inline: clamp(20px, 3vw, 56px);
@@ -20,8 +21,23 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-.header .nav-right { justify-content: flex-end; }
+.header .nav-left {
+  grid-row: 2;
+  grid-column: 1;
+  justify-content: flex-start;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.header .nav-left::-webkit-scrollbar { display: none; }
+.header .nav-right {
+  grid-row: 2;
+  grid-column: 2;
+  justify-content: flex-end;
+}
 .header .logo {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -80,24 +96,12 @@
   .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
   .header .nav-right .ticket-nav { padding: 10px 16px; }
 }
+.header ~ main .hero { padding-top: 112px; }
+
 @media (max-width: 1400px) {
-  .header {
-    height: 112px;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: 68px 44px;
-  }
   .header .nav-left {
-    grid-row: 2;
-    grid-column: 1;
-    justify-content: flex-start;
     gap: clamp(12px, 2.5vw, 32px);
-    overflow-x: auto;
-    scrollbar-width: none;
   }
-  .header .nav-left::-webkit-scrollbar { display: none; }
-  .header .logo { grid-row: 1; grid-column: 1 / -1; justify-self: start; }
-  .header .nav-right { grid-row: 2; grid-column: 2; }
-  .header ~ main .hero { padding-top: 112px; }
 }
 @media (max-width: 600px) {
   .header { padding-inline: 14px; column-gap: 12px; }
