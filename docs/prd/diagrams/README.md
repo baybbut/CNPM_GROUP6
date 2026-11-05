@@ -1,6 +1,6 @@
 # Sơ đồ phân tích MUSES
 
-Bộ sơ đồ được vẽ lại theo [PRD hiện hành](../PRD.md) và mã nguồn chức năng `31e2715`, ngày **30/10/2026**. Có **27 hình**: 1 Use Case tổng quát, 22 Use Case chi tiết và 4 ERD (3 nhóm chính, 1 trang tương thích). Ảnh PNG đã được chèn trực tiếp trong PRD; SVG dùng để phóng to hoặc đưa vào báo cáo mà không vỡ hình.
+Bộ sơ đồ được vẽ lại theo [PRD hiện hành](../../../README.md) và mã nguồn chức năng `31e2715`, ngày **30/10/2026**. Có **27 hình**: 1 Use Case tổng quát, 22 Use Case chi tiết và 4 ERD (3 nhóm chính, 1 trang tương thích). Ảnh PNG đã được chèn trực tiếp trong PRD; SVG dùng để phóng to hoặc đưa vào báo cáo mà không vỡ hình.
 
 ## 1. File chỉnh sửa và nguồn đối chiếu
 
@@ -37,7 +37,7 @@ Hai tác nhân chính là **Khách truy cập** và **Quản trị viên**. Tài
 | ERD 3/4 | Users, AuthSessions, AuthLoginEvents, AnalyticsSessions, AnalyticsEvents; tham chiếu Artworks | [PNG](images/erd-activity.png) · [SVG](images/erd-activity.svg) |
 | ERD 4/4 | TicketReservations và Museums tham chiếu; phần tương thích cũ | [PNG](images/erd-legacy-tickets.png) · [SVG](images/erd-legacy-tickets.svg) |
 
-Xem bốn hình trực tiếp tại [mục 8 của PRD](../PRD.md#8-dữ-liệu-và-tích-hợp). Bảng mang nhãn **tham chiếu** là cùng thực thể xuất hiện trên nhiều trang; không tạo thêm bảng trong DB.
+Xem bốn hình trực tiếp tại [mục 8 của PRD](../../../README.md#8-dữ-liệu-và-tích-hợp). Bảng mang nhãn **tham chiếu** là cùng thực thể xuất hiện trên nhiều trang; không tạo thêm bảng trong DB.
 
 Những điểm đã chỉnh so với ERD gửi ban đầu:
 
@@ -63,28 +63,28 @@ Mở liên kết ở cột **Use Case** để xem hình ngay trong PRD. Có th�
 
 | Mã | Use Case | Tác nhân | Yêu cầu PRD | File hình |
 | --- | --- | --- | --- | --- |
-| UC01 | [Tra cứu tác phẩm](../PRD.md#uc01) | Khách truy cập | `WEB-02` | [PNG](images/uc01.png) · [SVG](images/uc01.svg) |
-| UC02 | [Xem chi tiết tác phẩm](../PRD.md#uc02) | Khách truy cập | `WEB-03 / WEB-04 / WEB-09` | [PNG](images/uc02.png) · [SVG](images/uc02.svg) |
-| UC03 | [Chuyển ngôn ngữ nội dung](../PRD.md#uc03) | Khách truy cập | `WEB-04` | [PNG](images/uc03.png) · [SVG](images/uc03.svg) |
-| UC04 | [Nghe thuyết minh](../PRD.md#uc04) | Khách truy cập | `WEB-05 / WEB-06` | [PNG](images/uc04.png) · [SVG](images/uc04.svg) |
-| UC05 | [Xem nơi trưng bày tác phẩm](../PRD.md#uc05) | Khách truy cập | `WEB-09 / BR-03` | [PNG](images/uc05.png) · [SVG](images/uc05.svg) |
-| UC06 | [Tra cứu bảo tàng tại TP.HCM](../PRD.md#uc06) | Khách truy cập | `WEB-10` | [PNG](images/uc06.png) · [SVG](images/uc06.svg) |
-| UC07 | [Xem bản đồ bảo tàng](../PRD.md#uc07) | Khách truy cập | `WEB-10 / WEB-11` | [PNG](images/uc07.png) · [SVG](images/uc07.svg) |
-| UC08 | [Chỉ đường trên bản đồ Muses](../PRD.md#uc08) | Khách truy cập | `WEB-11 / BR-04` | [PNG](images/uc08.png) · [SVG](images/uc08.svg) |
-| UC09 | [Đăng nhập tài khoản web](../PRD.md#uc09) | Khách / Admin | `WEB-16 / ADM-01` | [PNG](images/uc09.png) · [SVG](images/uc09.svg) |
-| UC10 | [Quản lý và công bố tác phẩm](../PRD.md#uc10) | Quản trị viên | `ADM-02 / BR-01` | [PNG](images/uc10.png) · [SVG](images/uc10.svg) |
-| UC11 | [Quản lý bản dịch và URL audio](../PRD.md#uc11) | Quản trị viên | `ADM-03 / BR-02` | [PNG](images/uc11.png) · [SVG](images/uc11.svg) |
-| UC12 | [Quản lý thông tin bảo tàng](../PRD.md#uc12) | Quản trị viên | `ADM-05` | [PNG](images/uc12.png) · [SVG](images/uc12.svg) |
-| UC13 | [Quản lý lịch trưng bày hiện vật](../PRD.md#uc13) | Quản trị viên | `ADM-06 / BR-03` | [PNG](images/uc13.png) · [SVG](images/uc13.svg) |
-| UC14 | [Quản lý tác giả, chất liệu, thể loại](../PRD.md#uc14) | Quản trị viên | `ADM-04` | [PNG](images/uc14.png) · [SVG](images/uc14.svg) |
-| UC15 | [Đăng xuất](../PRD.md#uc15) | Khách / Admin | `WEB-16 / ADM-01` | [PNG](images/uc15.png) · [SVG](images/uc15.svg) |
-| UC16 | [Xem và quét QR tác phẩm](../PRD.md#uc16) | Khách truy cập | `WEB-07 / WEB-08 / BR-05` | [PNG](images/uc16.png) · [SVG](images/uc16.svg) |
-| UC17 | [Quản lý QR đang hoạt động](../PRD.md#uc17) | Quản trị viên | `ADM-07 / BR-05` | [PNG](images/uc17.png) · [SVG](images/uc17.svg) |
-| UC18 | [Xây dựng lộ trình tham quan](../PRD.md#uc18) | Khách truy cập | `WEB-12 / BR-04` | [PNG](images/uc18.png) · [SVG](images/uc18.svg) |
-| UC19 | [Tra cứu giá vé bảo tàng](../PRD.md#uc19) | Khách truy cập | `WEB-15 / BR-08` | [PNG](images/uc19.png) · [SVG](images/uc19.svg) |
-| UC20 | [Xem Overview và Reports](../PRD.md#uc20) | Quản trị viên | `ADM-08 / ADM-09 / BR-06 / BR-07` | [PNG](images/uc20.png) · [SVG](images/uc20.svg) |
-| UC21 | [Xem thông tin tham quan](../PRD.md#uc21) | Khách truy cập | `WEB-01 / WEB-13 / WEB-14` | [PNG](images/uc21.png) · [SVG](images/uc21.svg) |
-| UC22 | [Chia sẻ QR truy cập website](../PRD.md#uc22) | Khách truy cập | `WEB-17` | [PNG](images/uc22.png) · [SVG](images/uc22.svg) |
+| UC01 | [Tra cứu tác phẩm](../../../README.md#uc01) | Khách truy cập | `WEB-02` | [PNG](images/uc01.png) · [SVG](images/uc01.svg) |
+| UC02 | [Xem chi tiết tác phẩm](../../../README.md#uc02) | Khách truy cập | `WEB-03 / WEB-04 / WEB-09` | [PNG](images/uc02.png) · [SVG](images/uc02.svg) |
+| UC03 | [Chuyển ngôn ngữ nội dung](../../../README.md#uc03) | Khách truy cập | `WEB-04` | [PNG](images/uc03.png) · [SVG](images/uc03.svg) |
+| UC04 | [Nghe thuyết minh](../../../README.md#uc04) | Khách truy cập | `WEB-05 / WEB-06` | [PNG](images/uc04.png) · [SVG](images/uc04.svg) |
+| UC05 | [Xem nơi trưng bày tác phẩm](../../../README.md#uc05) | Khách truy cập | `WEB-09 / BR-03` | [PNG](images/uc05.png) · [SVG](images/uc05.svg) |
+| UC06 | [Tra cứu bảo tàng tại TP.HCM](../../../README.md#uc06) | Khách truy cập | `WEB-10` | [PNG](images/uc06.png) · [SVG](images/uc06.svg) |
+| UC07 | [Xem bản đồ bảo tàng](../../../README.md#uc07) | Khách truy cập | `WEB-10 / WEB-11` | [PNG](images/uc07.png) · [SVG](images/uc07.svg) |
+| UC08 | [Chỉ đường trên bản đồ Muses](../../../README.md#uc08) | Khách truy cập | `WEB-11 / BR-04` | [PNG](images/uc08.png) · [SVG](images/uc08.svg) |
+| UC09 | [Đăng nhập tài khoản web](../../../README.md#uc09) | Khách / Admin | `WEB-16 / ADM-01` | [PNG](images/uc09.png) · [SVG](images/uc09.svg) |
+| UC10 | [Quản lý và công bố tác phẩm](../../../README.md#uc10) | Quản trị viên | `ADM-02 / BR-01` | [PNG](images/uc10.png) · [SVG](images/uc10.svg) |
+| UC11 | [Quản lý bản dịch và URL audio](../../../README.md#uc11) | Quản trị viên | `ADM-03 / BR-02` | [PNG](images/uc11.png) · [SVG](images/uc11.svg) |
+| UC12 | [Quản lý thông tin bảo tàng](../../../README.md#uc12) | Quản trị viên | `ADM-05` | [PNG](images/uc12.png) · [SVG](images/uc12.svg) |
+| UC13 | [Quản lý lịch trưng bày hiện vật](../../../README.md#uc13) | Quản trị viên | `ADM-06 / BR-03` | [PNG](images/uc13.png) · [SVG](images/uc13.svg) |
+| UC14 | [Quản lý tác giả, chất liệu, thể loại](../../../README.md#uc14) | Quản trị viên | `ADM-04` | [PNG](images/uc14.png) · [SVG](images/uc14.svg) |
+| UC15 | [Đăng xuất](../../../README.md#uc15) | Khách / Admin | `WEB-16 / ADM-01` | [PNG](images/uc15.png) · [SVG](images/uc15.svg) |
+| UC16 | [Xem và quét QR tác phẩm](../../../README.md#uc16) | Khách truy cập | `WEB-07 / WEB-08 / BR-05` | [PNG](images/uc16.png) · [SVG](images/uc16.svg) |
+| UC17 | [Quản lý QR đang hoạt động](../../../README.md#uc17) | Quản trị viên | `ADM-07 / BR-05` | [PNG](images/uc17.png) · [SVG](images/uc17.svg) |
+| UC18 | [Xây dựng lộ trình tham quan](../../../README.md#uc18) | Khách truy cập | `WEB-12 / BR-04` | [PNG](images/uc18.png) · [SVG](images/uc18.svg) |
+| UC19 | [Tra cứu giá vé bảo tàng](../../../README.md#uc19) | Khách truy cập | `WEB-15 / BR-08` | [PNG](images/uc19.png) · [SVG](images/uc19.svg) |
+| UC20 | [Xem Overview và Reports](../../../README.md#uc20) | Quản trị viên | `ADM-08 / ADM-09 / BR-06 / BR-07` | [PNG](images/uc20.png) · [SVG](images/uc20.svg) |
+| UC21 | [Xem thông tin tham quan](../../../README.md#uc21) | Khách truy cập | `WEB-01 / WEB-13 / WEB-14` | [PNG](images/uc21.png) · [SVG](images/uc21.svg) |
+| UC22 | [Chia sẻ QR truy cập website](../../../README.md#uc22) | Khách truy cập | `WEB-17` | [PNG](images/uc22.png) · [SVG](images/uc22.svg) |
 
 Các Use Case quản trị có tiền điều kiện phiên Admin hợp lệ, thay vì vẽ `include Đăng nhập` vào mọi thao tác. Đăng nhập là một Use Case độc lập; người đã có phiên không cần nhập lại tài khoản mỗi lần lưu.
 

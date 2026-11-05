@@ -1,6 +1,6 @@
 # Chạy Muses theo PRD
 
-Phạm vi hiện hành và tiêu chí nghiệm thu: [PRD cập nhật](PRD.md). Hướng dẫn tổng hợp: [README](../../README.md).
+Phạm vi hiện hành và tiêu chí nghiệm thu: [PRD cập nhật](../../README.md). Hướng dẫn tổng hợp: [README](../SETUP.md).
 
 Phạm vi mới: web tra cứu không cần tài khoản; Admin duyệt thủ công tác phẩm, bản dịch và lịch ở nhiều bảo tàng. Các ngôn ngữ: Việt, Anh, Trung, Nhật, Hàn. Không cần LibreTranslate cho MVP. Mobile Expo giữ nguyên, ngoài phạm vi website/Admin của PRD này.
 

@@ -1,8 +1,8 @@
 # Mô hình triển khai PRD
 
-Đây là mô hình lõi dữ liệu; phạm vi sản phẩm và các giới hạn hiện tại ở [PRD](PRD.md).
+Đây là mô hình lõi dữ liệu; phạm vi sản phẩm và các giới hạn hiện tại ở [PRD](../../README.md).
 
-Bản ERD vẽ lại có khóa, kiểu dữ liệu và các nhóm tài khoản/thống kê/giá vé nằm trong [bộ sơ đồ](diagrams/README.md). Bốn hình ERD được chèn trực tiếp tại [mục 8 của PRD](PRD.md#8-dữ-liệu-và-tích-hợp); mô hình Mermaid dưới đây là bản tóm tắt.
+Bản ERD vẽ lại có khóa, kiểu dữ liệu và các nhóm tài khoản/thống kê/giá vé nằm trong [bộ sơ đồ](diagrams/README.md). Bốn hình ERD được chèn trực tiếp tại [mục 8 của PRD](../../README.md#8-dữ-liệu-và-tích-hợp); mô hình Mermaid dưới đây là bản tóm tắt.
 
 Các bảng cũ giữ nguyên tên/khóa để không cắt đứt ảnh, QR và thống kê. `Catalog.sql` thêm trạng thái và các quan hệ mới; không thay DB bằng một sơ đồ mới.
 
