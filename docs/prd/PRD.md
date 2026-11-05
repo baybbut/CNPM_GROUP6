@@ -4,13 +4,10 @@
 | ------------------ | --------------------------------------------------------------------------------- |
 | Đề tài             | Xây dựng hệ thống tra cứu tác phẩm nghệ thuật Muses                               |
 | Nhóm               | CNPM_GROUP6                                                                       |
-| Ngày cập nhật      | 30/10/2026, giờ Việt Nam                                                          |
-| Phạm vi tài liệu   | Website khách, Admin Dashboard và backend của bản MVP hiện tại                    |
-| Mã nguồn đối chiếu | `31e2715` trên nhánh `develop` — trước đợt cập nhật tài liệu này                  |
-| Căn cứ             | [PRD gốc](PRD-2026-10-29.txt), mã nguồn và các điều chỉnh chức năng đã thống nhất |
+| Phạm vi tài liệu   | Website khách, Admin Dashboard và backend                                         |
 | Tài liệu cài đặt   | [README](../../README.md)                                                         |
 
-PRD này mô tả yêu cầu sản phẩm hiện hành và phân biệt phần đã có trong mã nguồn với phần còn cần dữ liệu hoặc nghiệm thu thực tế. PRD gốc được giữ nguyên để truy vết thay đổi. “Đã triển khai” không đồng nghĩa đã nghiệm thu trên SQL Server, điện thoại hoặc môi trường triển khai công khai.
+PRD này mô tả yêu cầu sản phẩm chính, các tác nhân chính và huớng phát triển
 
 [Bộ sơ đồ phân tích](diagrams/README.md) đã được vẽ lại theo phạm vi này, gồm **Use Case tổng quát, 22 Use Case chi tiết và 4 trang ERD (3 nhóm chính và phần đặt vé cũ)**. Hình được chèn ở mục 5, 8 và 13; mỗi nhóm có file draw.io chỉnh sửa được. Ba file người dùng cung cấp ban đầu được lưu riêng để đối chiếu.
 
@@ -28,7 +25,7 @@ Trên website, **Quét QR → QR truy cập website** cũng hiển thị mã tra
 
 ## 1. Tổng quan sản phẩm
 
-Muses tập hợp thông tin tác phẩm nghệ thuật và nơi trưng bày để khách có thể tra cứu trước hoặc trong chuyến tham quan. Khách tìm tác phẩm theo tên/tác giả, đọc nội dung bằng ngôn ngữ phù hợp, nghe thuyết minh, mở QR, xem bảo tàng hiện đang trưng bày và xây dựng lộ trình tham quan tại TP.HCM.
+Muses tập hợp thông tin tác phẩm nghệ thuật và nơi trưng bày để khách có thể tra cứu trước hoặc lên kế hoạch một chuyến tham quan. Khách tìm tác phẩm theo tên/tác giả, đọc nội dung bằng ngôn ngữ phù hợp, nghe thuyết minh, mở QR, xem bảo tàng hiện đang trưng bày và xây dựng lộ trình tham quan tại TP.HCM.
 
 Quản trị viên quản lý thông tin tác phẩm, bản dịch, dữ liệu bảo tàng, lịch trưng bày và trạng thái QR. Hệ thống ghi nhận hoạt động website để hỗ trợ theo dõi truy cập theo ngày/giờ và mức sử dụng QR/thuyết minh.
 
