@@ -21,121 +21,121 @@ const definitions = {
   artworks: {
     title: "Tác phẩm",
     description:
-      "Nhập nội dung tiếng Việt, thông tin tác phẩm và công bố ngay tại đây.",
+      "Enter the Vietnamese content, details about the work, and publish it right here.",
     fields: [
-      ["title", "Tên tác phẩm (tiếng Việt)", "text", true],
-      ["descriptionVi", "Mô tả tiếng Việt", "textarea"],
-      ["shortDescriptionVi", "Mô tả ngắn (không bắt buộc)", "textarea"],
-      ["artistId", "Tác giả", "artists", true],
-      ["categoryId", "Thể loại", "categories", true],
-      ["materialId", "Chất liệu", "materials", true],
-      ["creationPeriod", "Năm / khoảng năm"],
-      ["dimensions", "Kích thước"],
-      ["source", "Nguồn thông tin (không bắt buộc)", "textarea"],
-      ["imageUrl", "URL ảnh đại diện"],
-      ["imageSource", "Nguồn / quyền sử dụng ảnh (không bắt buộc)"],
-      ["ownerMuseumId", "Bảo tàng sở hữu (khác nơi đang trưng bày)", "museums"],
+      ["title", "Name (Vietnamese)", "text", true],
+      ["descriptionVi", "Vietnamese Description", "textarea"],
+      ["shortDescriptionVi", "Short Description (Optional)", "textarea"],
+      ["artistId", "Artist", "artists", true],
+      ["categoryId", "Category", "categories", true],
+      ["materialId", "Material", "materials", true],
+      ["creationPeriod", "Year / Approximate Year"],
+      ["dimensions", "Dimensions"],
+      ["source", "Source (Optional)", "textarea"],
+      ["imageUrl", "Image URL"],
+      ["imageSource", "Image Source / Rights (Optional)"],
+      ["ownerMuseumId", "Owning Museum (Different from Displaying Museum)", "museums"],
     ],
   },
   translations: {
-    title: "Bản dịch & thuyết minh",
-    description: "Quản lý bản dịch và nghe thử thuyết minh theo từng ngôn ngữ.",
+    title: "Translation & voice-over",
+    description: "Manage translations and preview voiceovers for each language.",
     fields: [
-      ["artworkId", "Tác phẩm", "artworks", true],
-      ["language", "Ngôn ngữ", "languages", true],
-      ["title", "Tên tác phẩm đã dịch"],
-      ["description", "Mô tả đầy đủ", "textarea"],
-      ["shortDescription", "Mô tả ngắn", "textarea"],
-      ["audioUrl", "URL bản thu âm (không bắt buộc)"],
+      ["artworkId", "Artwork", "artworks", true],
+      ["language", "Languages", "languages", true],
+      ["title", "Name Artwork Translation", "text", true],
+      ["description", "Full Description", "textarea"],
+      ["shortDescription", "Short Description", "textarea"],
+      ["audioUrl", "Audio URL (Optional)"],
       [
         "source",
-        "Nguồn bản dịch / người biên dịch (không bắt buộc)",
+        "Translation Source / Translator (Optional)",
         "textarea",
       ],
-      ["status", "Trạng thái", "translationStatus", true],
+      ["status", "Status", "translationStatus", true],
     ],
   },
   museums: {
-    title: "Bảo tàng & bản đồ",
+    title: "Museums & Maps",
     description:
-      "Kiểm chứng địa chỉ và ghim trước khi công khai. Không ẩn bảo tàng còn lịch đã xác nhận.",
+      "Verify addresses and pins before publishing. Do not hide museums with confirmed schedules.",
     fields: [
-      ["name", "Tên bảo tàng", "text", true],
-      ["address", "Địa chỉ", "text", true],
-      ["description", "Mô tả", "textarea"],
-      ["contact", "Liên hệ"],
-      ["latitude", "Vĩ độ [-90,90]", "number", true],
-      ["longitude", "Kinh độ [-180,180]", "number", true],
-      ["source", "Nguồn thông tin", "textarea"],
-      ["pinVerified", "Đã đối chiếu ghim với địa chỉ", "checkbox"],
-      ["isPublic", "Công khai bảo tàng", "checkbox"],
+      ["name", "Museum Name", "text", true],
+      ["address", "Address", "text", true],
+      ["description", "Description", "textarea"],
+      ["contact", "Contact", "textarea"],
+      ["latitude", "Latitude [-90,90]", "number", true],
+      ["longitude", "Longitude [-180,180]", "number", true],
+      ["source", "Source", "textarea"],
+      ["pinVerified", "Pin Verified", "checkbox"],
+      ["isPublic", "Public Museum", "checkbox"],
     ],
   },
   schedules: {
-    title: "Lịch trưng bày",
+    title: "Exhibition Schedule",
     description:
-      "Ngày kết thúc không được tính vào thời gian trưng bày. Lịch nháp và đã hủy không dùng xác định nơi hiện tại.",
+      "The end date is not included in the exhibition period. Draft and cancelled schedules do not use the current location.",
     fields: [
-      ["artworkId", "Tác phẩm", "artworks", true],
-      ["museumId", "Bảo tàng trưng bày", "museums", true],
-      ["startDate", "Ngày bắt đầu", "date", true],
-      ["endDate", "Ngày kết thúc (không bao gồm ngày này)", "date"],
-      ["source", "Nguồn xác nhận lịch", "textarea", true],
-      ["verifiedOn", "Ngày kiểm chứng", "date", true],
-      ["status", "Trạng thái", "scheduleStatus", true],
+      ["artworkId", "Artwork", "artworks", true],
+      ["museumId", "Displaying Museum", "museums", true],
+      ["startDate", "Start Date", "date", true],
+      ["endDate", "End Date (Exclusive)", "date"],
+      ["source", "Schedule Confirmation Source", "textarea", true],
+      ["verifiedOn", "Verification Date", "date", true],
+      ["status", "Status", "scheduleStatus", true],
     ],
   },
   artists: {
-    title: "Tác giả",
-    description: "Mục đang được tác phẩm tham chiếu không thể xóa.",
+    title: "Artists",
+    description: "This item cannot be deleted if it is referenced by an artwork.",
     fields: [
-      ["name", "Tên tác giả", "text", true],
-      ["description", "Tiểu sử", "textarea"],
+      ["name", "Artist Name", "text", true],
+      ["description", "Biography", "textarea"],
     ],
   },
   materials: {
-    title: "Chất liệu",
+    title: "Materials",
     description:
-      "Thay đổi tên sẽ cập nhật tên chất liệu trên các tác phẩm liên quan.",
-    fields: [["name", "Tên chất liệu", "text", true]],
+      "Changing the name will update the material name on related artworks.",
+    fields: [["name", "Material Name", "text", true]],
   },
   categories: {
-    title: "Thể loại",
-    description: "Quản lý phân loại các hiện vật trong bộ sưu tập.",
+    title: "Categories",
+    description: "Manage the classification of artifacts in the collection.",
     fields: [
-      ["name", "Tên thể loại", "text", true],
-      ["description", "Mô tả", "textarea"],
+      ["name", "Category Name", "text", true],
+      ["description", "Description", "textarea"],
     ],
   },
 };
 const columns = {
   artworks: [
-    ["title", "Tác phẩm"],
-    ["artist", "Tác giả"],
-    ["material", "Chất liệu"],
-    ["status", "Trạng thái"],
+    ["title", "Artwork"],
+    ["artist", "Artist"],
+    ["material", "Material"],
+    ["status", "Status"],
   ],
   translations: [
-    ["artwork", "Tác phẩm"],
-    ["language", "Ngôn ngữ"],
-    ["title", "Tên bản dịch"],
-    ["status", "Trạng thái"],
+    ["artwork", "Artwork"],
+    ["language", "Language"],
+    ["title", "Translation Title"],
+    ["status", "Status"],
   ],
   museums: [
-    ["name", "Bảo tàng"],
-    ["address", "Địa chỉ"],
-    ["isPublic", "Công khai"],
+    ["name", "Museum"],
+    ["address", "Address"],
+    ["isPublic", "Public Museum"],
   ],
   schedules: [
-    ["artwork", "Tác phẩm"],
-    ["museum", "Bảo tàng"],
-    ["startDate", "Từ ngày"],
-    ["endDate", "Đến trước ngày"],
-    ["status", "Trạng thái"],
+    ["artwork", "Artwork"],
+    ["museum", "Museum"],
+    ["startDate", "Start Date"],
+    ["endDate", "End Date (Exclusive)"],
+    ["status", "Status"],
   ],
-  artists: [["name", "Tác giả"]],
-  materials: [["name", "Chất liệu"]],
-  categories: [["name", "Thể loại"]],
+  artists: [["name", "Artist"]],
+  materials: [["name", "Material"]],
+  categories: [["name", "Category"]],
 };
 export default function Catalog({ entity = "artworks", search = "" }) {
   const [kind, setKind] = useState(entity),
@@ -234,8 +234,8 @@ export default function Catalog({ entity = "artworks", search = "" }) {
       setEdit(null);
       setNotice(
         kind === "artworks" && intent === "Published"
-          ? "Đã lưu và công bố tác phẩm."
-          : "Đã lưu dữ liệu.",
+          ? "Save and published."
+          : "Data saved.",
       );
       setAttempt((n) => n + 1);
     } catch (e) {
@@ -248,8 +248,8 @@ export default function Catalog({ entity = "artworks", search = "" }) {
     if (
       !window.confirm(
         kind === "artworks"
-          ? `Xóa “${row.title}” khỏi công khai và giữ lịch sử?`
-          : `Xóa mục “${row.name}” nếu chưa được sử dụng?`,
+          ? `Delete “${row.title}” Delete and saved story?`
+          : `Delete “${row.name}” If not used?`,
       )
     )
       return;
@@ -258,8 +258,8 @@ export default function Catalog({ entity = "artworks", search = "" }) {
       setAttempt((n) => n + 1);
       setNotice(
         kind === "artworks"
-          ? "Đã chuyển tác phẩm sang ẩn, giữ lịch sử."
-          : "Đã xóa.",
+          ? "Artwork has been hidden, keeping history."
+          : "Deleted.",
       );
     } catch (e) {
       setError(e.message);
@@ -359,7 +359,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
         }
       />
       {["artists", "categories", "materials"].includes(entity) && (
-        <nav className="catalog-tabs" aria-label="Dữ liệu phân loại">
+        <nav className="catalog-tabs" aria-label="Classification data">
           {["artists", "materials", "categories"].map((k) => (
             <button
               key={k}
@@ -376,20 +376,20 @@ export default function Catalog({ entity = "artworks", search = "" }) {
       )}
       <Stats
         items={[
-          ["Tổng bản ghi", loading ? "—" : rows.length, "Đang quản lý", "pink"],
+          ["Total Records", loading ? "—" : rows.length, "Managing", "pink"],
           [
-            "Công bố / xác nhận",
+            "Published / Confirmed",
             loading
               ? "—"
               : rows.filter(
                   (r) =>
                     ["Published", "Confirmed"].includes(r.status) || r.isPublic,
                 ).length,
-            "Nội dung đã duyệt",
+            "Published / Confirmed",
             "green",
           ],
           [
-            "Nháp / ẩn",
+            "Draft / Hidden",
             loading
               ? "—"
               : rows.filter(
@@ -397,7 +397,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                     ["Draft", "Hidden", "Cancelled"].includes(r.status) ||
                     r.isPublic === false,
                 ).length,
-            "Cần kiểm tra",
+            "Needs Review",
             "yellow",
           ],
         ]}
@@ -406,12 +406,12 @@ export default function Catalog({ entity = "artworks", search = "" }) {
       {error && (
         <p role="alert">
           {error}{" "}
-          <button onClick={() => setAttempt((n) => n + 1)}>Thử lại</button>
+          <button onClick={() => setAttempt((n) => n + 1)}>Try Again</button>
         </p>
       )}
       <Panel title={definitions[kind].title}>
         {loading ? (
-          <p role="status">Đang tải dữ liệu…</p>
+          <p role="status">Loading data…</p>
         ) : (
           <div className="catalog-table-wrap">
             <table>
@@ -420,7 +420,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                   {columns[kind].map(([key, title]) => (
                     <th key={key}>{title}</th>
                   ))}
-                  <th>Thao tác</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -434,12 +434,12 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                             : "Không"
                           : statusLabel[row[key]] || row[key] || "—"}
                         {key === columns[kind][0][0] && row.isDemo && (
-                          <small className="catalog-demo-badge">Minh họa</small>
+                          <small className="catalog-demo-badge">Demo</small>
                         )}
                       </td>
                     ))}
                     <td>
-                      <button onClick={() => launch(row)}>Sửa</button>
+                      <button onClick={() => launch(row)}>Edit</button>
                       {[
                         "artworks",
                         "artists",
@@ -447,7 +447,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                         "categories",
                       ].includes(kind) && (
                         <button onClick={() => remove(row)}>
-                          {kind === "artworks" ? "Xóa khỏi công khai" : "Xóa"}
+                          {kind === "artworks" ? "Delete from public" : "Delete"}
                         </button>
                       )}
                     </td>
@@ -455,13 +455,13 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                 ))}
               </tbody>
             </table>
-            {!visible.length && !error && <p>Chưa có bản ghi phù hợp.</p>}
+            {!visible.length && !error && <p>No matching records found.</p>}
           </div>
         )}
       </Panel>
       {edit && (
         <Modal
-          title={`${edit.id ? "Sửa" : "Thêm"} · ${definitions[kind].title}`}
+          title={`${edit.id ? "Edit" : "Add"} · ${definitions[kind].title}`}
           onClose={() => {
             if (!saving) setEdit(null);
           }}
@@ -471,11 +471,11 @@ export default function Catalog({ entity = "artworks", search = "" }) {
               {kind === "artworks" ? (
                 <>
                   <section className="catalog-form-group">
-                    <h3>Nội dung tiếng Việt</h3>
+                    <h3>Vietnamese Content</h3>
                     {definitions.artworks.fields.slice(0, 3).map(field)}
                   </section>
                   <section className="catalog-form-group">
-                    <h3>Thông tin tác phẩm</h3>
+                    <h3>Artwork Information</h3>
                     {definitions.artworks.fields.slice(3).map(field)}
                   </section>
                 </>
@@ -500,12 +500,12 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                     rel="noopener noreferrer"
                     href={`https://www.openstreetmap.org/?mlat=${Number(edit.latitude)}&mlon=${Number(edit.longitude)}#map=17/${Number(edit.latitude)}/${Number(edit.longitude)}`}
                   >
-                    Kiểm tra ghim trên bản đồ
+                    Check the pin on the map
                   </a>
                 )}
               <div className="catalog-form-actions">
                 <button type="button" onClick={() => setEdit(null)}>
-                  Hủy
+                  Cancel
                 </button>
                 {kind === "artworks" ? (
                   <>
@@ -517,10 +517,10 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                       className={edit.status === "Published" ? "primary" : ""}
                     >
                       {saving
-                        ? "Đang lưu…"
+                        ? "Saving…"
                         : edit.status === "Published"
-                          ? "Lưu thay đổi"
-                          : "Lưu nháp"}
+                          ? "Save Changes"
+                          : "Save Drafts"}
                     </button>
                     <button
                       type="submit"
@@ -530,13 +530,13 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                       className={edit.status === "Published" ? "" : "primary"}
                     >
                       {edit.status === "Published"
-                        ? "Chuyển về nháp"
-                        : "Lưu và công bố"}
+                        ? "Move to Draft"
+                        : "Save and Publish"}
                     </button>
                   </>
                 ) : (
                   <button className="primary">
-                    {saving ? "Đang lưu…" : "Lưu"}
+                    {saving ? "Saving…" : "Save"}
                   </button>
                 )}
               </div>

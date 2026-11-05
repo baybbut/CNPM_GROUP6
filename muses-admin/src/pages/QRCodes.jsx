@@ -81,7 +81,7 @@ export default function QRCodes({ search = "" }) {
             className="secondary"
             onClick={() => setAttempt((n) => n + 1)}
           >
-            Làm mới
+            Refresh
           </button>
         }
       />
@@ -292,7 +292,7 @@ function QRPreview({ row, onClose }) {
           <img className="analytics-qr" src={image} alt={`QR ${row.title}`} />
         )}
         <p className="qr-preview-url">{url}</p>
-        {!url && <p role="alert">Nhập địa chỉ website hợp lệ.</p>}
+        {!url && <p role="alert">Enter a valid website URL.</p>}
         {error && <p role="alert">{error}</p>}
         {image && (
           <a

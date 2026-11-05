@@ -17,18 +17,18 @@ export async function adminApi(path, method = "GET", body, signal) {
     });
   } catch (e) {
     if (e.name === "AbortError") throw e;
-    throw Error("Không kết nối được backend. Vui lòng thử lại.");
+    throw Error("Cant connect to backend server.");
   }
   let data;
   try {
     data = await response.json();
   } catch {
-    throw Error("Backend trả về dữ liệu không hợp lệ.");
+    throw Error("Cant parse backend response.");
   }
   if (!response.ok) {
     if (response.status === 401 && method === "GET")
       window.dispatchEvent(new Event("muses-admin-session-ended"));
-    const e = Error(data.message || "Không thể lưu dữ liệu.");
+    const e = Error(data.message || "Cant save data.");
     e.status = response.status;
     throw e;
   }
@@ -82,15 +82,15 @@ export default function AdminGate({ children }) {
   if (loading)
     return (
       <div className="catalog-auth" role="status">
-        Đang kiểm tra phiên đăng nhập…
+        Checking login session…
       </div>
     );
   if (user && !["Admin", "Administrator"].includes(user.role))
     return (
       <div className="catalog-auth">
         <h1>MUSES</h1>
-        <p role="alert">Tài khoản không có quyền quản trị.</p>
-        <button onClick={logout}>Đăng xuất</button>
+        <p role="alert">Access denied.</p>
+        <button onClick={logout}>Logout</button>
       </div>
     );
   if (!user)
@@ -98,7 +98,7 @@ export default function AdminGate({ children }) {
       <main className="catalog-auth">
         <div className="catalog-auth-card">
           <p>MUSES · ADMIN</p>
-          <h1>Đăng nhập quản trị</h1>
+          <h1>Admin Login</h1>
           <form onSubmit={submit}>
             <label>
               Email
@@ -110,7 +110,7 @@ export default function AdminGate({ children }) {
               />
             </label>
             <label>
-              Mật khẩu
+              Password
               <input
                 type="password"
                 name="password"
@@ -120,7 +120,7 @@ export default function AdminGate({ children }) {
               />
             </label>
             <button className="primary" disabled={busy}>
-              {busy ? "Đang đăng nhập…" : "Đăng nhập"}
+              {busy ? "Logging in…" : "Login"}
             </button>
             {error && <p role="alert">{error}</p>}
           </form>

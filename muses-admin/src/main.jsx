@@ -4,6 +4,15 @@ import AdminGate, { useAdmin, adminApi } from "./AdminAuth";
 import AdminPages from "./AdminPages";
 import Icon from "./Icons";
 import "./style.css";
+import logo from "../../muses-react/icon/logo.png";
+
+const favicon =
+  document.querySelector('link[rel~="icon"]') ||
+  document.head.appendChild(document.createElement("link"));
+
+favicon.rel = "icon";
+favicon.type = "image/png";
+favicon.href = logo;
 const nav = [
   ["Overview", "home"],
   ["Reports", "chart"],
@@ -130,9 +139,9 @@ function App() {
               active === "Reports"
                 ? "Muses reports"
                 : active === "Overview"
-                  ? "Tìm khách hoặc mã phiên…"
+                  ? "Find a customer or session ID…"
                   : active === "QR Codes"
-                    ? "Tìm tác phẩm hoặc tên QR…"
+                    ? "Find a QR name or artwork…"
                     : `Search ${active.toLowerCase()}…`
             }
             value={search}
@@ -149,15 +158,15 @@ function App() {
             </button>
             {notifications && (
               <div className="notification-panel">
-                <strong>Kiểm duyệt nội dung</strong>
-                <p>Kiểm tra bản dịch và nguồn thông tin trước khi công bố.</p>
+                <strong>Content Review</strong>
+                <p>Check translations and information sources before publishing.</p>
                 <button
                   onClick={() => {
                     setNotifications(false);
                     navigate("Languages & Audio");
                   }}
                 >
-                  Xem bản dịch →
+                  View Translations →
                 </button>
               </div>
             )}
