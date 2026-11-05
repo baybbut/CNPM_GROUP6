@@ -74,8 +74,8 @@ export default function QRCodes({ search = "" }) {
   return (
     <div className="pg-workspace qr-management">
       <Header
-        title="Quản lý QR"
-        description="Quản lý mã QR tác phẩm đang được sử dụng trên website."
+        title="Manage QR"
+        description="QR-coded product management is being used on the website."
         action={
           <button
             className="secondary"
@@ -93,36 +93,36 @@ export default function QRCodes({ search = "" }) {
         </p>
       )}
       <Panel
-        title="Mã QR tác phẩm"
-        subtitle="Mỗi tác phẩm có một mã gốc dùng chung trạng thái bật/tắt cho các ngôn ngữ."
+        title="Artwworks QR Codes"
+        subtitle="Each work has a master code that governs the on/off status across all languages."
       >
         <div className="analytics-visitor-tools">
           <label>
-            Trạng thái
+            Status
             <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-              <option value="active">Đang hoạt động</option>
-              <option value="paused">Đã tắt</option>
-              <option value="unavailable">Tác phẩm chưa công bố</option>
-              <option value="all">Tất cả</option>
+              <option value="active">Active</option>
+              <option value="paused">Pause</option>
+              <option value="unavailable">Unavailable</option>
+              <option value="all">All</option>
             </select>
           </label>
           <span role="status">
             {data
-              ? `${rows.length} mã QR`
+              ? `${rows.length} QR Code`
               : error
-                ? "Chưa tải được dữ liệu"
-                : "Đang tải…"}
+                ? "Can’t load QR Codes."
+                : "Loading…"}
           </span>
         </div>
         <div className="catalog-table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Tác phẩm / tên QR</th>
-                <th>Trạng thái</th>
-                <th>Lượt mở QR</th>
-                <th>Mở gần nhất</th>
-                <th>Thao tác</th>
+                <th>Artwork / QR Name</th>
+                <th>Status</th>
+                <th>QR Scans</th>
+                <th>Last Opened</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -135,10 +135,10 @@ export default function QRCodes({ search = "" }) {
                   </td>
                   <td>
                     {active(row)
-                      ? "Đang hoạt động"
+                      ? "Active"
                       : !row.available
-                        ? "Tác phẩm chưa công bố"
-                        : "Đã tắt"}
+                        ? "Artwork not published"
+                        : "Paused"}
                   </td>
                   <td>{row.scans}</td>
                   <td>{date(row.lastScannedAt)}</td>
@@ -160,7 +160,7 @@ export default function QRCodes({ search = "" }) {
                           });
                         }}
                       >
-                        Chỉnh sửa
+                        Edit
                       </button>
                     </div>
                   </td>
@@ -168,7 +168,7 @@ export default function QRCodes({ search = "" }) {
               ))}
               {data && !rows.length && (
                 <tr>
-                  <td colSpan={5}>Không có mã QR phù hợp.</td>
+                  <td colSpan={5}>No matching QR Codes.</td>
                 </tr>
               )}
             </tbody>
@@ -177,14 +177,14 @@ export default function QRCodes({ search = "" }) {
       </Panel>
       {edit && (
         <Modal
-          title={`Chỉnh sửa QR-${edit.id}`}
+          title={`Edit QR-${edit.id}`}
           onClose={() => {
             if (!busy) setEdit(null);
           }}
         >
           <form className="pg-form" onSubmit={save}>
             <p>{edit.title}</p>
-            <Field label="Tên QR">
+            <Field label="QR Name">
               <input
                 value={edit.label}
                 maxLength={150}
@@ -201,19 +201,19 @@ export default function QRCodes({ search = "" }) {
                   setEdit({ ...edit, enabled: e.target.checked })
                 }
               />
-              Cho phép quét QR trên website
+              Allow QR scanning on website
             </label>
             {!edit.available && (
-              <p>Công bố tác phẩm và mô tả tiếng Việt trước khi bật mã QR.</p>
+              <p>Publish artwork and description in Vietnamese before enabling QR code.</p>
             )}
             <p>
-              Tắt QR sẽ ngừng các liên kết có gắn mã này. Thông tin tác phẩm
-              trong bộ sưu tập vẫn được giữ.
+              Disabling QR will stop all links associated with this code. Artwork
+              information in the collection will still be retained.
             </p>
-            <small>Cập nhật gần nhất: {date(edit.updatedAt)}</small>
+            <small>Last updated: {date(edit.updatedAt)}</small>
             {saveError && <p role="alert">{saveError}</p>}
             <button className="primary" disabled={busy}>
-              {busy ? "Đang lưu…" : "Lưu thay đổi"}
+              {busy ? "Saving…" : "Save changes"}
             </button>
           </form>
         </Modal>
@@ -260,7 +260,7 @@ function QRPreview({ row, onClose }) {
           if (live) setImage(src);
         })
         .catch(() => {
-          if (live) setError("Chưa tạo được ảnh QR.");
+          if (live) setError("Failed to generate QR code.");
         });
     return () => {
       live = false;
@@ -269,14 +269,14 @@ function QRPreview({ row, onClose }) {
   return (
     <Modal title={row.label || row.title} onClose={onClose}>
       <div className="pg-form">
-        <Field label="Địa chỉ website khách">
+        <Field label="Website URL">
           <input
             type="url"
             value={base}
             onChange={(e) => setBase(e.target.value)}
           />
         </Field>
-        <Field label="Ngôn ngữ">
+        <Field label="Languages">
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -300,12 +300,11 @@ function QRPreview({ row, onClose }) {
             href={image}
             download={`muses-qr-${row.id}-${language}.png`}
           >
-            Tải QR
+            Download QR
           </a>
         )}
         <small>
-          Để quét bằng điện thoại, dùng địa chỉ website mà điện thoại truy cập
-          được.
+          To scan with a phone, use the website address that the phone can access.
         </small>
       </div>
     </Modal>

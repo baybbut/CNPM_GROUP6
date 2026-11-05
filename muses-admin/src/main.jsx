@@ -84,13 +84,13 @@ function App() {
             icon ? (
               <button
                 key={name}
-                aria-label={name === "QR Codes" ? "Quản lý QR" : name}
+                aria-label={name === "QR Codes" ? "Manage QR" : name}
                 aria-current={active === name ? "page" : undefined}
                 className={`nav-item ${active === name ? "selected" : ""}`}
                 onClick={() => navigate(name)}
               >
                 <Icon name={icon} />
-                <span>{name === "QR Codes" ? "Quản lý QR" : name}</span>
+                <span>{name === "QR Codes" ? "Manage QR" : name}</span>
               </button>
             ) : (
               <div className="nav-label" key={name}>
@@ -171,7 +171,7 @@ function App() {
       {notice && (
         <div className="toast" role="status">
           {notice}
-          <button aria-label="Đóng thông báo" onClick={() => setNotice("")}>
+          <button aria-label="Close" onClick={() => setNotice("")}>
             ×
           </button>
         </div>
