@@ -38,46 +38,12 @@ async function api(path, body, signal) {
     signal?.removeEventListener("abort", abort);
   }
 }
-const today = () =>
-  new Date(Date.now() + 420 * 60000).toISOString().slice(0, 10);
-const weekStart = () =>
-  new Date(Date.now() + 420 * 60000 - 6 * 86400000).toISOString().slice(0, 10);
-const clock = (value) =>
-  new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-const hourLabel = (hour) =>
-  `${String(hour).padStart(2, "0")}:00–${String(hour + 1).padStart(2, "0")}:00`;
-export default function Analytics({ mode = "overview", search = "" }) {
-  const [user, setUser] = useState(null),
-    [authLoading, setAuthLoading] = useState(true),
-    [authBusy, setAuthBusy] = useState(false),
-    [authError, setAuthError] = useState("");
-  const [from, setFrom] = useState(weekStart),
-    [to, setTo] = useState(today),
-    [fromHour, setFromHour] = useState(0),
-    [toHour, setToHour] = useState(24),
-    [data, setData] = useState(null),
+function useReport(user, path, attempt, onUnauthorized) {
+  const [data, setData] = useState(null),
     [error, setError] = useState(""),
-    [loading, setLoading] = useState(false),
-    [attempt, setAttempt] = useState(0),
-    [visitorStatus, setVisitorStatus] = useState("all");
+    [loading, setLoading] = useState(false);
   useEffect(() => {
-    let live = true;
-    api("/api/auth/me")
-      .then((result) => {
-        if (live) setUser(result.user);
-      })
-      .catch((e) => {
-        if (live) setAuthError(e.message);
-      })
-      .finally(() => {
-        if (live) setAuthLoading(false);
-      });
-    return () => {
-      live = false;
-    };
-  }, []);
-  useEffect(() => {
-    if (!user || !["Admin", "Administrator"].includes(user.role)) return;
+    if (!path || !user || !["Admin", "Administrator"].includes(user.role)) return;
     const controller = new AbortController();
     let pending = false;
     async function refresh() {
@@ -86,16 +52,12 @@ export default function Analytics({ mode = "overview", search = "" }) {
       setLoading(true);
       setError("");
       try {
-        const result = await api(
-          `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
-          null,
-          controller.signal,
-        );
+        const result = await api(path, null, controller.signal);
         if (!controller.signal.aborted) setData(result);
       } catch (e) {
         if (!controller.signal.aborted) {
           setError(e.message);
-          if (e.status === 401) setUser(null);
+          if (e.status === 401) onUnauthorized(null);
         }
       } finally {
         pending = false;
@@ -116,7 +78,62 @@ export default function Analytics({ mode = "overview", search = "" }) {
       window.removeEventListener("focus", refreshVisible);
       document.removeEventListener("visibilitychange", refreshVisible);
     };
-  }, [user, from, to, fromHour, toHour, attempt]);
+  }, [user, path, attempt, onUnauthorized]);
+  return { data, error, loading };
+}
+const today = () =>
+  new Date(Date.now() + 420 * 60000).toISOString().slice(0, 10);
+const weekStart = () =>
+  new Date(Date.now() + 420 * 60000 - 6 * 86400000).toISOString().slice(0, 10);
+const clock = (value) =>
+  new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+const hourLabel = (hour) =>
+  `${String(hour).padStart(2, "0")}:00–${String(hour + 1).padStart(2, "0")}:00`;
+export default function Analytics({ mode = "overview", search = "" }) {
+  const [user, setUser] = useState(null),
+    [authLoading, setAuthLoading] = useState(true),
+    [authBusy, setAuthBusy] = useState(false),
+    [authError, setAuthError] = useState("");
+  const [from, setFrom] = useState(weekStart),
+    [to, setTo] = useState(today),
+    [fromHour, setFromHour] = useState(0),
+    [toHour, setToHour] = useState(24),
+    [hourDate, setHourDate] = useState(today),
+    [attempt, setAttempt] = useState(0),
+    [visitorStatus, setVisitorStatus] = useState("all");
+  const { data, error, loading } = useReport(
+    user,
+    `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
+    attempt,
+    setUser,
+  );
+  const sameDay = from === hourDate && to === hourDate;
+  const singleDayReport = useReport(
+    user,
+    sameDay
+      ? null
+      : `/api/admin/analytics?from=${hourDate}&to=${hourDate}&fromHour=${fromHour}&toHour=${toHour}`,
+    attempt,
+    setUser,
+  );
+  const hourly = sameDay ? { data, error, loading } : singleDayReport;
+  const dayLabel = hourDate.split("-").reverse().join("/");
+  useEffect(() => {
+    let live = true;
+    api("/api/auth/me")
+      .then((result) => {
+        if (live) setUser(result.user);
+      })
+      .catch((e) => {
+        if (live) setAuthError(e.message);
+      })
+      .finally(() => {
+        if (live) setAuthLoading(false);
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
   async function login(e) {
     e.preventDefault();
     setAuthBusy(true);
@@ -137,7 +154,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
     try {
       await api("/api/auth/logout", {});
       setUser(null);
-      setData(null);
     } catch (e) {
       setAuthError(e.message);
     }
@@ -210,7 +226,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
     hour: fromHour + index,
     visitors: 0,
     interactions: 0,
-    ...data?.hours.find((row) => row.hour === fromHour + index),
+    ...hourly.data?.hours?.find((row) => row.hour === fromHour + index),
   }));
   const maximum = Math.max(1, ...hours.map((row) => row.visitors));
   return (
@@ -348,9 +364,27 @@ export default function Analytics({ mode = "overview", search = "" }) {
       )}
       <Panel
         title="Báo cáo theo khung giờ"
-        subtitle="Áp dụng cho dữ liệu của mỗi ngày đã chọn · giờ Việt Nam"
+        subtitle={`Số liệu ngày ${dayLabel} · giờ Việt Nam`}
       >
         <div className="analytics-hour-filters">
+          <label>
+            Ngày xem
+            <input
+              type="date"
+              value={hourDate}
+              max={today()}
+              onChange={(e) => {
+                if (e.target.value && e.target.value <= today())
+                  setHourDate(e.target.value);
+              }}
+            />
+          </label>
+          <button
+            onClick={() => setHourDate(today())}
+            aria-pressed={hourDate === today()}
+          >
+            Hôm nay
+          </button>
           <label>
             Từ giờ
             <select
@@ -395,10 +429,19 @@ export default function Analytics({ mode = "overview", search = "" }) {
           </button>
         </div>
         <p className="analytics-hour-summary" role="status">
-          Đang hiển thị {String(fromHour).padStart(2, "0")}:00–
+          {hourly.loading ? "Đang tải" : "Đang hiển thị"} ngày {dayLabel}
+          {hourDate === today() ? " (hôm nay)" : ""} · {" "}
+          {fromHour === 0 && toHour === 24 ? "Cả ngày · " : ""}
+          {String(fromHour).padStart(2, "0")}:00–
           {String(toHour).padStart(2, "0")}:00
         </p>
-        <div className="analytics-chart-scroll">
+        {hourly.error && (
+          <p className="analytics-error" role="alert">
+            {hourly.error}{" "}
+            <button onClick={() => setAttempt((n) => n + 1)}>Thử lại</button>
+          </p>
+        )}
+        <div className="analytics-chart-scroll" aria-busy={hourly.loading}>
           <div
             className="analytics-hours"
             style={{
@@ -408,14 +451,14 @@ export default function Analytics({ mode = "overview", search = "" }) {
                 hours.length < 6 ? `${hours.length * 100}px` : undefined,
             }}
             role="img"
-            aria-label="Số thiết bị truy cập theo từng giờ"
+            aria-label={`Số thiết bị truy cập theo từng giờ ngày ${dayLabel}`}
           >
             {hours.map((row) => (
               <div
                 key={row.hour}
-                title={`${hourLabel(row.hour)}: ${row.visitors} thiết bị, ${row.interactions} tương tác`}
+                title={`${dayLabel} · ${hourLabel(row.hour)}: ${row.visitors} thiết bị, ${row.interactions} tương tác`}
               >
-                <strong>{data ? row.visitors : "—"}</strong>
+                <strong>{hourly.data ? row.visitors : "—"}</strong>
                 <div>
                   <span
                     style={{ height: `${(row.visitors / maximum) * 100}%` }}

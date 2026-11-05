@@ -2,6 +2,12 @@
 
 # Thống kê Admin
 
+## Ngày xem của biểu đồ theo giờ
+
+Biểu đồ “Báo cáo theo khung giờ” có ô **Ngày xem** riêng, mặc định là hôm nay theo giờ Việt Nam. Biểu đồ truy vấn đúng một ngày (`from=to=ngày đã chọn`), không cộng dồn các ngày của bộ lọc tổng hợp phía trên. Dòng trạng thái và chú thích cột hiển thị ngày đang xem.
+
+**Hôm nay** đưa biểu đồ về ngày hiện tại. **Cả ngày** giữ nguyên ngày đã chọn và đặt khoảng giờ về 00:00–24:00. Các số liệu tổng hợp/bảng còn lại tiếp tục theo khoảng ngày ở đầu trang và khung giờ đang chọn. Không cần migration database cho thay đổi này.
+
 Các mục Overview, Visitors, Reports và QR Check-in lấy dữ liệu từ backend, không dùng số mẫu. Các khu vực quản lý nội dung khác vẫn giữ nguyên trạng thái trước đây.
 
 ## Cập nhật một lần trên máy đang chạy SQL Server
