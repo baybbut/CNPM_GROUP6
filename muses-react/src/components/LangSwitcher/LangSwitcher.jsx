@@ -30,7 +30,7 @@ export default function LangSwitcher() {
         <SvgIcon
           kind="chevron"
           size={14}
-          className={`lang-arrow ${open ? "open" : ""}`}
+          className={`lang-arrow dropdown-chevron ${open ? "open" : ""}`}
         />
       </button>
       {open && (

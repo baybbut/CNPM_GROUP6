@@ -1,5 +1,63 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+  "Share the experience": [
+    "Chia sẻ trải nghiệm",
+    "分享体验",
+    "体験をシェア",
+    "경험 공유하기",
+  ],
+  "Website access QR": [
+    "QR truy cập website",
+    "网站访问二维码",
+    "ウェブサイトアクセスQR",
+    "웹사이트 접속 QR",
+  ],
+  "Scan with your phone camera to open the Muses homepage and explore the collection.":
+    [
+      "Quét bằng camera điện thoại để mở trang chủ Muses và khám phá bộ sưu tập.",
+      "使用手机相机扫码，打开 Muses 首页并探索馆藏。",
+      "スマートフォンのカメラで読み取って、Musesのホームページとコレクションをご覧ください。",
+      "휴대폰 카메라로 스캔하여 Muses 홈페이지를 열고 컬렉션을 둘러보세요.",
+    ],
+  "Website address": [
+    "Địa chỉ website",
+    "网站地址",
+    "ウェブサイトのアドレス",
+    "웹사이트 주소",
+  ],
+  "Download website QR": [
+    "Tải QR website",
+    "下载网站二维码",
+    "ウェブサイトQRを保存",
+    "웹사이트 QR 다운로드",
+  ],
+  "Open homepage": ["Mở trang chủ", "打开首页", "ホームページを開く", "홈페이지 열기"],
+  "Connect your phone to the same Wi-Fi as the computer running Muses. Keep the website running while scanning.":
+    [
+      "Kết nối điện thoại cùng Wi-Fi với máy tính đang chạy Muses. Giữ website hoạt động khi quét mã.",
+      "请将手机连接到运行 Muses 的电脑所在的 Wi-Fi，并保持网站运行。",
+      "Musesを実行しているパソコンと同じWi-Fiに接続し、読み取り中はサイトを起動したままにしてください。",
+      "Muses를 실행하는 컴퓨터와 같은 Wi-Fi에 휴대폰을 연결하고 웹사이트를 실행한 상태로 유지하세요.",
+    ],
+  "QR linking to the Muses homepage": [
+    "Mã QR mở trang chủ Muses",
+    "打开 Muses 首页的二维码",
+    "MusesホームページへのQRコード",
+    "Muses 홈페이지로 연결되는 QR 코드",
+  ],
+  "Could not create the website QR. Please try again.": [
+    "Chưa tạo được QR website. Vui lòng thử lại.",
+    "无法生成网站二维码，请重试。",
+    "ウェブサイトのQRを生成できませんでした。もう一度お試しください。",
+    "웹사이트 QR을 생성하지 못했습니다. 다시 시도하세요.",
+  ],
+  "Creating website QR…": [
+    "Đang tạo QR website…",
+    "正在生成网站二维码…",
+    "ウェブサイトのQRを生成中…",
+    "웹사이트 QR 생성 중…",
+  ],
+  "Scan to visit": ["Quét để truy cập", "扫码访问", "読み取ってアクセス", "스캔하여 방문"],
   "This QR code is no longer active.": [
     "Mã QR này hiện không hoạt động.",
     "此二维码已停用。",

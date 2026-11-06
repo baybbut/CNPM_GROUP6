@@ -16,7 +16,7 @@ const users = [],
   sessions = new Map(),
   events = new Map(),
   logins = [];
-let lastInputs, lastReportQuery;
+let lastInputs, lastReportQuery, failureNumber;
 before(async () => {
   users.push(
     {
@@ -45,6 +45,7 @@ before(async () => {
           return this;
         },
         async query(query) {
+          if (failureNumber) throw Object.assign(Error("SQL failure"), { number: failureNumber });
           lastInputs = inputs;
           if (query.includes("PasswordHash AS hash"))
             return { recordset: users.filter((u) => u.email === inputs.email) };
@@ -302,4 +303,21 @@ test("hour reports bind Vietnam daily windows and preserve live counters", async
     { headers: { Cookie: adminCookie } },
   );
   assert.equal(bad.status, 400);
+});
+
+test("activity distinguishes missing schema and missing SQL write permission", async () => {
+  const body = {
+    sessionId: crypto.randomUUID(), visitorId: crypto.randomUUID(),
+    eventId: crypto.randomUUID(), kind: "page_view",
+  };
+  try {
+    for (const [number, code] of [[208, "ACTIVITY_SETUP_REQUIRED"], [229, "ACTIVITY_PERMISSION_DENIED"]]) {
+      failureNumber = number;
+      const response = await post("/api/activity", body);
+      assert.equal(response.status, 503);
+      assert.equal((await response.json()).code, code);
+    }
+  } finally {
+    failureNumber = undefined;
+  }
 });

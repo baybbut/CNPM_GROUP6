@@ -3,25 +3,83 @@ import { Header, Panel, Stats, Field } from "./shared";
 import "./analytics.css";
 const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 async function api(path, body, signal) {
-  const response = await fetch(base + path, {
-    method: body ? "POST" : "GET",
-    credentials: "include",
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-    signal,
-  });
-  let data;
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  if (signal?.aborted) abort();
+  signal?.addEventListener("abort", abort, { once: true });
+  const timeout = setTimeout(abort, 15000);
   try {
-    data = await response.json();
-  } catch {
-    throw Error("Không kết nối được backend.");
-  }
-  if (!response.ok) {
-    const error = Error(data.message || "Không tải được dữ liệu.");
-    error.status = response.status;
+    const response = await fetch(base + path, {
+      method: body ? "POST" : "GET",
+      credentials: "include",
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw Error("Cant connect to backend server.");
+    }
+    if (!response.ok) {
+      const error = Error(data.message || "Cant fetch data.");
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    if (error.name === "AbortError" && !signal?.aborted)
+      throw Error("Cant connect to backend server.");
     throw error;
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener("abort", abort);
   }
-  return data;
+}
+function useReport(user, path, attempt, onUnauthorized) {
+  const [data, setData] = useState(null),
+    [error, setError] = useState(""),
+    [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!path || !user || !["Admin", "Administrator"].includes(user.role)) return;
+    const controller = new AbortController();
+    let pending = false;
+    async function refresh() {
+      if (pending) return;
+      pending = true;
+      setLoading(true);
+      setError("");
+      try {
+        const result = await api(path, null, controller.signal);
+        if (!controller.signal.aborted) setData(result);
+      } catch (e) {
+        if (!controller.signal.aborted) {
+          setError(e.message);
+          if (e.status === 401) onUnauthorized(null);
+        }
+      } finally {
+        pending = false;
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    setData(null);
+    void refresh();
+    const refreshVisible = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    const timer = setInterval(refreshVisible, 5000);
+    window.addEventListener("focus", refreshVisible);
+    document.addEventListener("visibilitychange", refreshVisible);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+      window.removeEventListener("focus", refreshVisible);
+      document.removeEventListener("visibilitychange", refreshVisible);
+    };
+  }, [user, path, attempt, onUnauthorized]);
+  return { data, error, loading };
 }
 const today = () =>
   new Date(Date.now() + 420 * 60000).toISOString().slice(0, 10);
@@ -40,11 +98,26 @@ export default function Analytics({ mode = "overview", search = "" }) {
     [to, setTo] = useState(today),
     [fromHour, setFromHour] = useState(0),
     [toHour, setToHour] = useState(24),
-    [data, setData] = useState(null),
-    [error, setError] = useState(""),
-    [loading, setLoading] = useState(false),
+    [hourDate, setHourDate] = useState(today),
     [attempt, setAttempt] = useState(0),
     [visitorStatus, setVisitorStatus] = useState("all");
+  const { data, error, loading } = useReport(
+    user,
+    `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
+    attempt,
+    setUser,
+  );
+  const sameDay = from === hourDate && to === hourDate;
+  const singleDayReport = useReport(
+    user,
+    sameDay
+      ? null
+      : `/api/admin/analytics?from=${hourDate}&to=${hourDate}&fromHour=${fromHour}&toHour=${toHour}`,
+    attempt,
+    setUser,
+  );
+  const hourly = sameDay ? { data, error, loading } : singleDayReport;
+  const dayLabel = hourDate.split("-").reverse().join("/");
   useEffect(() => {
     let live = true;
     api("/api/auth/me")
@@ -61,42 +134,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
       live = false;
     };
   }, []);
-  useEffect(() => {
-    if (!user || !["Admin", "Administrator"].includes(user.role)) return;
-    const controller = new AbortController();
-    let pending = false;
-    async function refresh() {
-      if (pending) return;
-      pending = true;
-      setLoading(true);
-      setError("");
-      try {
-        const result = await api(
-          `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
-          null,
-          controller.signal,
-        );
-        if (!controller.signal.aborted) setData(result);
-      } catch (e) {
-        if (!controller.signal.aborted) {
-          setError(e.message);
-          if (e.status === 401) setUser(null);
-        }
-      } finally {
-        pending = false;
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-    setData(null);
-    void refresh();
-    const timer = setInterval(() => {
-      if (document.visibilityState === "visible") void refresh();
-    }, 30000);
-    return () => {
-      controller.abort();
-      clearInterval(timer);
-    };
-  }, [user, from, to, fromHour, toHour, attempt]);
   async function login(e) {
     e.preventDefault();
     setAuthBusy(true);
@@ -117,7 +154,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
     try {
       await api("/api/auth/logout", {});
       setUser(null);
-      setData(null);
     } catch (e) {
       setAuthError(e.message);
     }
@@ -152,7 +188,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
               />
             </Field>
             <button className="primary" disabled={authBusy}>
-              {authBusy ? "Đang đăng nhập…" : "Đăng nhập"}
+              {authBusy ? "Logging in…" : "Log in"}
             </button>
             {authError && <p role="alert">{authError}</p>}
           </form>
@@ -162,8 +198,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
   if (!["Admin", "Administrator"].includes(user.role))
     return (
       <div className="pg-workspace">
-        <p role="alert">Tài khoản này không có quyền xem thống kê quản trị.</p>
-        <button onClick={logout}>Đăng xuất</button>
+        <p role="alert">This account does not have permission to view admin statistics.</p>
+        <button onClick={logout}>Log out</button>
       </div>
     );
   const s = data?.summary;
@@ -181,7 +217,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
       .toLowerCase();
   const recentRows = (data?.recent || []).filter(
     (row) =>
-      fold(`${row.id} ${row.name || "Khách"}`).includes(fold(search.trim())) &&
+      fold(`${row.id} ${row.name || "Guest"}`).includes(fold(search.trim())) &&
       (!showVisitors ||
         visitorStatus === "all" ||
         (visitorStatus === "active" ? Boolean(row.active) : !row.active)),
@@ -190,29 +226,29 @@ export default function Analytics({ mode = "overview", search = "" }) {
     hour: fromHour + index,
     visitors: 0,
     interactions: 0,
-    ...data?.hours.find((row) => row.hour === fromHour + index),
+    ...hourly.data?.hours?.find((row) => row.hour === fromHour + index),
   }));
   const maximum = Math.max(1, ...hours.map((row) => row.visitors));
   return (
     <div className="pg-workspace analytics">
       <Header
-        title={isOverview ? `Xin chào, ${user.name}` : "Báo cáo hoạt động"}
+        title={isOverview ? `Hello, ${user.name}` : "Reports"}
         description={
           isOverview
-            ? "Tổng quan lượng truy cập, tương tác và các phiên gần đây."
-            : "Theo dõi hoạt động trên website và tại các điểm đọc."
+            ? "Overview of traffic, interactions, and recent sessions."
+            : "Monitor activity on the website and at reading points."
         }
         action={
           isOverview ? (
             <a className="primary" href="#Reports">
-              Xem báo cáo
+              View Reports
             </a>
           ) : null
         }
       />
       <div className="analytics-filters">
         <label>
-          Từ ngày
+          From
           <input
             type="date"
             value={from}
@@ -223,7 +259,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
           />
         </label>
         <label>
-          Đến ngày
+          To
           <input
             type="date"
             value={to}
@@ -241,7 +277,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
             setTo(today());
           }}
         >
-          Hôm nay
+          Today
         </button>
         <button
           aria-pressed={from === weekStart() && to === today()}
@@ -250,63 +286,69 @@ export default function Analytics({ mode = "overview", search = "" }) {
             setTo(today());
           }}
         >
-          7 ngày
+          7 Days
         </button>
         <button
           onClick={() => setAttempt((n) => n + 1)}
           disabled={loading}
           aria-busy={loading}
         >
-          Làm mới
+          Refresh
         </button>
         <span role="status">
           {loading
-            ? "Đang cập nhật…"
+            ? "Updating…"
             : data
-              ? `Cập nhật ${clock(data.updatedAt)}`
+              ? `Updated ${clock(data.updatedAt)}`
               : ""}
         </span>
+        <small>Automatically updates every 5 seconds while viewing the page</small>
       </div>
       {error && (
         <p className="analytics-error" role="alert">
           {error}{" "}
-          <button onClick={() => setAttempt((n) => n + 1)}>Thử lại</button>
+          <button onClick={() => setAttempt((n) => n + 1)}>Try again</button>
+        </p>
+      )}
+      {s?.trackingReady === 0 && (
+        <p className="analytics-error" role="alert">
+          The SQL account of the backend does not have sufficient permissions to record access. Please update the permissions for the AnalyticsSessions and AnalyticsEvents tables using the db:setup command in muses-backend.
         </p>
       )}
       <Stats
         items={[
           [
-            "Khách đang hoạt động",
+            "Active Visitors",
             s?.activeVisitors ?? "—",
-            "Trong 5 phút gần nhất",
+            "In the last 5 minutes",
             "green",
             "people",
           ],
           [
-            "Thiết bị truy cập",
+            "Access Devices",
             s?.visitors ?? "—",
-            "Thiết bị khác nhau trong kỳ",
+            "Different devices used during the period",
             "pink",
             "people",
           ],
           [
-            "Phiên truy cập",
+            "Sessions",
             s?.sessions ?? "—",
-            "Phiên trong kỳ",
+            "Sessions during the period",
             "yellow",
             "chart",
           ],
           [
-            "Lượt mở QR",
+            "QR Opens",
             s?.qrScans ?? "—",
-            "Mở trang tác phẩm từ QR",
+            "Opened the work page from QR",
             "green",
             "qr",
           ],
           [
-            "Lượt bắt đầu nghe",
+            "Audio Plays",
             s?.audioPlays ?? "—",
-            "Không tính tạm dừng / tiếp tục",
+            "Excluding pause/Continue",
             "blue",
             "audio",
           ],
@@ -314,17 +356,34 @@ export default function Analytics({ mode = "overview", search = "" }) {
       />
       {data && !data.trackingSince && (
         <p className="analytics-empty">
-          Chưa ghi nhận hoạt động. Mở website hoặc quét QR điểm đọc để bắt đầu
-          có số liệu.
+          No activity recorded yet. Open the website or scan the QR code at the reading point to begin generating data.
         </p>
       )}
       <Panel
-        title="Báo cáo theo khung giờ"
-        subtitle="Áp dụng cho dữ liệu của mỗi ngày đã chọn · giờ Việt Nam"
+        title="Report by time interval"
+        subtitle={`Days ${dayLabel} · time at Vietnam (GMT+7)`}
       >
         <div className="analytics-hour-filters">
           <label>
-            Từ giờ
+            Date viewed
+            <input
+              type="date"
+              value={hourDate}
+              max={today()}
+              onChange={(e) => {
+                if (e.target.value && e.target.value <= today())
+                  setHourDate(e.target.value);
+              }}
+            />
+          </label>
+          <button
+            onClick={() => setHourDate(today())}
+            aria-pressed={hourDate === today()}
+          >
+            Today
+          </button>
+          <label>
+            From
             <select
               value={fromHour}
               onChange={(e) => {
@@ -341,7 +400,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
             </select>
           </label>
           <label>
-            Đến giờ
+            To hour
             <select
               value={toHour}
               onChange={(e) => setToHour(Number(e.target.value))}
@@ -363,14 +422,23 @@ export default function Analytics({ mode = "overview", search = "" }) {
             }}
             aria-pressed={fromHour === 0 && toHour === 24}
           >
-            Cả ngày
+            All day
           </button>
         </div>
         <p className="analytics-hour-summary" role="status">
-          Đang hiển thị {String(fromHour).padStart(2, "0")}:00–
+          {hourly.loading ? "Loading" : "Loading"} Day {dayLabel}
+          {hourDate === today() ? " (Today)" : ""} · {" "}
+          {fromHour === 0 && toHour === 24 ? "All day · " : ""}
+          {String(fromHour).padStart(2, "0")}:00–
           {String(toHour).padStart(2, "0")}:00
         </p>
-        <div className="analytics-chart-scroll">
+        {hourly.error && (
+          <p className="analytics-error" role="alert">
+            {hourly.error}{" "}
+            <button onClick={() => setAttempt((n) => n + 1)}>Try Again</button>
+          </p>
+        )}
+        <div className="analytics-chart-scroll" aria-busy={hourly.loading}>
           <div
             className="analytics-hours"
             style={{
@@ -380,14 +448,14 @@ export default function Analytics({ mode = "overview", search = "" }) {
                 hours.length < 6 ? `${hours.length * 100}px` : undefined,
             }}
             role="img"
-            aria-label="Số thiết bị truy cập theo từng giờ"
+            aria-label={`Number of accessing devices by hour of the day ${dayLabel}`}
           >
             {hours.map((row) => (
               <div
                 key={row.hour}
-                title={`${hourLabel(row.hour)}: ${row.visitors} thiết bị, ${row.interactions} tương tác`}
+                title={`${dayLabel} · ${hourLabel(row.hour)}: ${row.visitors} devices, ${row.interactions} interactions`}
               >
-                <strong>{data ? row.visitors : "—"}</strong>
+                <strong>{hourly.data ? row.visitors : "—"}</strong>
                 <div>
                   <span
                     style={{ height: `${(row.visitors / maximum) * 100}%` }}
@@ -401,26 +469,26 @@ export default function Analytics({ mode = "overview", search = "" }) {
       </Panel>
       {showDetails && (
         <Panel
-          title="Tham gia tại từng điểm đọc"
-          subtitle="Thiết bị đã mở QR hoặc bắt đầu nghe thuyết minh"
+          title="Participation at each reading point"
+          subtitle="Devices that opened QR or started listening to the narration"
         >
           <div className="pg-table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Điểm / tác phẩm</th>
-                  <th>Thiết bị tham gia</th>
-                  <th>Tài khoản tham gia</th>
-                  <th>Xem tác phẩm</th>
-                  <th>Mở QR</th>
-                  <th>Bắt đầu nghe</th>
+                  <th>Point/ Entry</th>
+                  <th>Device</th>
+                  <th>Guest</th>
+                  <th>Watch Artwork</th>
+                  <th>Open QR</th>
+                  <th>Start Listening</th>
                 </tr>
               </thead>
               <tbody>
                 {pointRows.map((row) => (
                   <tr key={`${row.point}-${row.artworkId}`}>
                     <td>
-                      <strong>{row.title || "Điểm đọc"}</strong>
+                      <strong>{row.title || "Read Point"}</strong>
                       <small className="analytics-point-id">{row.point}</small>
                     </td>
                     <td>{row.participants}</td>
@@ -434,8 +502,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
                   <tr>
                     <td colSpan={6}>
                       {data
-                        ? "Chưa có điểm đọc phù hợp."
-                        : "Chưa tải được dữ liệu."}
+                        ? "Not have matching read points."
+                        : "Failed to load data."}
                     </td>
                   </tr>
                 )}
@@ -450,16 +518,16 @@ export default function Analytics({ mode = "overview", search = "" }) {
         }
       >
         {showDetails && (
-          <Panel title="Hoạt động theo ngày">
+          <Panel title="Daily Activity">
             <div className="pg-table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Ngày</th>
-                    <th>Phiên</th>
-                    <th>Thiết bị</th>
+                    <th>Date</th>
+                    <th>Session</th>
+                    <th>Device</th>
                     <th>QR</th>
-                    <th>Nghe</th>
+                    <th>Listening</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -474,7 +542,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
                   ))}
                   {!data?.daily.length && (
                     <tr>
-                      <td colSpan={5}>Chưa có hoạt động.</td>
+                      <td colSpan={5}>No activity recorded.</td>
                     </tr>
                   )}
                 </tbody>
@@ -484,26 +552,25 @@ export default function Analytics({ mode = "overview", search = "" }) {
         )}
         <Panel
           title={
-            showVisitors ? "Danh sách phiên truy cập" : "Phiên truy cập gần đây"
+            showVisitors ? "List of Recent Sessions" : "Recent Sessions"
           }
-          subtitle="Tối đa 100 phiên mới nhất trong khoảng ngày đã chọn"
+          subtitle="Maximum 100 sessions, sorted by last activity"
         >
           {showVisitors && (
             <div className="analytics-visitor-tools">
               <label>
-                Trạng thái
+                Status
                 <select
                   value={visitorStatus}
                   onChange={(e) => setVisitorStatus(e.target.value)}
                 >
-                  <option value="all">Tất cả</option>
-                  <option value="active">Đang hoạt động</option>
-                  <option value="inactive">Đã rời</option>
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </label>
               <span role="status">
-                Hiển thị {recentRows.length} / {data?.recent?.length || 0} phiên
-                gần đây
+                Display {recentRows.length} / {data?.recent?.length || 0} recent sessions
               </span>
             </div>
           )}
@@ -511,21 +578,21 @@ export default function Analytics({ mode = "overview", search = "" }) {
             <table>
               <thead>
                 <tr>
-                  <th>Khách</th>
+                  <th>Guest</th>
                   {showVisitors && (
                     <>
-                      <th>Mã phiên</th>
-                      <th>Bắt đầu</th>
+                      <th>Sessions Code</th>
+                      <th>Start</th>
                     </>
                   )}
-                  <th>Hoạt động cuối</th>
-                  <th>Trạng thái</th>
+                  <th>Last Active</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {recentRows.map((row) => (
                   <tr key={row.id}>
-                    <td>{row.name || `Khách · ${row.id.slice(0, 8)}`}</td>
+                    <td>{row.name || `Guest · ${row.id.slice(0, 8)}`}</td>
                     {showVisitors && (
                       <>
                         <td>
@@ -535,17 +602,17 @@ export default function Analytics({ mode = "overview", search = "" }) {
                       </>
                     )}
                     <td>{clock(row.lastSeenAt)}</td>
-                    <td>{row.active ? "Đang hoạt động" : "Đã rời"}</td>
+                    <td>{row.active ? "Active" : "Inactive"}</td>
                   </tr>
                 ))}
                 {!recentRows.length && (
                   <tr>
                     <td colSpan={showVisitors ? 5 : 3}>
                       {loading
-                        ? "Đang tải phiên truy cập…"
+                        ? "Loading session..."
                         : error && !data
-                          ? "Chưa tải được phiên truy cập."
-                          : "Chưa có phiên phù hợp."}
+                          ? "Failed to load session."
+                          : "No matching sessions."}
                     </td>
                   </tr>
                 )}
@@ -556,8 +623,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
       </div>
       <p className="analytics-caption">
         {showVisitors
-          ? "Một khách có thể có nhiều phiên truy cập. Trạng thái đang hoạt động tính theo tương tác trong 5 phút gần nhất."
-          : "Một thiết bị có thể được nhiều người dùng chung. Số tham gia là thiết bị riêng biệt tại mỗi điểm, không xác nhận khách đã có mặt tại bảo tàng."}
+          ? "A single visitor can have multiple sessions. 'Active' status is determined based on interactions within the last 5 minutes."
+          : "A single device can be shared by multiple users. Each entry is recorded as a distinct device at a specific location; this does not verify the actual presence of the visitor at the museum."}
       </p>
     </div>
   );

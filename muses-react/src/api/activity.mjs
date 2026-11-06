@@ -1,5 +1,9 @@
 import { contentLanguage } from "./contentLanguages.mjs";
-const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+import { activityApiBase, createActivityDelivery } from "./activityDelivery.mjs";
+const base = activityApiBase(
+  import.meta.env?.VITE_API_BASE_URL,
+  globalThis.location?.origin,
+);
 export function activityId() {
   const bytes = new Uint8Array(16);
   if (globalThis.crypto?.getRandomValues) crypto.getRandomValues(bytes);
@@ -11,27 +15,48 @@ export function activityId() {
 }
 let fallbackVisitor = activityId(),
   fallbackSession = activityId(),
-  queue = [],
-  flushing = false;
+  lastActivity = Date.now();
+const validId = (value) =>
+  typeof value === "string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+const delivery = createActivityDelivery({ endpoint: `${base}/api/activity` });
 function identity() {
+  const now = Date.now();
+  let storedVisitor = false;
   let visitorId = fallbackVisitor,
-    sessionId = fallbackSession;
+    sessionId = now - lastActivity < 1800000 ? fallbackSession : activityId();
   try {
-    visitorId = localStorage.getItem("muses-visitor-id") || visitorId;
+    const savedVisitor = localStorage.getItem("muses-visitor-id");
+    if (validId(savedVisitor)) {
+      visitorId = savedVisitor;
+      storedVisitor = true;
+    }
+    fallbackVisitor = visitorId;
     localStorage.setItem("muses-visitor-id", visitorId);
   } catch {}
   try {
     const saved = JSON.parse(
       sessionStorage.getItem("muses-activity-session") || "null",
     );
-    sessionId =
-      saved && Date.now() - saved.last < 1800000 ? saved.id : activityId();
+    if (saved?.visitorId && saved.visitorId !== visitorId) sessionId = activityId();
+    if (
+      validId(saved?.id) &&
+      Number.isFinite(saved.last) &&
+      saved.last <= now &&
+      now - saved.last < 1800000 &&
+      (saved.visitorId ? saved.visitorId === visitorId : storedVisitor)
+    ) {
+      sessionId = saved.id;
+    }
+    fallbackSession = sessionId;
+    lastActivity = now;
     sessionStorage.setItem(
       "muses-activity-session",
-      JSON.stringify({ id: sessionId, last: Date.now() }),
+      JSON.stringify({ id: sessionId, visitorId, last: now }),
     );
-    fallbackSession = sessionId;
   } catch {}
+  fallbackSession = sessionId;
+  lastActivity = now;
   return { visitorId, sessionId };
 }
 export async function authRequest(path, body) {
@@ -45,32 +70,12 @@ export async function authRequest(path, body) {
   if (!response.ok) throw Error(data.message || "Chưa kết nối được máy chủ.");
   return data;
 }
-async function flush() {
-  if (flushing || !queue.length) return;
-  flushing = true;
-  try {
-    while (queue.length) {
-      const item = queue[0];
-      const response = await fetch(`${base}/api/activity`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item),
-        credentials: "include",
-        keepalive: true,
-      });
-      if (response.status >= 500 || response.status === 429) break;
-      queue.shift();
-    }
-  } catch {
-  } finally {
-    flushing = false;
-  }
-}
 export function trackActivity(kind, details = {}) {
   const item = { ...identity(), eventId: activityId(), kind, ...details };
-  queue.push(item);
-  if (queue.length > 100) queue.shift();
-  void flush();
+  return delivery.enqueue(item);
+}
+export function retryActivityDelivery() {
+  return delivery.retry();
 }
 export function trackAudio(language) {
   const match = /^\/explore\/artworks\/([1-9]\d*)\/?$/.exec(location.pathname);

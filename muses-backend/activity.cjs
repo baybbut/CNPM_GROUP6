@@ -106,10 +106,19 @@ function attachActivityRoutes(app, sql) {
       await fn(req, res);
     } catch (e) {
       console.error("Activity API:", e.code || e.message);
+      const setupRequired = [207, 208].includes(e.number);
+      const permissionDenied = e.number === 229;
       res.status(503).json({
-        code: "ACTIVITY_UNAVAILABLE",
-        message:
-          "Chưa tải được dữ liệu. Kiểm tra kết nối và cập nhật database.",
+        code: setupRequired
+          ? "ACTIVITY_SETUP_REQUIRED"
+          : permissionDenied
+            ? "ACTIVITY_PERMISSION_DENIED"
+            : "ACTIVITY_UNAVAILABLE",
+        message: setupRequired
+          ? "Cần cập nhật các bảng thống kê trong database backend đang kết nối."
+          : permissionDenied
+            ? "Tài khoản SQL của backend chưa đủ quyền đọc/ghi dữ liệu thống kê."
+            : "Chưa tải được dữ liệu. Kiểm tra kết nối và cập nhật database.",
       });
     }
   };
@@ -322,7 +331,13 @@ function attachActivityRoutes(app, sql) {
         .input("start", sql.DateTime2, range.start)
         .input("end", sql.DateTime2, range.end).query(`
     SELECT COUNT(*) AS sessions,COUNT(DISTINCT VisitorID) AS visitors,(SELECT COUNT(DISTINCT VisitorID) FROM dbo.AnalyticsSessions WHERE LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME())) AS activeVisitors,
-      (SELECT COUNT(DISTINCT s.UserID) FROM dbo.AnalyticsSessions s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME()) AND u.Role='Visitor') AS activeLoggedIn
+      (SELECT COUNT(DISTINCT s.UserID) FROM dbo.AnalyticsSessions s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LastSeenAt>=DATEADD(minute,-5,SYSUTCDATETIME()) AND u.Role='Visitor') AS activeLoggedIn,
+      CASE WHEN HAS_PERMS_BY_NAME('dbo.AnalyticsSessions','OBJECT','SELECT')=1
+        AND HAS_PERMS_BY_NAME('dbo.AnalyticsSessions','OBJECT','INSERT')=1
+        AND HAS_PERMS_BY_NAME('dbo.AnalyticsSessions','OBJECT','UPDATE')=1
+        AND HAS_PERMS_BY_NAME('dbo.AnalyticsEvents','OBJECT','SELECT')=1
+        AND HAS_PERMS_BY_NAME('dbo.AnalyticsEvents','OBJECT','INSERT')=1
+      THEN 1 ELSE 0 END AS trackingReady
     FROM dbo.AnalyticsSessions s WHERE s.LastSeenAt>=@start AND s.StartedAt<@end AND (${sessionHours});
     SELECT COUNT(*) AS logins,COUNT(DISTINCT s.UserID) AS loggedInUsers FROM dbo.AuthLoginEvents s JOIN dbo.Users u ON u.UserID=s.UserID WHERE s.LoggedAt>=@start AND s.LoggedAt<@end AND DATEPART(hour,DATEADD(minute,420,s.LoggedAt))>=@fromHour AND DATEPART(hour,DATEADD(minute,420,s.LoggedAt))<@toHour AND u.Role='Visitor';
     SELECT COUNT(CASE WHEN Kind='qr_scan' THEN 1 END) AS qrScans,COUNT(CASE WHEN Kind='audio_play' THEN 1 END) AS audioPlays FROM dbo.AnalyticsEvents e WHERE e.OccurredAt>=@start AND e.OccurredAt<@end AND ${hourWindow("e")};

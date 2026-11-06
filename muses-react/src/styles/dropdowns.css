@@ -1,0 +1,39 @@
+/* Shared by the visitor website and Admin, including their compact controls. */
+:root select:not([multiple]):not([size]),
+:root select:not([multiple])[size="1"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='m1 1 5 5 5-5' stroke='%23242424' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9em center;
+  background-size: 0.9em 0.6em;
+  padding-inline-end: 2.6em;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+:root[dir="rtl"] select:not([multiple]):not([size]),
+:root[dir="rtl"] select:not([multiple])[size="1"] {
+  background-position: left 0.9em center;
+}
+.dropdown-chevron {
+  display: inline-block;
+  inline-size: 0.9em;
+  block-size: 0.6em;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+}
+[aria-expanded="true"] > .dropdown-chevron {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-chevron { transition: none; }
+}
+@media (forced-colors: active) {
+  :root select:not([multiple]):not([size]),
+  :root select:not([multiple])[size="1"] {
+    -webkit-appearance: auto;
+    appearance: auto;
+    background-image: none;
+  }
+}

@@ -221,13 +221,18 @@
   align-items: center;
   gap: 10px;
 }
-.analytics-hour-filters select {
+.analytics-hour-filters select,
+.analytics-hour-filters input[type="date"] {
   font: inherit;
   color: #171710;
   background: #fffaf0;
   border: 1px solid #b7ae97;
   border-radius: 8px;
   padding: 9px 13px;
+}
+.analytics-hour-filters input[type="date"] {
+  min-width: 145px;
+  color-scheme: light;
 }
 .analytics-hour-filters button {
   border: 1px solid #b7ae97;
