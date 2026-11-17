@@ -26,6 +26,7 @@ const definitions = {
       ["title", "Tên tác phẩm (tiếng Việt)", "text", true],
       ["descriptionVi", "Mô tả tiếng Việt", "textarea"],
       ["shortDescriptionVi", "Mô tả ngắn (không bắt buộc)", "textarea"],
+      ["historyVi", "Lịch sử tác phẩm tiếng Việt (không bắt buộc)", "textarea"],
       ["artistId", "Tác giả", "artists", true],
       ["categoryId", "Thể loại", "categories", true],
       ["materialId", "Chất liệu", "materials", true],
@@ -46,6 +47,7 @@ const definitions = {
       ["title", "Tên tác phẩm đã dịch"],
       ["description", "Mô tả đầy đủ", "textarea"],
       ["shortDescription", "Mô tả ngắn", "textarea"],
+      ["history", "Lịch sử tác phẩm", "textarea"],
       ["audioUrl", "URL bản thu âm (không bắt buộc)"],
       [
         "source",
@@ -205,6 +207,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
     if (kind === "artworks") {
       next.descriptionVi = row?.descriptionVi ?? "";
       next.shortDescriptionVi = row?.shortDescriptionVi ?? "";
+        next.historyVi = row?.historyVi ?? "";
     }
     setEdit(next);
   }
@@ -472,11 +475,11 @@ export default function Catalog({ entity = "artworks", search = "" }) {
                 <>
                   <section className="catalog-form-group">
                     <h3>Nội dung tiếng Việt</h3>
-                    {definitions.artworks.fields.slice(0, 3).map(field)}
+                    {definitions.artworks.fields.slice(0, 4).map(field)}
                   </section>
                   <section className="catalog-form-group">
                     <h3>Thông tin tác phẩm</h3>
-                    {definitions.artworks.fields.slice(3).map(field)}
+                    {definitions.artworks.fields.slice(4).map(field)}
                   </section>
                 </>
               ) : (

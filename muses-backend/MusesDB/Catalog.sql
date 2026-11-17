@@ -31,6 +31,9 @@ IF COL_LENGTH('dbo.ArtworkDescriptions','PublicationStatus') IS NULL
  ALTER TABLE dbo.ArtworkDescriptions ADD PublicationStatus VARCHAR(12) NOT NULL CONSTRAINT DF_Description_Publication DEFAULT 'Draft';
 IF COL_LENGTH('dbo.ArtworkDescriptions','InformationSource') IS NULL
  ALTER TABLE dbo.ArtworkDescriptions ADD InformationSource NVARCHAR(1000) NULL;
+IF COL_LENGTH('dbo.ArtworkDescriptions','HistoryText') IS NULL
+ ALTER TABLE dbo.ArtworkDescriptions ADD HistoryText NVARCHAR(4000) NULL;
+GO
 GO
 -- Existing content stays in Draft until an administrator reviews it.
 UPDATE d SET Title=a.ArtworkName FROM dbo.ArtworkDescriptions d

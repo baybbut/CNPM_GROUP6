@@ -148,6 +148,7 @@ function translation(body) {
     title: text(body.title, "Tên bản dịch", 250, state === "Published"),
     description: text(body.description, "Mô tả", 12000, state === "Published"),
     shortDescription: text(body.shortDescription, "Mô tả ngắn", 1000),
+    history: text(body.history, "Lịch sử tác phẩm", 4000),
     source: text(body.source, "Nguồn bản dịch", 1000),
     audioUrl: url(body.audioUrl, "Âm thanh"),
     status: state,
