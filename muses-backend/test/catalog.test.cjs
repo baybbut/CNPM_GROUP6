@@ -229,7 +229,7 @@ test("public queries filter publication at API level, manual fallback metadata a
 test("combined filters and pagination bind parameters, never interpolate the search text", async () => {
   calls = [];
   const response = await send(
-    "/api/catalog/artworks?lang=ja&q=%27%20DROP&artist=1&material=2&museum=3&page=2",
+     "/api/catalog/artworks?lang=ja&q=%27%20DROP&artist=1&material=2&museum=3&page=2&" +  new URLSearchParams({ category: "Tác phẩm điêu khắc" }),
   );
   assert.equal(response.status, 200);
   assert.equal((await response.json()).page, 2);
@@ -237,6 +237,8 @@ test("combined filters and pagination bind parameters, never interpolate the sea
   assert.equal(call.values.artist, 1);
   assert.equal(call.values.material, 2);
   assert.equal(call.values.museum, 3);
+  assert.equal(call.values.category, "Tác phẩm điêu khắc");
+  assert.equal(call.statement.match(/c\.CategoryName=@category/g)?.length, 2);
   assert.equal(call.values.offset, 12);
   assert.ok(!call.statement.includes("DROP"));
   assert.equal((await send("/api/catalog/artworks?page=-1")).status, 400);

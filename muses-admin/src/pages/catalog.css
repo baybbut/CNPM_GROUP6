@@ -1,3 +1,6 @@
+main.catalog-auth {
+  grid-template-columns: minmax(0, 480px);
+}
 .catalog-auth {
   min-height: 100vh;
   display: grid;
@@ -7,17 +10,16 @@
   padding: 25px;
 }
 .catalog-auth-card {
-  max-width: 480px;
-  width: min(100%, 480px);
   border: 1px solid #d0c8b4;
   border-radius: 22px;
-  padding: 35px;
+  padding: 40px;
   background: #fffaf0;
 }
 .catalog-auth-card h1 {
   font:
     34px Georgia,
     serif;
+    margin-bottom: 20px;
 }
 .catalog-auth form,
 .catalog-auth label {
