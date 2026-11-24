@@ -1,6 +1,3 @@
-main.catalog-auth {
-  grid-template-columns: minmax(0, 480px);
-}
 .catalog-auth {
   min-height: 100vh;
   display: grid;
@@ -9,6 +6,9 @@ main.catalog-auth {
   color: #1c1d18;
   padding: 25px;
 }
+main.catalog-auth {
+  grid-template-columns: minmax(0, 480px);
+}
 .catalog-auth-card {
   border: 1px solid #d0c8b4;
   border-radius: 22px;
@@ -16,10 +16,10 @@ main.catalog-auth {
   background: #fffaf0;
 }
 .catalog-auth-card h1 {
+  margin-bottom: 22px;
   font:
     34px Georgia,
     serif;
-    margin-bottom: 20px;
 }
 .catalog-auth form,
 .catalog-auth label {

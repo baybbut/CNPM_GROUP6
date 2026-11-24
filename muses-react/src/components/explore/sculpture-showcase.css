@@ -1,105 +1,103 @@
 .sculpture-showcase {
-  padding: clamp(40px, 6vw, 84px) 5%;
-  background: #f2eee4;
-  color: #302a20;
+  background: #f3f0ea;
+  color: #28231f;
+  padding: clamp(42px, 7vw, 100px) 9%;
 }
-
-.sculpture-showcase h2 {
-  margin: 0 0 32px;
-  font: 400 clamp(34px, 5vw, 68px) / 1.1 Georgia, serif;
-}
-
-.sculpture-grid {
+.sculpture-filter { position: absolute; pointer-events: none; }
+.sculpture-poster { max-width: 900px; margin: 0 auto; }
+.sculpture-stage {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 32px);
-  align-items: start;
+  align-items: end;
+  gap: 1.8%;
+  aspect-ratio: 1.52;
+  isolation: isolate;
 }
-
-.sculpture-work {
+.sculpture-panel {
+  --panel: linear-gradient(105deg, #312822, #4e4136);
+  --object-width: 120%;
+  --bottom: 0%;
+  position: relative;
+  height: 75%;
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  background: var(--panel);
   color: inherit;
-  text-decoration: none;
-  padding-top: clamp(24px, 7vw, 105px);
+  cursor: pointer;
+  overflow: visible;
 }
-
-.sculpture-work:nth-child(2) {
-  padding-top: clamp(12px, 3vw, 45px);
+.sculpture-panel:nth-child(2) {
+  --panel: linear-gradient(105deg, #c6c1b9, #a69c90);
+  --object-width: 104%;
+  --bottom: 30%;
+  height: 83%;
 }
-
-.sculpture-work:nth-child(3) {
-  padding-top: 0;
+.sculpture-panel:nth-child(2)::before {
+  content: "";
+  position: absolute;
+  inset: 70% 0 -22%;
+  background: linear-gradient(90deg, #292722 16%, #161512 16%, #11100f);
 }
-
-.sculpture-image {
-  display: grid;
-  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  place-items: center;
-  padding: 8%;
-  aspect-ratio: 3 / 4.6;
-  background: #d6cbb9;
+.sculpture-panel:nth-child(3) {
+  --panel: linear-gradient(120deg, #d4d5cf, #e3e1da 55%, #c9cbc6);
+  --object-width: 147%;
+  --bottom: -6%;
+  height: 100%;
+  z-index: 2;
 }
-
-.sculpture-image .aw-no-image {
-  width: 100%;
-  min-height: 0;
-  text-align: center;
+.sculpture-panel:nth-child(4) {
+  --panel: linear-gradient(90deg, #99806e 69%, #846d5d 69%);
+  --object-width: 155%;
+  --bottom: 10%;
 }
-
-.sculpture-work:nth-child(2) .sculpture-image {
-  background: #c8bba9;
-  aspect-ratio: 3 / 5.5;
+.sculpture-panel:nth-child(4)::before {
+  content: "";
+  position: absolute;
+  inset: 78% -1% 0 9%;
+  background: linear-gradient(90deg, #d5c1af 70%, #ad9482 70%);
 }
-
-.sculpture-work:nth-child(3) .sculpture-image {
-  background: #d4d4cc;
-  aspect-ratio: 3 / 6;
+.sculpture-object {
+  position: absolute;
+  left: 50%;
+  bottom: var(--bottom);
+  width: var(--object-width);
+  pointer-events: none;
+  transform: translateX(-50%);
+  filter: drop-shadow(4px 9px 5px rgb(32 22 14 / 30%));
 }
-
-.sculpture-work:nth-child(4) .sculpture-image {
-  background: #d4beaa;
-}
-
-.sculpture-image img {
+.sculpture-object img {
   display: block;
   width: 100%;
-  height: 100%;
-  min-height: 0;
-  object-fit: contain;
+  height: auto;
+  filter: url(#sculpture-paper);
 }
-
+.sculpture-panel:nth-child(2) img {
+  clip-path: polygon(24% 0, 34% 0, 34% 29%, 42% 29%, 45% 0, 53% 0, 53% 29%, 57% 55%, 53% 61%, 56% 66%, 52% 75%, 53% 94%, 38% 96%, 37% 90%, 16% 99%, 1% 99%, 1% 91%, 15% 79%, 36% 65%, 29% 50%);
+}
+.sculpture-panel:nth-child(3) img {
+  filter: none;
+  clip-path: polygon(50% 6%, 55% 9%, 62% 11%, 72% 15%, 82% 22%, 86% 32%, 83% 44%, 76% 51%, 69% 56%, 72% 59%, 70% 64%, 63% 65%, 62% 71%, 74% 71%, 74% 76%, 70% 78%, 75% 84%, 78% 93%, 77% 95%, 30% 95%, 29% 91%, 32% 83%, 35% 78%, 32% 76%, 32% 71%, 42% 71%, 42% 65%, 35% 63%, 33% 58%, 34% 55%, 24% 51%, 20% 44%, 17% 35%, 18% 26%, 23% 20%, 31% 15%, 43% 10%, 47% 9%);
+}
+.sculpture-panel:focus-visible { outline: 3px solid #8e572d; outline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .sculpture-object { transition: transform .25s ease; }
+  .sculpture-panel:is(:hover, :focus-visible) .sculpture-object {
+    transform: translate(-50%, -4px);
+  }
+}
 .sculpture-caption {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 14px;
+  margin: 0 0 0 51%;
+  padding: clamp(32px, 4vw, 64px) 0 0;
 }
-
-.sculpture-caption h3 {
-  margin: 0;
-  font: 400 clamp(17px, 2vw, 27px) / 1.2 Georgia, serif;
+.sculpture-caption h2 {
+  margin: 0 0 12px;
+  font: 400 clamp(36px, 5vw, 72px)/1 Georgia, serif;
 }
-
-.sculpture-caption p {
-  margin: 6px 0 0;
-  font-size: 14px;
-}
-
-.sculpture-work:hover h3 {
-  text-decoration: underline;
-}
-
-@media (max-width: 720px) {
-  .sculpture-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 24px;
-  }
-
-  .sculpture-grid .sculpture-work {
-    padding-top: 0;
-  }
-
-  .sculpture-grid .sculpture-image {
-    aspect-ratio: 3 / 4;
-  }
+.sculpture-caption h3 { margin: 0 0 8px; font: 500 18px/1.35 Georgia, serif; }
+.sculpture-caption p { margin: 0; font-size: 15px; line-height: 1.55; }
+.sculpture-caption a { display: inline-block; margin-top: 12px; text-decoration: underline; }
+@media (max-width: 580px) {
+  .sculpture-stage { aspect-ratio: 1.15; }
+  .sculpture-caption { margin-left: 0; padding-top: 20%; }
 }
