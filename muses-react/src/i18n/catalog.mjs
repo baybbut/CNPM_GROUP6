@@ -168,6 +168,7 @@ const messages = {
     ],
   Start: ["Bắt đầu", "开始", "開始", "시작"],
   Finish: ["Kết thúc", "结束", "終了", "종료"],
+  "Image details": ["Chi tiết tác phẩm", "作品细节", "作品の細部", "작품 세부"],
   Painting: ["Hội họa", "绘画", "絵画", "회화"],
   Sculpture: ["Điêu khắc", "雕塑", "彫刻", "조각"],
   Architecture: ["Kiến trúc", "建筑", "建築", "건축"],
