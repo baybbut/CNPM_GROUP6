@@ -101,3 +101,28 @@
   .sculpture-stage { aspect-ratio: 1.15; }
   .sculpture-caption { margin-left: 0; padding-top: 20%; }
 }
+<<<<<<< HEAD
+=======
+
+.sculpture-work:hover h3 {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .sculpture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 24px;
+  }
+
+  .sculpture-grid .sculpture-work {
+    padding-top: 0;
+  }
+
+  .sculpture-grid .sculpture-image {
+    aspect-ratio: 3 / 4;
+  }
+}
+.sculpture-panel:nth-child(2) img {
+  clip-path: polygon(24% 0, 34% 0, 34% 29%, 42% 29%, 45% 0, 53% 0, 53% 29%, 57% 55%, 53% 61%, 56% 66%, 52% 75%, 53% 94%, 38% 96%, 37% 90%, 16% 99%, 1% 99%, 1% 91%, 15% 79%, 36% 65%, 29% 50%);
+}
+>>>>>>> 23d6ca0 (điều chỉnh css cho explore)
