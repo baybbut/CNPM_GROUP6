@@ -11,11 +11,12 @@ export default function Header() {
   const { t, lang } = useLang();
   const { pathname } = useLocation();
 
+  const artworkDetail = pathname.startsWith("/explore/artworks/");
   const light = pathname === "/visit"; // trang Visit: chữ trắng
   const sand = ["/exhibition", "/explore"].some((p) => pathname.startsWith(p)); // trang Exhibition: nền nâu xám
 
   return (
-    <header className={`header ${light ? "light" : ""} ${sand ? "sand" : ""}`}>
+    <header className={`header ${light ? "light" : ""} ${sand ? "sand" : ""} ${artworkDetail ? "header-artwork" : ""}`}>
       <nav className="nav-left">
         {NAV_LINKS.map((n) => (
           <NavLink

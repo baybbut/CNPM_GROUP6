@@ -11,6 +11,13 @@
   padding-inline: clamp(20px, 3vw, 56px);
   color: #000;
 }
+.header.header-artwork {
+  position: relative;
+  height: auto;
+  grid-template-rows: auto auto;
+  row-gap: clamp(8px, 1vw, 16px);
+  padding-block: clamp(12px, 1.35vw, 22px);
+}
 .header .nav-left,
 .header .nav-right {
   display: flex;
