@@ -1,5 +1,5 @@
 .scan-page {
-  padding: 135px 6% 85px;
+  padding: 24px 6% 85px;
   background: var(--cream);
   min-height: 80vh;
   color: #302a20;
@@ -439,7 +439,7 @@
 }
 @media (max-width: 700px) {
   .scan-page {
-    padding: 115px 5% 55px;
+    padding: 20px 5% 55px;
   }
   .scan-layout {
     grid-template-columns: 1fr;

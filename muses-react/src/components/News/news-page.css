@@ -1,6 +1,6 @@
 @import "./News.css";
 .museum-news-page {
-  padding: 135px 6% 85px;
+  padding: 24px 6% 85px;
   background: var(--cream);
   color: #2e291e;
   min-height: 65vh;
@@ -140,13 +140,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 28px;
   }
-  .museum-news-page {
-    padding-top: 115px;
-  }
 }
 @media (max-width: 600px) {
   .museum-news-page {
-    padding: 110px 6% 55px;
+    padding: 20px 6% 55px;
   }
   .museum-news-heading {
     margin-bottom: 35px;

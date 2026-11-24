@@ -1,22 +1,15 @@
 .header {
-  position: absolute;
-  inset: 0 0 auto;
+  position: relative;
   z-index: 5;
-  height: 112px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: 68px 44px;
+  grid-template-rows: auto auto;
+  row-gap: clamp(8px, 1vw, 16px);
+  padding-block: clamp(12px, 1.35vw, 22px);
   align-items: center;
   column-gap: 24px;
   padding-inline: clamp(20px, 3vw, 56px);
   color: #000;
-}
-.header.header-artwork {
-  position: relative;
-  height: auto;
-  grid-template-rows: auto auto;
-  row-gap: clamp(8px, 1vw, 16px);
-  padding-block: clamp(12px, 1.35vw, 22px);
 }
 .header .nav-left,
 .header .nav-right {
@@ -74,7 +67,11 @@
 .header .ticket-icon { width: 20px; height: 20px; object-fit: contain; }
 .header .museum-nav-icon { display: block; }
 .header .nav-left .scan-nav.active { border-bottom: 0; }
-.header.light { color: #fff; }
+.header.light {
+  position: absolute;
+  inset: 0 0 auto;
+  color: #fff;
+}
 .header.light .lang-toggle { border-color: currentColor; }
 .header.sand { background: #9b9078; }
 .header .nav-left a,
@@ -102,7 +99,6 @@
   .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
   .header .nav-right .ticket-nav { padding: 10px 16px; }
 }
-.header ~ main .hero { padding-top: 112px; }
 
 @media (max-width: 1400px) {
   .header .nav-left {

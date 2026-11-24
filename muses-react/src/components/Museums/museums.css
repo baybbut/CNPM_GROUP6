@@ -1,5 +1,5 @@
 .museum-page {
-  padding: 130px 5vw 70px;
+  padding: 24px 5vw 70px;
   max-width: 1500px;
   margin: auto;
   min-height: 70vh;
@@ -133,9 +133,6 @@
   .museum-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .museum-page {
-    padding-top: 110px;
-  }
   .museum-map iframe {
     height: 280px;
   }
@@ -148,7 +145,7 @@
     width: 100%;
   }
   .museum-page {
-    padding: 110px 5% 40px;
+    padding: 20px 5% 40px;
   }
   .museum-page .aw-grid {
     grid-template-columns: 1fr;
