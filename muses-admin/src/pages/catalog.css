@@ -93,6 +93,55 @@
   font-size: 12px;
   margin-top: 5px;
 }
+.catalog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+  color: #504b3e;
+  font-size: 14px;
+}
+.catalog-pagination p {
+  margin: 0;
+}
+.catalog-page-size,
+.catalog-pagination nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.catalog-pagination select,
+.catalog-pagination button {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 12px;
+  border: 1px solid #c7bea8;
+  border-radius: 18px;
+  background: #f8f3e5;
+  color: inherit;
+  font: inherit;
+}
+.catalog-pagination button:not(:disabled),
+.catalog-pagination select {
+  cursor: pointer;
+}
+.catalog-pagination button[aria-current="page"] {
+  background: #1c1d18;
+  border-color: #1c1d18;
+  color: #fffdf7;
+}
+.catalog-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.catalog-pagination button:focus-visible,
+.catalog-pagination select:focus-visible {
+  outline: 2px solid #86652d;
+  outline-offset: 3px;
+}
 .catalog-form fieldset {
   border: 0;
   margin: 0;

@@ -149,7 +149,12 @@ export default function Catalog({ entity = "artworks", search = "" }) {
     [edit, setEdit] = useState(null),
     [saving, setSaving] = useState(false),
     [saveError, setSaveError] = useState(""),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [page, setPage] = useState(1),
+    [pageSize, setPageSize] = useState(10);
+  useEffect(() => {
+    setPage(1);
+  }, [kind, search, pageSize]);
   useEffect(() => {
     setKind(entity);
     setEdit(null);
@@ -207,7 +212,7 @@ export default function Catalog({ entity = "artworks", search = "" }) {
     if (kind === "artworks") {
       next.descriptionVi = row?.descriptionVi ?? "";
       next.shortDescriptionVi = row?.shortDescriptionVi ?? "";
-        next.historyVi = row?.historyVi ?? "";
+      next.historyVi = row?.historyVi ?? "";
     }
     setEdit(next);
   }
@@ -346,6 +351,23 @@ export default function Catalog({ entity = "artworks", search = "" }) {
   const visible = rows.filter((row) =>
     JSON.stringify(row).toLowerCase().includes(search.toLowerCase()),
   );
+  const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const firstRow = (currentPage - 1) * pageSize;
+  const pageRows = visible.slice(firstRow, firstRow + pageSize);
+  const firstPageButton = Math.max(
+    1,
+    Math.min(currentPage - 2, totalPages - 4),
+  );
+  const pageNumbers = Array.from(
+    { length: Math.min(5, totalPages) },
+    (_, index) => firstPageButton + index,
+  );
+  useEffect(() => {
+    if (!loading && !error) {
+      setPage((value) => Math.min(value, totalPages));
+    }
+  }, [totalPages, loading, error]);
   return (
     <div className="pg-workspace catalog-admin">
       <Header
@@ -416,50 +438,123 @@ export default function Catalog({ entity = "artworks", search = "" }) {
         {loading ? (
           <p role="status">Đang tải dữ liệu…</p>
         ) : (
-          <div className="catalog-table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  {columns[kind].map(([key, title]) => (
-                    <th key={key}>{title}</th>
-                  ))}
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((row) => (
-                  <tr key={row.id}>
-                    {columns[kind].map(([key]) => (
-                      <td key={key}>
-                        {key === "isPublic"
-                          ? row[key]
-                            ? "Có"
-                            : "Không"
-                          : statusLabel[row[key]] || row[key] || "—"}
-                        {key === columns[kind][0][0] && row.isDemo && (
-                          <small className="catalog-demo-badge">Minh họa</small>
+          <>
+            <div className="catalog-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    {columns[kind].map(([key, title]) => (
+                      <th key={key}>{title}</th>
+                    ))}
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageRows.map((row) => (
+                    <tr key={row.id}>
+                      {columns[kind].map(([key]) => (
+                        <td key={key}>
+                          {key === "isPublic"
+                            ? row[key]
+                              ? "Có"
+                              : "Không"
+                            : statusLabel[row[key]] || row[key] || "—"}
+                          {key === columns[kind][0][0] && row.isDemo && (
+                            <small className="catalog-demo-badge">
+                              Minh họa
+                            </small>
+                          )}
+                        </td>
+                      ))}
+                      <td>
+                        <button onClick={() => launch(row)}>Sửa</button>
+                        {[
+                          "artworks",
+                          "artists",
+                          "materials",
+                          "categories",
+                        ].includes(kind) && (
+                          <button onClick={() => remove(row)}>
+                            {kind === "artworks" ? "Xóa khỏi công khai" : "Xóa"}
+                          </button>
                         )}
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!visible.length && !error && <p>Chưa có bản ghi phù hợp.</p>}
+            </div>
+            {!error && (
+              <div className="catalog-pagination">
+                <p role="status" aria-live="polite" aria-atomic="true">
+                  {visible.length
+                    ? `Hiển thị ${firstRow + 1}–${firstRow + pageRows.length} / ${visible.length} bản ghi · Trang ${currentPage}/${totalPages}`
+                    : "0 bản ghi"}
+                </p>
+                <label className="catalog-page-size">
+                  Số dòng mỗi trang
+                  <select
+                    value={pageSize}
+                    onChange={(event) =>
+                      setPageSize(Number(event.target.value))
+                    }
+                  >
+                    {[10, 20, 50].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
                     ))}
-                    <td>
-                      <button onClick={() => launch(row)}>Sửa</button>
-                      {[
-                        "artworks",
-                        "artists",
-                        "materials",
-                        "categories",
-                      ].includes(kind) && (
-                        <button onClick={() => remove(row)}>
-                          {kind === "artworks" ? "Xóa khỏi công khai" : "Xóa"}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!visible.length && !error && <p>Chưa có bản ghi phù hợp.</p>}
-          </div>
+                  </select>
+                </label>
+                {totalPages > 1 && (
+                  <nav aria-label="Phân trang danh sách quản trị">
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() => setPage(1)}
+                    >
+                      Đầu
+                    </button>
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() => setPage(currentPage - 1)}
+                    >
+                      Trước
+                    </button>
+                    {pageNumbers.map((number) => (
+                      <button
+                        type="button"
+                        key={number}
+                        aria-label={`Trang ${number}`}
+                        aria-current={
+                          number === currentPage ? "page" : undefined
+                        }
+                        onClick={() => setPage(number)}
+                      >
+                        {number}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setPage(currentPage + 1)}
+                    >
+                      Sau
+                    </button>
+                    <button
+                      type="button"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setPage(totalPages)}
+                    >
+                      Cuối
+                    </button>
+                  </nav>
+                )}
+              </div>
+            )}
+          </>
         )}
       </Panel>
       {edit && (
