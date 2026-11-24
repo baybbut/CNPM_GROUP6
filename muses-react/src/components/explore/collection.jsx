@@ -1,6 +1,7 @@
 import { Hero, Crumb } from "./part";
 import { HERO_IMG } from "../../data/exploreData";
 import { ArtworkCollection } from "./Artworks";
+import SculptureShowcase from "./SculptureShowcase";
 import "./explore.css";
 
 export default function Collection() {
@@ -9,6 +10,7 @@ export default function Collection() {
       <Hero img={HERO_IMG} />
       <Crumb />
       <ArtworkCollection />
+      <SculptureShowcase />
     </div>
   );
 }
