@@ -68,23 +68,19 @@ export function searchPlaces(
     );
 }
 // Only a close name AND pin match may link an OSM venue to the curated catalogue.
-export function connectCatalogue(items, museums) {
+export function matchesMuseum(place, museum) {
   const norm = (s) =>
     String(s || "")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/[^\p{L}\p{N}]/gu, "");
+  return hasCoordinates(museum) && distanceKm(museum, place) < 0.25 &&
+    Object.values(place.names || { name: place.name }).some(name => norm(name) === norm(museum.name));
+}
+export function connectCatalogue(items, museums) {
   return items.map((place) => {
-    const museum = museums.find(
-      (m) =>
-        !m.isDemo &&
-        hasCoordinates(m) &&
-        distanceKm(m, place) < 0.25 &&
-        Object.values(place.names || { name: place.name }).some(
-          (name) => norm(name) === norm(m.name),
-        ),
-    );
+    const museum = museums.find(m => !m.isDemo && matchesMuseum(place, m));
     return museum ? { ...place, museumId: museum.id } : place;
   });
 }

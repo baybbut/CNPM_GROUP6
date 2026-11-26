@@ -269,6 +269,10 @@ const messages = {
     "地図で経路を表示するには「現在地を使う」を押してください。",
     "지도 경로를 사용하려면 내 위치 사용을 누르세요.",
   ],
+  "Plan a visit from this museum": ["Lập lộ trình từ bảo tàng này", "从这家博物馆规划行程", "この博物館からの見学ルートを作成", "이 박물관에서 출발하는 일정 만들기"],
+  "Starting museum": ["Bảo tàng xuất phát", "起点博物馆", "出発する博物館", "출발 박물관"],
+  "Starting museum unavailable.": ["Không tìm thấy bảo tàng xuất phát có tọa độ trên bản đồ.", "找不到有地图坐标的起点博物馆。", "地図上で出発する博物館を特定できません。", "지도에서 출발 박물관의 위치를 확인할 수 없습니다."],
+  "Add another museum to draw the route.": ["Chọn thêm một bảo tàng để vẽ lộ trình.", "再选择一家博物馆即可显示路线。", "別の博物館を追加すると経路が表示されます。", "경로를 표시하려면 박물관을 하나 더 선택하세요."],
   "Build a museum itinerary": [
     "Xây dựng lộ trình tham quan",
     "规划博物馆行程",

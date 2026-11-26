@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import {
   LocationControls,
@@ -8,7 +8,7 @@ import {
 import { label } from "../../i18n/catalog.mjs";
 import { catalog } from "../../api/catalog.mjs";
 import references from "../../data/hcmPlaces.json";
-import { connectCatalogue, MUSEUM_RADIUS_KM } from "./placeModel.mjs";
+import { connectCatalogue, hasCoordinates, matchesMuseum, MUSEUM_RADIUS_KM } from "./placeModel.mjs";
 import {
   museumGuides,
   moveStop,
@@ -65,32 +65,58 @@ function useItineraryRoute(stops, position) {
 export default function Itinerary() {
   const { lang } = useLang(),
     t = (key) => label(lang, key);
-  const { position } = useMuseumLocation();
-  const [showLegDirections, setShowLegDirections] = useState(false);
-  const [ids, setIds] = useState(references.map((p) => p.id));
-  const [durations, setDurations] = useState({});
-  const [start, setStart] = useState("09:00");
-  const [selected, setSelected] = useState(references[0].id),
-    [topic, setTopic] = useState(0);
-  const [museums, setMuseums] = useState([]),
-    [detail, setDetail] = useState(null),
-    [detailError, setDetailError] = useState(false),
-    [attempt, setAttempt] = useState(0);
+  const [params] = useSearchParams();
+  const requestedId = params.get("fromMuseum");
+  const [museums, setMuseums] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const c = new AbortController();
+    setFailed(false);
     catalog("/api/museums", c.signal)
-      .then(setMuseums)
-      .catch(() => {});
+      .then(rows => { if (!c.signal.aborted) setMuseums(rows); })
+      .catch(() => { if (!c.signal.aborted) setFailed(true); });
     return () => c.abort();
-  }, []);
-  const places = useMemo(
-    () =>
-      connectCatalogue(references, museums).map((p) => ({
-        ...p,
-        name: p.names[lang] || p.name,
-      })),
-    [museums, lang],
-  );
+  }, [attempt]);
+  const origin = requestedId ? museums?.find(m => String(m.id) === requestedId) : null;
+  const places = useMemo(() => {
+    const list = connectCatalogue(references, museums || []);
+    if (hasCoordinates(origin)) {
+      const index = list.findIndex(p => p.museumId === origin.id || matchesMuseum(p, origin));
+      const startPlace = { ...origin, id: `museum-${origin.id}`, museumId: origin.id, kind: "museum" };
+      if (index < 0) list.unshift(startPlace);
+      else list[index] = { ...list[index], museumId: origin.id, latitude: origin.latitude, longitude: origin.longitude };
+    }
+    return list.map(p => ({ ...p, name: p.names?.[lang] || p.name }));
+  }, [museums, lang, origin]);
+  if (requestedId && !hasCoordinates(origin)) {
+    return <section className="museum-page">
+      <h1>{t("Build a museum itinerary")}</h1>
+      <p role="status">{t(failed ? "Unable to load data. Please try again." :
+        museums ? "Starting museum unavailable." : "Loading…")}</p>
+      {failed && <button onClick={() => setAttempt(n => n + 1)}>{t("Try again")}</button>}
+      <Link className="v-link" to="/museums/itinerary">{t("Build a museum itinerary")}</Link>
+    </section>;
+  }
+  const firstStop = origin && places.find(p => p.museumId === origin.id);
+  return <ItineraryEditor key={requestedId} places={places} firstStop={firstStop} />;
+}
+
+function ItineraryEditor({ places, firstStop }) {
+  const { lang } = useLang(), t = key => label(lang, key);
+  const { position: userPosition } = useMuseumLocation();
+  const position = firstStop ? null : userPosition;
+  const [showLegDirections, setShowLegDirections] = useState(false);
+  const [ids, setIds] = useState(() => firstStop
+    ? [firstStop.id, ...places.filter(p => p.id !== firstStop.id).map(p => p.id)]
+    : places.map(p => p.id));
+  const [durations, setDurations] = useState({});
+  const [start, setStart] = useState("09:00");
+  const [selected, setSelected] = useState(ids[0]),
+    [topic, setTopic] = useState(0);
+  const [detail, setDetail] = useState(null),
+    [detailError, setDetailError] = useState(false),
+    [attempt, setAttempt] = useState(0);
   const stops = useMemo(
     () => ids.map((id) => places.find((p) => p.id === id)).filter(Boolean),
     [ids, places],
@@ -131,7 +157,8 @@ export default function Itinerary() {
       <p className="aw-eyebrow">MUSES · {t("Ho Chi Minh City")}</p>
       <h1>{t("Build a museum itinerary")}</h1>
       <p>{t("Choose museums, arrange your stops and plan your visit time.")}</p>
-      <LocationControls hint="Use your location to start the itinerary from where you are." />
+      {firstStop ? <p>{t("Starting museum")} · <strong>{firstStop.name}</strong></p>
+        : <LocationControls hint="Use your location to start the itinerary from where you are." />}
       <div className="itinerary-layout">
         <section className="itinerary-editor" aria-label={t("Your itinerary")}>
           <h2>{t("Your itinerary")}</h2>
@@ -141,6 +168,7 @@ export default function Itinerary() {
                 <input
                   type="checkbox"
                   checked={ids.includes(p.id)}
+                  disabled={p.id === firstStop?.id}
                   onChange={() => toggle(p.id)}
                 />
                 {p.name}
@@ -158,9 +186,9 @@ export default function Itinerary() {
               />
             </label>
             <button
-              disabled={!position || stops.length < 2}
+              disabled={firstStop ? stops.length < 3 : !position || stops.length < 2}
               onClick={() => {
-                setIds(nearestOrder(stops, position));
+                setIds(firstStop ? [firstStop.id, ...nearestOrder(stops.slice(1), firstStop)] : nearestOrder(stops, position));
                 setShowLegDirections(false);
               }}
             >
@@ -217,7 +245,7 @@ export default function Itinerary() {
                   </label>
                   <div className="place-actions">
                     <button
-                      disabled={i === 0}
+                      disabled={i === 0 || (firstStop && i === 1)}
                       aria-label={`${t("Move up")}: ${p.name}`}
                       onClick={() => {
                         setIds(moveStop(ids, p.id, -1));
@@ -227,7 +255,7 @@ export default function Itinerary() {
                       ↑
                     </button>
                     <button
-                      disabled={i === stops.length - 1}
+                      disabled={i === stops.length - 1 || p.id === firstStop?.id}
                       aria-label={`${t("Move down")}: ${p.name}`}
                       onClick={() => {
                         setIds(moveStop(ids, p.id, 1));
@@ -261,7 +289,7 @@ export default function Itinerary() {
               {journey.loading && t("Finding itinerary route…")}
               {journey.error && <>{t("Unable to load the itinerary route.")} <button className="v-link" onClick={journey.retry}>{t("Try again")}</button></>}
               {!stops.length && t("Select at least one museum.")}
-              {stops.length === 1 && !position && t("Add another museum or use your location to draw a route.")}
+              {stops.length === 1 && !position && t(firstStop ? "Add another museum to draw the route." : "Add another museum or use your location to draw a route.")}
               {journey.route && <strong>{routeSummary(journey.route, lang)}</strong>}
               {selectedLeg && <p>
                 {stops[selectedIndex - 1]?.name || t("Your location")} → {place.name}
@@ -306,34 +334,38 @@ export default function Itinerary() {
         </label>
         <h3>{place.name}</h3>
         <p>{place.address}</p>
-        <h4>{t("Suggested visit diagram")}</h4>
-        <p>
-          {t(
-            "These are suggested viewing themes, not room locations or a floor plan.",
-          )}
-        </p>
-        <div
-          className="guide-diagram"
-          aria-label={t("Suggested visit diagram")}
-        >
-          <span className="guide-endpoint">{t("Start")}</span>
-          {guide.topics.map((name, i) => (
-            <button
-              key={name}
-              aria-pressed={topic === i}
-              onClick={() => setTopic(i)}
+        {guide && (
+          <>
+            <h4>{t("Suggested visit diagram")}</h4>
+            <p>
+              {t(
+                "These are suggested viewing themes, not room locations or a floor plan.",
+              )}
+            </p>
+            <div
+              className="guide-diagram"
+              aria-label={t("Suggested visit diagram")}
             >
-              <span>{i + 1}</span>
-              {t(name)}
-            </button>
-          ))}
-          <span className="guide-endpoint">{t("Finish")}</span>
-        </div>
-        <p className="guide-topic" role="status">
-          {t("Selected theme")}:{" "}
-          <strong>{t(guide.topics[topic] || guide.topics[0])}</strong>
-        </p>
-        <MuseumFloorPlans key={place.id} plans={guide.floorPlans} />
+              <span className="guide-endpoint">{t("Start")}</span>
+              {guide.topics.map((name, i) => (
+                <button
+                  key={name}
+                  aria-pressed={topic === i}
+                  onClick={() => setTopic(i)}
+                >
+                  <span>{i + 1}</span>
+                  {t(name)}
+                </button>
+              ))}
+              <span className="guide-endpoint">{t("Finish")}</span>
+            </div>
+            <p className="guide-topic" role="status">
+              {t("Selected theme")}:{" "}
+              <strong>{t(guide.topics[topic] || guide.topics[0])}</strong>
+            </p>
+            <MuseumFloorPlans key={place.id} plans={guide.floorPlans} />
+          </>
+        )}
         <h4>{t("Currently on display")}</h4>
         {!place.museumId ? (
           <p>{t("No confirmed current exhibition.")}</p>
@@ -359,7 +391,7 @@ export default function Itinerary() {
         ) : (
           <p>{t("No confirmed current exhibition.")}</p>
         )}
-        <a href={place.sourceUrl} target="_blank" rel="noopener noreferrer">
+        <a href={place.sourceUrl || `/museums/${place.museumId}`} target="_blank" rel="noopener noreferrer">
           {t("Place information")} ↗
         </a>
       </section>

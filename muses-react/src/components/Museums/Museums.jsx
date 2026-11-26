@@ -91,10 +91,10 @@ export function CurrentExhibition({ artwork }) {
               {e.verifiedOn && ` · ${t("Verified on")}: ${e.verifiedOn}`}
             </p>
           )}
-          {e.isDemo && (
-            <p className="catalog-demo">
-              {t("Demonstration data — not a real exhibition.")}
-            </p>
+          {e.museumId && hasCoordinates(e) && (
+            <Link className="planner-link" to={`/museums/itinerary?fromMuseum=${encodeURIComponent(e.museumId)}`}>
+              {t("Plan a visit from this museum")} →
+            </Link>
           )}
           <MuseumMap museum={e} />
         </>
