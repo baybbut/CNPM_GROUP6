@@ -2,12 +2,16 @@ import { useCallback, useEffect, useRef } from "react";
 import { label } from "../../i18n/catalog.mjs";
 import { chooseVoice, speechLocale } from "../Narration/speechLanguage.mjs";
 
-export default function NearbyMuseumNotice({ nearest, lang, radius }) {
+export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius }) {
   const active = useRef(null);
   const lastAnnouncement = useRef(null);
   const speech = window.speechSynthesis;
   const canSpeak = Boolean(speech && window.SpeechSynthesisUtterance);
-  let message = label(lang, "No matching museums within {radius} km.").replace("{radius}", radius);
+  const expansion = searchRadius > radius
+    ? label(lang, "No matching museums within {radius} km. Search expanded to {extended} km.")
+        .replace("{radius}", radius).replace("{extended}", searchRadius)
+    : "";
+  let result = label(lang, "No matching museums within {radius} km.").replace("{radius}", searchRadius);
   if (nearest) {
     const meters = nearest.distance < 1;
     const distance = new Intl.NumberFormat(lang, {
@@ -16,14 +20,15 @@ export default function NearbyMuseumNotice({ nearest, lang, radius }) {
       unitDisplay: "long",
       maximumFractionDigits: meters ? 0 : 2,
     }).format(meters ? nearest.distance * 1000 : nearest.distance);
-    message = label(lang, nearest.inside
-      ? "{name} is the nearest museum, about {distance} away."
-      : "You are just outside the {radius} km radius of {name}, about {distance} away.")
+    result = label(lang, nearest.zone === "approaching"
+      ? "You are just outside the {radius} km radius of {name}, about {distance} away."
+      : "{name} is the nearest museum, about {distance} away.")
       .replace("{radius}", radius)
       .replace("{distance}", distance)
       .replace("{name}", () => nearest.place.names?.[lang] || nearest.place.name);
   }
-  const key = nearest ? JSON.stringify([nearest.place.id, nearest.inside, lang]) : null;
+  const message = expansion ? `${expansion} ${result}` : result;
+  const key = nearest ? JSON.stringify([nearest.place.id, nearest.zone, lang]) : null;
   const stop = useCallback(() => {
     if (active.current) {
       active.current = null;

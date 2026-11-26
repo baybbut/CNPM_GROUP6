@@ -27,6 +27,12 @@ const messages = {
     "{name}の半径{radius}キロ圏のすぐ外です。博物館まで約{distance}です。",
     "{name}의 반경 {radius}킬로미터 바로 바깥입니다. 박물관까지 약 {distance} 거리입니다.",
   ],
+  "No matching museums within {radius} km. Search expanded to {extended} km.": [
+    "Hiện không có bảo tàng phù hợp trong bán kính {radius} km. Đã mở rộng tìm kiếm lên {extended} km.",
+    "在 {radius} 公里内没有符合条件的博物馆。已将搜索范围扩大至 {extended} 公里。",
+    "半径{radius}キロメートル以内に該当する博物館はありません。検索範囲を{extended}キロメートルに広げました。",
+    "반경 {radius}km 내에 조건에 맞는 박물관이 없어 검색 범위를 {extended}km로 넓혔습니다.",
+  ],
   "No matching museums within {radius} km.": [
     "Không có bảo tàng nào trong kết quả nằm trong bán kính {radius} km.",
     "结果中没有位于 {radius} 公里以内的博物馆。",

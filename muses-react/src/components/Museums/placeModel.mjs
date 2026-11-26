@@ -1,5 +1,6 @@
 import { distanceKm } from "../../api/catalog.mjs";
 export const MUSEUM_RADIUS_KM = 2;
+export const EXTENDED_MUSEUM_RADIUS_KM = 10;
 // Announce the approach up to 200 m before crossing the museum radius.
 export const APPROACH_MARGIN_KM = 0.2;
 
@@ -9,10 +10,13 @@ export function closestMuseumInRange(places, position, radiusKm) {
   for (const place of places) {
     if (place.kind !== "museum" || !hasCoordinates(place)) continue;
     const distance = distanceKm(position, place);
-    if (distance > radiusKm + APPROACH_MARGIN_KM) continue;
+    if (distance > EXTENDED_MUSEUM_RADIUS_KM) continue;
     if (!nearest || distance < nearest.distance ||
         (distance === nearest.distance && String(place.id) < String(nearest.place.id))) {
-      nearest = { place, distance, inside: distance <= radiusKm };
+      let zone = "extended";
+      if (distance <= radiusKm) zone = "nearby";
+      else if (distance <= radiusKm + APPROACH_MARGIN_KM) zone = "approaching";
+      nearest = { place, distance, zone };
     }
   }
   return nearest;

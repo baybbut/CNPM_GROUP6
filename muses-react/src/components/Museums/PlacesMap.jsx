@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
-import { HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
+import { EXTENDED_MUSEUM_RADIUS_KM, HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
 import NearbyMuseumNotice from "./NearbyMuseumNotice";
 
 export default function PlacesMap({
@@ -18,8 +18,10 @@ export default function PlacesMap({
 }) {
   const { lang } = useLang();
   const nearest = closestMuseumInRange(places, position, museumRadiusKm);
-  const nearestId = nearest?.inside ? nearest.place.id : null;
-  const centeredOnUser = useRef(false);
+  const nearestId = nearest?.place.id;
+  const expanded = hasCoordinates(position) && museumRadiusKm > 0 && nearest?.zone !== "nearby";
+  const searchRadiusKm = expanded ? EXTENDED_MUSEUM_RADIUS_KM : museumRadiusKm;
+  const lastFittedRadius = useRef(null);
   const host = useRef(null),
     mapRef = useRef(null),
     routeRef = useRef(route),
@@ -58,7 +60,7 @@ export default function PlacesMap({
     return () => {
       clearTimeout(loadTimeout);
       resize.disconnect();
-      centeredOnUser.current = false;
+      lastFittedRadius.current = null;
       map.remove();
       mapRef.current = null;
     };
@@ -113,7 +115,7 @@ export default function PlacesMap({
       const center = [position.latitude, position.longitude];
       if (museumRadiusKm > 0) {
         L.circle(center, {
-          radius: museumRadiusKm * 1000,
+          radius: searchRadiusKm * 1000,
           className: "visitor-radius",
           color: "#286cda",
           weight: 2,
@@ -132,12 +134,12 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry, museumRadiusKm, nearestId]);
+  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     if (route?.points?.length) {
-      centeredOnUser.current = false;
+      lastFittedRadius.current = null;
       map.fitBounds(L.latLngBounds(route.points), {
         padding: [36, 36],
         animate: false,
@@ -145,16 +147,16 @@ export default function PlacesMap({
       return;
     }
     if (hasCoordinates(position)) {
-      if (centeredOnUser.current) return;
+      if (lastFittedRadius.current === searchRadiusKm) return;
       const center = L.latLng(position.latitude, position.longitude);
       if (museumRadiusKm > 0) {
-        map.fitBounds(center.toBounds(museumRadiusKm * 2000), { padding: [16, 16], animate: false });
+        map.fitBounds(center.toBounds(searchRadiusKm * 2000), { padding: [16, 16], animate: false });
       } else {
         map.setView(center, 13, { animate: false });
       }
-      centeredOnUser.current = true;
+      lastFittedRadius.current = searchRadiusKm;
     } else {
-      centeredOnUser.current = false;
+      lastFittedRadius.current = null;
       const bounds = L.latLngBounds([]);
       for (const place of places.filter(hasCoordinates)) {
         const pin = L.latLng(Number(place.latitude), Number(place.longitude));
@@ -170,7 +172,7 @@ export default function PlacesMap({
         });
       else map.setView(HCM_CENTER, 12, { animate: false });
     }
-  }, [places, position, retry, focus, route, museumRadiusKm]);
+  }, [places, position, retry, focus, route, museumRadiusKm, searchRadiusKm]);
   useEffect(() => {
     const marker = markers.current.get(selectedId);
     if (marker && !route) {
@@ -193,10 +195,10 @@ export default function PlacesMap({
       className="places-map-panel"
       aria-label={title || label(lang, "Museum map")}
     >
-      <div className="places-map-canvas" ref={host} />
       {position && museumRadiusKm > 0 && (
-        <NearbyMuseumNotice nearest={nearest} lang={lang} radius={museumRadiusKm} />
+        <NearbyMuseumNotice nearest={nearest} lang={lang} radius={museumRadiusKm} searchRadius={searchRadiusKm} />
       )}
+      <div className="places-map-canvas" ref={host} />
       {tileError && (
         <div className="map-tile-error" role="status">
           <span>

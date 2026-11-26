@@ -82,9 +82,12 @@ test("proximity distinguishes the nearest museum, its approach zone and out-of-r
   const nearest = (places, position = origin) => closestMuseumInRange(places, position, MUSEUM_RADIUS_KM);
   const places = [at("g", 0.1, "gallery"), at("b", 1.9), at("a", 1.3)];
   assert.equal(nearest(places).place.id, "a");
-  assert.equal(nearest([at("m", 2)]).inside, true);
-  assert.equal(nearest([at("m", 2.1)]).inside, false);
-  assert.equal(nearest([at("m", 2.21)]), null);
+  assert.equal(nearest([at("m", 2)]).zone, "nearby");
+  assert.equal(nearest([at("m", 2.1)]).zone, "approaching");
+  assert.equal(nearest([at("b", 7.9), at("a", 6.5)]).place.id, "a");
+  assert.equal(nearest([at("m", 6.5)]).zone, "extended");
+  assert.equal(nearest([at("m", 10)]).zone, "extended");
+  assert.equal(nearest([at("m", 10.01)]), null);
   assert.equal(nearest(places, null), null);
   assert.equal(nearest([at("a", 0, "gallery")]), null);
 });
