@@ -8,11 +8,12 @@ import { routeUrl, readRoute } from "./routeModel.mjs";
 export function useDirections(position) {
   const [state, setState] = useState(null);
   const current = useRef(null);
+  const located = hasCoordinates(position);
   useEffect(() => {
     current.current?.abort();
     setState(null);
     return () => current.current?.abort();
-  }, [position]);
+  }, [located]);
   function clear() {
     current.current?.abort();
     setState(null);

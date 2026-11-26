@@ -14,11 +14,18 @@ const messages = {
     "옻칠",
   ],
 
-  "{name} is within {radius} km of you.": [
-    "{name} nằm trong bán kính {radius} km tính từ vị trí của bạn.",
-    "{name}位于您周围 {radius} 公里以内。",
-    "{name}は現在地から半径{radius}キロメートル以内にあります。",
-    "{name}은(는) 현재 위치에서 반경 {radius}km 이내에 있습니다.",
+  "Nearest museum": ["Bảo tàng gần nhất", "最近的博物馆", "最寄りの博物館", "가장 가까운 박물관"],
+  "{name} is the nearest museum, about {distance} away.": [
+    "{name} là bảo tàng gần bạn nhất, cách khoảng {distance}.",
+    "最近的博物馆是{name}，距您约{distance}。",
+    "最寄りの博物館は{name}です。現在地から約{distance}です。",
+    "가장 가까운 박물관은 {name}입니다. 현재 위치에서 약 {distance} 거리입니다.",
+  ],
+  "You are just outside the {radius} km radius of {name}, about {distance} away.": [
+    "Bạn đang ở gần rìa ngoài bán kính {radius} km của {name}, cách bảo tàng khoảng {distance}.",
+    "您在{name}的{radius}公里范围之外，距博物馆约{distance}。",
+    "{name}の半径{radius}キロ圏のすぐ外です。博物館まで約{distance}です。",
+    "{name}의 반경 {radius}킬로미터 바로 바깥입니다. 박물관까지 약 {distance} 거리입니다.",
   ],
   "No matching museums within {radius} km.": [
     "Không có bảo tàng nào trong kết quả nằm trong bán kính {radius} km.",

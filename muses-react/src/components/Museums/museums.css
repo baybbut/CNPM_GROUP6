@@ -197,6 +197,9 @@
   background: #fff;
   margin: 7px;
 }
+.nearest-museum .venue-pin {
+  background: #aa3230;
+}
 .gallery-pin {
   background: #596e52;
 }

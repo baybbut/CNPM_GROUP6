@@ -3,7 +3,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
-import { HCM_CENTER, hasCoordinates } from "./placeModel.mjs";
+import { HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
+import NearbyMuseumNotice from "./NearbyMuseumNotice";
 
 export default function PlacesMap({
   places,
@@ -16,6 +17,9 @@ export default function PlacesMap({
   route = null,
 }) {
   const { lang } = useLang();
+  const nearest = closestMuseumInRange(places, position, museumRadiusKm);
+  const nearestId = nearest?.inside ? nearest.place.id : null;
+  const centeredOnUser = useRef(false);
   const host = useRef(null),
     mapRef = useRef(null),
     routeRef = useRef(route),
@@ -54,6 +58,7 @@ export default function PlacesMap({
     return () => {
       clearTimeout(loadTimeout);
       resize.disconnect();
+      centeredOnUser.current = false;
       map.remove();
       mapRef.current = null;
     };
@@ -70,21 +75,26 @@ export default function PlacesMap({
     markers.current.clear();
     for (const place of places.filter(hasCoordinates)) {
       const center = [Number(place.latitude), Number(place.longitude)];
-      if (museumRadiusKm && place.kind === "museum") {
+      const isNearest = nearestId != null && place.id === nearestId;
+      if (museumRadiusKm && place.kind === "museum" && (!position || isNearest)) {
         L.circle(center, {
           radius: museumRadiusKm * 1000,
-          color: "#886b3e",
+          color: isNearest ? "#aa3230" : "#886b3e",
+          dashArray: isNearest ? "6 5" : undefined,
           weight: 1,
           fillOpacity: 0.05,
           interactive: false,
         }).addTo(layer);
       }
+      const pinTitle = isNearest ? `${place.name} · ${label(lang, "Nearest museum")}` : place.name;
       const marker = L.marker(
         center,
         {
-          title: place.name,
+          title: pinTitle,
+          alt: pinTitle,
+          zIndexOffset: isNearest ? 500 : 0,
           icon: L.divIcon({
-            className: "venue-marker",
+            className: isNearest ? "venue-marker nearest-museum" : "venue-marker",
             html: `<span class="venue-pin ${place.kind === "gallery" ? "gallery-pin" : ""}"></span>`,
             iconSize: [28, 36],
             iconAnchor: [14, 36],
@@ -92,7 +102,7 @@ export default function PlacesMap({
         },
       );
       const name = document.createElement("span");
-      name.textContent = place.name;
+      name.textContent = pinTitle;
       marker
         .bindTooltip(name, { direction: "top" })
         .on("click", () => onSelectRef.current?.(place.id))
@@ -100,7 +110,18 @@ export default function PlacesMap({
       markers.current.set(place.id, marker);
     }
     if (hasCoordinates(position)) {
-      L.circleMarker([position.latitude, position.longitude], {
+      const center = [position.latitude, position.longitude];
+      if (museumRadiusKm > 0) {
+        L.circle(center, {
+          radius: museumRadiusKm * 1000,
+          className: "visitor-radius",
+          color: "#286cda",
+          weight: 2,
+          fillOpacity: 0.08,
+          interactive: false,
+        }).addTo(layer);
+      }
+      L.circleMarker(center, {
         radius: 8,
         color: "#fff",
         weight: 3,
@@ -111,22 +132,29 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry, museumRadiusKm]);
+  }, [places, position, lang, retry, museumRadiusKm, nearestId]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     if (route?.points?.length) {
+      centeredOnUser.current = false;
       map.fitBounds(L.latLngBounds(route.points), {
         padding: [36, 36],
         animate: false,
       });
       return;
     }
-    if (hasCoordinates(position))
-      map.setView([position.latitude, position.longitude], 13, {
-        animate: false,
-      });
-    else {
+    if (hasCoordinates(position)) {
+      if (centeredOnUser.current) return;
+      const center = L.latLng(position.latitude, position.longitude);
+      if (museumRadiusKm > 0) {
+        map.fitBounds(center.toBounds(museumRadiusKm * 2000), { padding: [16, 16], animate: false });
+      } else {
+        map.setView(center, 13, { animate: false });
+      }
+      centeredOnUser.current = true;
+    } else {
+      centeredOnUser.current = false;
       const bounds = L.latLngBounds([]);
       for (const place of places.filter(hasCoordinates)) {
         const pin = L.latLng(Number(place.latitude), Number(place.longitude));
@@ -149,7 +177,7 @@ export default function PlacesMap({
       mapRef.current?.panTo(marker.getLatLng(), { animate: false });
       marker.openTooltip();
     }
-  }, [selectedId, places, retry, route]);
+  }, [selectedId, retry, route]);
   useEffect(() => {
     if (!route?.points?.length || !mapRef.current) return;
     const map = mapRef.current;
@@ -166,6 +194,9 @@ export default function PlacesMap({
       aria-label={title || label(lang, "Museum map")}
     >
       <div className="places-map-canvas" ref={host} />
+      {position && museumRadiusKm > 0 && (
+        <NearbyMuseumNotice nearest={nearest} lang={lang} radius={museumRadiusKm} />
+      )}
       {tileError && (
         <div className="map-tile-error" role="status">
           <span>

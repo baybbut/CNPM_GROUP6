@@ -4,6 +4,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   hasCoordinates,
+  closestMuseumInRange,
+  MUSEUM_RADIUS_KM,
   searchPlaces,
   connectCatalogue,
 } from "../src/components/Museums/placeModel.mjs";
@@ -70,4 +72,19 @@ test("reference museums are immediately usable, multilingual and route by addres
   );
   assert.ok(destination.includes("97A Phó Đức Chính"));
   assert.ok(!destination.includes("10.769"));
+});
+
+test("proximity distinguishes the nearest museum, its approach zone and out-of-range positions", () => {
+  const origin = { latitude: 0, longitude: 0 };
+  const at = (id, km, kind = "museum") => ({
+    id, kind, longitude: 0, latitude: km / 6371 * 180 / Math.PI,
+  });
+  const nearest = (places, position = origin) => closestMuseumInRange(places, position, MUSEUM_RADIUS_KM);
+  const places = [at("g", 0.1, "gallery"), at("b", 1.9), at("a", 1.3)];
+  assert.equal(nearest(places).place.id, "a");
+  assert.equal(nearest([at("m", 2)]).inside, true);
+  assert.equal(nearest([at("m", 2.1)]).inside, false);
+  assert.equal(nearest([at("m", 2.21)]), null);
+  assert.equal(nearest(places, null), null);
+  assert.equal(nearest([at("a", 0, "gallery")]), null);
 });

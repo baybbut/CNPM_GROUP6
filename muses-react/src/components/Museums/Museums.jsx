@@ -5,7 +5,6 @@ import { label } from "../../i18n/catalog.mjs";
 import { catalog } from "../../api/catalog.mjs";
 import { ArtworkImage } from "../explore/Artworks";
 import PlacesMap from "./PlacesMap";
-import NearbyMuseumNotice from "./NearbyMuseumNotice";
 import {
   LocationControls,
   useMuseumLocation,
@@ -190,9 +189,6 @@ function DiscoverMuseums() {
         </label>
         <LocationControls />
       </div>
-      {position && (
-        <NearbyMuseumNotice key={`${lang}:${position.latitude}:${position.longitude}`} places={places} lang={lang} />
-      )}
       <div className="discovery-summary" aria-live="polite">
         <span>
           {places.length} {t("places")}
@@ -299,7 +295,7 @@ function DiscoverMuseums() {
           <PlacesMap
             places={places}
             museumRadiusKm={MUSEUM_RADIUS_KM}
-            position={directions.state?.origin || position}
+            position={position}
             route={directions.state?.route}
             selectedId={selectedId}
             onSelect={selectPlace}

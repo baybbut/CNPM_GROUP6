@@ -1,26 +1,39 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { label } from "../../i18n/catalog.mjs";
 import { chooseVoice, speechLocale } from "../Narration/speechLanguage.mjs";
-import { MUSEUM_RADIUS_KM } from "./placeModel.mjs";
 
-export default function NearbyMuseumNotice({ places, lang }) {
-  const announced = useRef(new Set());
+export default function NearbyMuseumNotice({ nearest, lang, radius }) {
   const active = useRef(null);
+  const lastAnnouncement = useRef(null);
   const speech = window.speechSynthesis;
   const canSpeak = Boolean(speech && window.SpeechSynthesisUtterance);
-  const nearby = places.filter((place) =>
-    place.kind === "museum" && Number.isFinite(place.distance) && place.distance <= MUSEUM_RADIUS_KM
-  );
-
-  function message(place) {
-    return label(lang, "{name} is within {radius} km of you.")
-      .replace("{radius}", MUSEUM_RADIUS_KM)
-      .replace("{name}", () => place.name);
+  let message = label(lang, "No matching museums within {radius} km.").replace("{radius}", radius);
+  if (nearest) {
+    const meters = nearest.distance < 1;
+    const distance = new Intl.NumberFormat(lang, {
+      style: "unit",
+      unit: meters ? "meter" : "kilometer",
+      unitDisplay: "long",
+      maximumFractionDigits: meters ? 0 : 2,
+    }).format(meters ? nearest.distance * 1000 : nearest.distance);
+    message = label(lang, nearest.inside
+      ? "{name} is the nearest museum, about {distance} away."
+      : "You are just outside the {radius} km radius of {name}, about {distance} away.")
+      .replace("{radius}", radius)
+      .replace("{distance}", distance)
+      .replace("{name}", () => nearest.place.names?.[lang] || nearest.place.name);
   }
-
-  function speak(items) {
-    if (!canSpeak || !items.length) return;
-    const utterance = new SpeechSynthesisUtterance(items.map(message).join(" "));
+  const key = nearest ? JSON.stringify([nearest.place.id, nearest.inside, lang]) : null;
+  const stop = useCallback(() => {
+    if (active.current) {
+      active.current = null;
+      speech.cancel();
+    }
+  }, [speech]);
+  const speak = useCallback(() => {
+    if (!canSpeak) return;
+    stop();
+    const utterance = new SpeechSynthesisUtterance(message);
     utterance.lang = speechLocale(lang);
     const voice = chooseVoice(speech.getVoices(), lang);
     if (voice) utterance.voice = voice;
@@ -29,33 +42,28 @@ export default function NearbyMuseumNotice({ places, lang }) {
       if (active.current === utterance) active.current = null;
     };
     speech.speak(utterance);
-  }
+  }, [canSpeak, speech, stop, message, lang]);
 
   useEffect(() => {
-    // Delay until mount completes so a StrictMode effect replay cannot swallow the alert.
+    if (lastAnnouncement.current === key) return;
+    stop();
+    if (!key) {
+      lastAnnouncement.current = null;
+      return;
+    }
     const timer = setTimeout(() => {
-      const fresh = nearby.filter((place) => !announced.current.has(place.id));
-      fresh.forEach((place) => announced.current.add(place.id));
-      speak(fresh);
+      lastAnnouncement.current = key;
+      speak();
     }, 0);
     return () => clearTimeout(timer);
-  }, [places, lang]);
-
-  useEffect(() => () => {
-    if (active.current) speech?.cancel();
-  }, [speech]);
+  }, [key, speak, stop]);
+  useEffect(() => stop, [stop]);
 
   return (
     <div className="nearby-museums">
-      <div role="status">
-        {nearby.length ? nearby.map((place) => <p key={place.id}>{message(place)}</p>) :
-          <p>{label(lang, "No matching museums within {radius} km.").replace("{radius}", MUSEUM_RADIUS_KM)}</p>}
-      </div>
-      {canSpeak && nearby.length > 0 && (
-        <button type="button" onClick={() => {
-          if (active.current) speech.cancel();
-          speak(nearby);
-        }}>{label(lang, "Read nearby museum alerts")}</button>
+      <p role="status">{message}</p>
+      {nearest && canSpeak && (
+        <button type="button" onClick={speak}>{label(lang, "Read nearby museum alerts")}</button>
       )}
     </div>
   );

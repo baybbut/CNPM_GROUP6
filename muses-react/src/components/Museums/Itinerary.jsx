@@ -8,7 +8,7 @@ import {
 import { label } from "../../i18n/catalog.mjs";
 import { catalog } from "../../api/catalog.mjs";
 import references from "../../data/hcmPlaces.json";
-import { connectCatalogue } from "./placeModel.mjs";
+import { connectCatalogue, MUSEUM_RADIUS_KM } from "./placeModel.mjs";
 import {
   museumGuides,
   moveStop,
@@ -51,9 +51,10 @@ export default function Itinerary() {
       })),
     [museums, lang],
   );
-  const stops = ids
-    .map((id) => places.find((p) => p.id === id))
-    .filter(Boolean);
+  const stops = useMemo(
+    () => ids.map((id) => places.find((p) => p.id === id)).filter(Boolean),
+    [ids, places],
+  );
   const place = places.find((p) => p.id === selected) || places[0];
   const guide = museumGuides[place.id];
   useEffect(() => {
@@ -235,6 +236,7 @@ export default function Itinerary() {
           <section className="museum-map">
             <PlacesMap
               places={stops}
+              museumRadiusKm={MUSEUM_RADIUS_KM}
               position={position}
               selectedId={selected}
               route={directions.state?.route}

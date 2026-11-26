@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { hasCoordinates } from "../components/Museums/placeModel.mjs";
 import { useLang } from "./LangContext";
 import { label } from "../i18n/catalog.mjs";
@@ -14,6 +15,29 @@ export function MuseumLocationProvider({ children }) {
     },
     [],
   );
+  const { pathname } = useLocation();
+  const tracking = Boolean(position) && /^\/museums(?:\/itinerary)?\/?$/.test(pathname);
+  useEffect(() => {
+    if (!tracking || !navigator.geolocation?.watchPosition) return;
+    let live = true;
+    const watch = navigator.geolocation.watchPosition(({ coords }) => {
+      if (!live || !hasCoordinates(coords)) return;
+      setPosition((previous) => {
+        if (!previous || (previous.latitude === coords.latitude && previous.longitude === coords.longitude))
+          return previous;
+        return { latitude: coords.latitude, longitude: coords.longitude };
+      });
+      setError(null);
+    }, (error) => {
+      if (!live) return;
+      if (error.code === 1) setPosition(null);
+      setError("Location unavailable. You can still search by name.");
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+    return () => {
+      live = false;
+      navigator.geolocation.clearWatch(watch);
+    };
+  }, [tracking]);
   function reset() {
     generation.current++;
     setPosition(null);
