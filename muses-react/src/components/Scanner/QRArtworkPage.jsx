@@ -38,13 +38,20 @@ function QRAudioGuide({ id, language }) {
       {ready ? (
         <>
           <p>{t(guide.translationSource === "automatic" ? "Automatic translation" : "Audio guide")}</p>
-          {mediaUrl(guide.audioUrl) ? (
-            <>
-              <audio controls preload="none" src={mediaUrl(guide.audioUrl)} onPlay={() => trackAudio(language)} />
-              <p>{guide.description}</p>
-            </>
-          ) : (
-            <Narration text={guide.description} language={language} requestedLanguage={language} />
+          <Narration text={guide.description} language={language} requestedLanguage={language} />
+          {mediaUrl(guide.audioUrl) && (
+            <details>
+              <summary>{t("Recorded narration")}</summary>
+              <audio
+                controls
+                preload="none"
+                src={mediaUrl(guide.audioUrl)}
+                onPlay={() => {
+                  window.dispatchEvent(new Event("muses-audio-play"));
+                  trackAudio(language);
+                }}
+              />
+            </details>
           )}
         </>
       ) : error || guide ? (

@@ -39,6 +39,7 @@ export default function Narration({
     transcript = useRef(null),
     highlighted = useRef(null);
   const available = matchingVoices(voices, lang);
+  const automaticVoice = chooseVoice(voices, lang);
   const busy = status === "playing" || status === "paused";
   function stop() {
     run.current++;
@@ -108,7 +109,7 @@ export default function Narration({
     synth.cancel();
     synth.resume();
     document
-      .querySelectorAll(".artwork-detail-page audio, .pg-modal audio")
+      .querySelectorAll(".artwork-detail-page audio, .pg-modal audio, .scan-page audio")
       .forEach((audio) => audio.pause());
     setError("");
     setWord(null);
@@ -250,7 +251,7 @@ export default function Narration({
                       uiLanguage,
                       "Automatic voice",
                       "Tự chọn giọng phù hợp",
-                    )}
+                    )}{automaticVoice?.name && ` · ${automaticVoice.name}`}
                   </option>
                   {available.map((v) => (
                     <option value={v.voiceURI} key={v.voiceURI}>

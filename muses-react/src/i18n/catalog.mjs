@@ -750,6 +750,7 @@ const messages = {
   Stop: ["Dừng", "停止", "停止", "중지"],
   Speed: ["Tốc độ", "速度", "速度", "속도"],
   Voice: ["Giọng đọc", "语音", "音声", "음성"],
+  "Recorded narration": ["Bản thu thuyết minh", "讲解录音", "収録音声", "녹음된 해설"],
   "Automatic voice": [
     "Tự chọn giọng",
     "自动选择语音",
