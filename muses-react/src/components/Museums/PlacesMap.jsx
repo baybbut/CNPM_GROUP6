@@ -16,6 +16,9 @@ export default function PlacesMap({
   museumRadiusKm = 0,
   focus = "results",
   route = null,
+  numberStops = false,
+  activeLeg = -1,
+  onLegSelect,
 }) {
   const { lang } = useLang();
   const nearest = closestMuseumInRange(places, position, museumRadiusKm);
@@ -27,10 +30,12 @@ export default function PlacesMap({
     mapRef = useRef(null),
     routeRef = useRef(route),
     markers = useRef(new Map()),
-    onSelectRef = useRef(onSelect);
+    onSelectRef = useRef(onSelect),
+    onLegSelectRef = useRef(onLegSelect);
   const [tileError, setTileError] = useState(false),
     [retry, setRetry] = useState(0);
   onSelectRef.current = onSelect;
+  onLegSelectRef.current = onLegSelect;
   routeRef.current = route;
   useEffect(() => {
     const map = L.map(host.current, { scrollWheelZoom: false }).setView(
@@ -77,7 +82,8 @@ export default function PlacesMap({
     if (!map) return;
     const layer = L.layerGroup().addTo(map);
     markers.current.clear();
-    for (const place of places.filter(hasCoordinates)) {
+    for (const [index, place] of places.entries()) {
+      if (!hasCoordinates(place)) continue;
       const center = [Number(place.latitude), Number(place.longitude)];
       const isNearest = nearestId != null && place.id === nearestId;
       if (museumRadiusKm && place.kind === "museum" && (!position || isNearest)) {
@@ -90,7 +96,8 @@ export default function PlacesMap({
           interactive: false,
         }).addTo(layer);
       }
-      const pinTitle = isNearest ? `${place.name} · ${label(lang, "Nearest museum")}` : place.name;
+      const pinName = isNearest ? `${place.name} · ${label(lang, "Nearest museum")}` : place.name;
+      const pinTitle = numberStops ? `${index + 1}. ${pinName}` : pinName;
       const marker = L.marker(
         center,
         {
@@ -99,9 +106,9 @@ export default function PlacesMap({
           zIndexOffset: isNearest ? 500 : 0,
           icon: L.divIcon({
             className: isNearest ? "venue-marker nearest-museum" : "venue-marker",
-            html: `<span class="venue-pin ${place.kind === "gallery" ? "gallery-pin" : ""}"></span>`,
+            html: numberStops ? `<span class="itinerary-pin">${index + 1}</span>` : `<span class="venue-pin ${place.kind === "gallery" ? "gallery-pin" : ""}"></span>`,
             iconSize: [28, 36],
-            iconAnchor: [14, 36],
+            iconAnchor: numberStops ? [14, 14] : [14, 36],
           }),
         },
       );
@@ -136,7 +143,7 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm]);
+  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm, numberStops]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -181,6 +188,8 @@ export default function PlacesMap({
   useEffect(() => {
     if (!route?.points?.length || !mapRef.current) return;
     const map = mapRef.current;
+    map.fitBounds(route.bounds, { padding: [36, 36], maxZoom: 16, animate: false });
+    if (route.legs) return;
     const layer = L.layerGroup().addTo(map);
     L.polyline(route.points, { color: "#203677", weight: 8, interactive: false }).addTo(layer);
     L.polyline(route.points, { color: "#4878ff", weight: 5, interactive: false })
@@ -190,9 +199,24 @@ export default function PlacesMap({
         className: "venue-route-label",
       })
       .addTo(layer);
-    map.fitBounds(route.bounds, { padding: [36, 36], maxZoom: 16, animate: false });
     return () => map.removeLayer(layer);
   }, [route, lang, retry]);
+  useEffect(() => {
+    if (!route?.legs || !mapRef.current) return;
+    const map = mapRef.current;
+    const layer = L.layerGroup().addTo(map);
+    route.legs.forEach((leg, index) => {
+      const active = index === activeLeg;
+      L.polyline(leg.points, {
+        color: active ? "#203677" : "#4878ff",
+        weight: active ? 8 : 5,
+        className: "itinerary-leg",
+      }).bindTooltip(routeSummary(leg, lang), { sticky: true })
+        .on("click", () => onLegSelectRef.current?.(index))
+        .addTo(layer);
+    });
+    return () => map.removeLayer(layer);
+  }, [route, activeLeg, lang, retry]);
   return (
     <section
       className="places-map-panel"

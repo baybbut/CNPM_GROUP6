@@ -130,7 +130,6 @@
   box-shadow: inset 3px 0 #7b6238;
 }
 .itinerary-number,
-.itinerary-sequence span,
 .guide-diagram button span {
   display: inline-grid;
   place-items: center;
@@ -169,24 +168,6 @@
 .itinerary-total {
   padding: 18px 0 0;
   border-top: 1px solid #bdb08c;
-}
-.itinerary-sequence {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.itinerary-sequence button {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  text-align: left;
-  padding: 12px;
-  background: #e7dfc4;
-  border-radius: 8px;
-  line-height: 1.5;
-}
-.itinerary-sequence button[aria-pressed="true"] {
-  outline: 2px solid #7b6238;
 }
 .museum-guide {
   margin-top: 35px;
@@ -311,4 +292,21 @@
 }
 .guide-floorplan .place-actions button[aria-pressed="true"] {
   outline: 2px solid #7b6238;
+}
+
+.itinerary-pin {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 1px 5px #0006;
+  background: #74572d;
+  color: white;
+  font: bold 14px/1 sans-serif;
+}
+.nearest-museum .itinerary-pin {
+  background: #aa3230;
 }

@@ -86,7 +86,7 @@ export function MuseumLocationProvider({ children }) {
   );
 }
 export const useMuseumLocation = () => useContext(LocationContext);
-export function LocationControls() {
+export function LocationControls({ hint = "Use my location to enable directions on the map." }) {
   const { lang } = useLang(),
     t = (key) => label(lang, key);
   const { position, gpsBusy, gpsError, locate, reset } = useMuseumLocation();
@@ -100,7 +100,7 @@ export function LocationControls() {
           {t("Reset to Ho Chi Minh City")}
         </button>
       ) : (
-        <p>{t("Use my location to enable directions on the map.")}</p>
+        <p>{t(hint)}</p>
       )}
       {gpsError && <p role="status">{t(gpsError)}</p>}
     </div>

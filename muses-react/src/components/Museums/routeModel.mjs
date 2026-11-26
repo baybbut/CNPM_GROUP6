@@ -1,17 +1,24 @@
 import { hasCoordinates } from "./placeModel.mjs";
 
 export function routeUrl(origin, destination) {
-  if (!hasCoordinates(origin) || !hasCoordinates(destination))
+  return roadRouteUrl([origin, destination], false);
+}
+
+export function roadRouteUrl(waypoints, steps = true) {
+  if (waypoints.length < 2 || !waypoints.every(hasCoordinates))
     throw Error("INVALID_COORDINATES");
   const pair = (p) => `${Number(p.longitude)},${Number(p.latitude)}`;
-  return `https://router.project-osrm.org/route/v1/driving/${pair(origin)};${pair(destination)}?overview=full&geometries=geojson&steps=false`;
+  return `https://router.project-osrm.org/route/v1/driving/${waypoints.map(pair).join(";")}?overview=full&geometries=geojson&steps=${steps}`;
 }
 
 export function readRoute(data) {
   const route = data?.routes?.[0];
-  const coordinates = route?.geometry?.coordinates;
+  if (data?.code !== "Ok") throw Error("NO_ROUTE");
+  return roadGeometry(route, route?.geometry?.coordinates);
+}
+
+function roadGeometry(route, coordinates) {
   if (
-    data?.code !== "Ok" ||
     !Array.isArray(coordinates) ||
     coordinates.length < 2 ||
     !Number.isFinite(route.distance) ||
@@ -31,6 +38,23 @@ export function readRoute(data) {
     distance: route.distance,
     duration: route.duration,
   };
+}
+
+export async function fetchRoadRoute(url, signal) {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw Error("ROUTE");
+  return response.json();
+}
+
+export function readItineraryRoute(data, waypointCount) {
+  const route = readRoute(data);
+  const legs = data.routes[0].legs;
+  if (!Array.isArray(legs) || legs.length !== waypointCount - 1) throw Error("NO_ROUTE");
+  const segments = legs.map(({ distance, duration, steps }) => {
+    const coordinates = steps.flatMap(step => step.geometry.coordinates);
+    return roadGeometry({ distance, duration }, coordinates);
+  });
+  return { ...route, legs: segments, bounds: route.points };
 }
 
 export function routeSummary({ distance, duration }, lang) {

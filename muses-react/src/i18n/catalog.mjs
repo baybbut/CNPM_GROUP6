@@ -313,6 +313,10 @@ const messages = {
       "経路を取得できません。位置情報を許可するか、Google マップで出発地を選んでください。",
       "경로를 찾을 수 없습니다. 위치를 허용하거나 Google 지도에서 출발지를 선택하세요.",
     ],
+  "Use your location to start the itinerary from where you are.": ["Dùng vị trí của bạn để bắt đầu hành trình từ nơi bạn đang đứng.", "使用当前位置作为行程起点。", "現在地から旅程を開始できます。", "현재 위치에서 여정을 시작할 수 있습니다."],
+  "Finding itinerary route…": ["Đang tìm đường qua các điểm dừng…", "正在规划各站之间的路线…", "各立ち寄り先を結ぶ経路を検索中…", "방문지를 잇는 경로를 찾는 중…"],
+  "Unable to load the itinerary route.": ["Chưa tải được đường đi giữa các điểm dừng.", "无法加载行程路线。", "旅程の経路を取得できませんでした。", "방문 경로를 불러올 수 없습니다."],
+  "Add another museum or use your location to draw a route.": ["Chọn thêm một bảo tàng hoặc dùng vị trí của bạn để vẽ tuyến.", "请再选一家博物馆或使用您的位置来规划路线。", "経路を表示するには別の博物館を追加するか、現在地を使用してください。", "경로를 표시하려면 박물관을 더 선택하거나 현재 위치를 사용하세요."],
   "Driving route": ["Lộ trình ô tô", "驾车路线", "車の経路", "자동차 경로"],
   "Navigate in Google Maps": [
     "Dẫn đường bằng Google Maps",

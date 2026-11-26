@@ -3,7 +3,7 @@ import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
 import { directionsUrl } from "../../api/catalog.mjs";
 import { hasCoordinates } from "./placeModel.mjs";
-import { routeUrl, readRoute, routeSummary } from "./routeModel.mjs";
+import { routeUrl, readRoute, fetchRoadRoute, routeSummary } from "./routeModel.mjs";
 
 export function useDirections(position) {
   const [request, setRequest] = useState(null);
@@ -24,9 +24,7 @@ export function useDirections(position) {
     let active = true;
     async function load() {
       try {
-        const response = await fetch(routeUrl(origin, place), { signal: controller.signal });
-        if (!response.ok) throw Error("ROUTE");
-        const route = readRoute(await response.json());
+        const route = readRoute(await fetchRoadRoute(routeUrl(origin, place), controller.signal));
         route.bounds = [[origin.latitude, origin.longitude], ...route.points, [place.latitude, place.longitude]];
         if (active) setResult({ request, place, route });
       } catch {
@@ -82,12 +80,12 @@ export default function Directions({ state, onClose, onRetry }) {
       </div>
       <div role="status">
         {state.loading && (
-          <p>{t("Finding a driving route from your location…")}</p>
+          <p>{t(state.origin ? "Finding itinerary route…" : "Finding a driving route from your location…")}</p>
         )}
         {state.error && (
           <p>
             {t(
-              "Unable to find a route. Allow location access or choose your starting point in Google Maps.",
+              state.origin ? "Unable to load the itinerary route." : "Unable to find a route. Allow location access or choose your starting point in Google Maps.",
             )}
           </p>
         )}
@@ -104,7 +102,7 @@ export default function Directions({ state, onClose, onRetry }) {
       <div className="place-actions">
         {state.error && <button onClick={onRetry}>{t("Try again")}</button>}
         <a
-          href={directionsUrl(state.place)}
+          href={directionsUrl(state.place, state.origin)}
           target="_blank"
           rel="noopener noreferrer"
         >

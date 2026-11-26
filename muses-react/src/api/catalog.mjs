@@ -20,7 +20,7 @@ export function distanceKm(a, b) {
     Math.cos(r(a.latitude)) * Math.cos(r(b.latitude)) * Math.sin(dlng / 2) ** 2;
   return 6371 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(Math.max(0, 1 - x)));
 }
-export function directionsUrl(museum) {
+export function directionsUrl(museum, origin) {
   const q = new URLSearchParams({
     api: "1",
     destination:
@@ -32,5 +32,6 @@ export function directionsUrl(museum) {
         ? `${museum.name}, ${museum.address}`
         : `${Number(museum.latitude)},${Number(museum.longitude)}`,
   });
+  if (origin) q.set("origin", `${origin.latitude},${origin.longitude}`);
   return `https://www.google.com/maps/dir/?${q}`;
 }

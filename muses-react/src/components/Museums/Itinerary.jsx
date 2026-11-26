@@ -16,17 +16,57 @@ import {
   visitTimeline,
   clockLabel,
 } from "./itineraryModel.mjs";
+import { fetchRoadRoute, readItineraryRoute, roadRouteUrl, routeSummary } from "./routeModel.mjs";
 import MuseumFloorPlans from "./MuseumFloorPlans";
 import PlacesMap from "./PlacesMap";
-import Directions, { useDirections } from "./Directions";
+import Directions from "./Directions";
 import "./museums.css";
 import "./itinerary.css";
+
+function useItineraryRoute(stops, position) {
+  // Ignore small GPS fluctuations when calculating the driving route.
+  const waypoints = position ? [{
+    latitude: Number(position.latitude.toFixed(4)),
+    longitude: Number(position.longitude.toFixed(4)),
+  }, ...stops] : stops;
+  const count = waypoints.length;
+  const url = count >= 2 ? roadRouteUrl(waypoints) : null;
+  const [result, setResult] = useState(null);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!url) return;
+    const controller = new AbortController();
+    let active = true;
+    let timeout;
+    const timer = setTimeout(async () => {
+      timeout = setTimeout(() => controller.abort(), 15000);
+      try {
+        const data = await fetchRoadRoute(url, controller.signal);
+        const route = readItineraryRoute(data, count);
+        if (active) setResult({ url, attempt, route });
+      } catch {
+        if (active) setResult({ url, attempt, error: true });
+      } finally {
+        clearTimeout(timeout);
+      }
+    }, 250);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [url, count, attempt]);
+  const state = result?.url === url && result.attempt === attempt ? result : null;
+  return { route: state?.route, loading: Boolean(url && !state), error: state?.error,
+    retry: () => setAttempt(n => n + 1) };
+}
 
 export default function Itinerary() {
   const { lang } = useLang(),
     t = (key) => label(lang, key);
   const { position } = useMuseumLocation();
-  const directions = useDirections(position);
+  const [showLegDirections, setShowLegDirections] = useState(false);
   const [ids, setIds] = useState(references.map((p) => p.id));
   const [durations, setDurations] = useState({});
   const [start, setStart] = useState("09:00");
@@ -55,6 +95,10 @@ export default function Itinerary() {
     () => ids.map((id) => places.find((p) => p.id === id)).filter(Boolean),
     [ids, places],
   );
+  const journey = useItineraryRoute(stops, position);
+  const selectedIndex = stops.findIndex(p => p.id === selected);
+  const legIndex = selectedIndex >= 0 && position ? selectedIndex : selectedIndex - 1;
+  const selectedLeg = journey.route?.legs[legIndex];
   const place = places.find((p) => p.id === selected) || places[0];
   const guide = museumGuides[place.id];
   useEffect(() => {
@@ -69,18 +113,16 @@ export default function Itinerary() {
         });
     return () => c.abort();
   }, [place.museumId, lang, attempt]);
-  function choose(id) {
+  function choose(id, showDirections = false) {
     setSelected(id);
     setTopic(0);
-    const stop = stops.find((item) => item.id === id);
-    if (stop) directions.start(stop);
-    else directions.clear();
+    setShowLegDirections(showDirections);
   }
   function toggle(id) {
     setIds((old) =>
       old.includes(id) ? old.filter((v) => v !== id) : [...old, id],
     );
-    directions.clear();
+    setShowLegDirections(false);
   }
   const timeline = visitTimeline(ids, durations, start);
   return (
@@ -89,7 +131,7 @@ export default function Itinerary() {
       <p className="aw-eyebrow">MUSES · {t("Ho Chi Minh City")}</p>
       <h1>{t("Build a museum itinerary")}</h1>
       <p>{t("Choose museums, arrange your stops and plan your visit time.")}</p>
-      <LocationControls />
+      <LocationControls hint="Use your location to start the itinerary from where you are." />
       <div className="itinerary-layout">
         <section className="itinerary-editor" aria-label={t("Your itinerary")}>
           <h2>{t("Your itinerary")}</h2>
@@ -119,7 +161,7 @@ export default function Itinerary() {
               disabled={!position || stops.length < 2}
               onClick={() => {
                 setIds(nearestOrder(stops, position));
-                directions.clear();
+                setShowLegDirections(false);
               }}
             >
               {t("Nearest stop first")}
@@ -179,7 +221,7 @@ export default function Itinerary() {
                       aria-label={`${t("Move up")}: ${p.name}`}
                       onClick={() => {
                         setIds(moveStop(ids, p.id, -1));
-                        directions.clear();
+                        setShowLegDirections(false);
                       }}
                     >
                       ↑
@@ -189,14 +231,14 @@ export default function Itinerary() {
                       aria-label={`${t("Move down")}: ${p.name}`}
                       onClick={() => {
                         setIds(moveStop(ids, p.id, 1));
-                        directions.clear();
+                        setShowLegDirections(false);
                       }}
                     >
                       ↓
                     </button>
                     <button
-                      disabled={!position}
-                      onClick={() => choose(p.id)}
+                      disabled={i === 0 && !position}
+                      onClick={() => choose(p.id, true)}
                     >
                       {t("Directions")}
                     </button>
@@ -213,22 +255,18 @@ export default function Itinerary() {
           )}
         </section>
         <div className="itinerary-preview">
-          <section
-            className="itinerary-overview"
-            aria-label={t("Visit sequence")}
-          >
-            <h2>{t("Visit sequence")}</h2>
-            <div className="itinerary-sequence">
-              {stops.map((p, i) => (
-                <button
-                  key={p.id}
-                  aria-pressed={selected === p.id}
-                  onClick={() => choose(p.id)}
-                >
-                  <span>{i + 1}</span>
-                  {p.name}
-                </button>
-              ))}
+          <section className="itinerary-overview" aria-label={t("Driving route")}>
+            <h2>{t("Driving route")}</h2>
+            <div role="status">
+              {journey.loading && t("Finding itinerary route…")}
+              {journey.error && <>{t("Unable to load the itinerary route.")} <button className="v-link" onClick={journey.retry}>{t("Try again")}</button></>}
+              {!stops.length && t("Select at least one museum.")}
+              {stops.length === 1 && !position && t("Add another museum or use your location to draw a route.")}
+              {journey.route && <strong>{routeSummary(journey.route, lang)}</strong>}
+              {selectedLeg && <p>
+                {stops[selectedIndex - 1]?.name || t("Your location")} → {place.name}
+                {" · "}{routeSummary(selectedLeg, lang)}
+              </p>}
             </div>
           </section>
           <section className="museum-map">
@@ -237,13 +275,19 @@ export default function Itinerary() {
               museumRadiusKm={MUSEUM_RADIUS_KM}
               position={position}
               selectedId={selected}
-              route={directions.state?.route}
+              numberStops
+              route={journey.route}
+              activeLeg={legIndex}
+              onLegSelect={index => choose(stops[index + (position ? 0 : 1)].id)}
               onSelect={choose}
             />
             <Directions
-              state={directions.state}
-              onClose={directions.clear}
-              onRetry={() => directions.start(directions.state.place)}
+              state={showLegDirections && legIndex >= 0 ? {
+                place, origin: stops[selectedIndex - 1] || position,
+                loading: journey.loading, error: journey.error, route: selectedLeg,
+              } : null}
+              onClose={() => setShowLegDirections(false)}
+              onRetry={journey.retry}
             />
           </section>
         </div>
