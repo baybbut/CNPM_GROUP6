@@ -1,5 +1,4 @@
 import { catalog } from "../../api/catalog.mjs";
-import { label } from "../../i18n/catalog.mjs";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
@@ -7,6 +6,7 @@ import { fetchArtworks, mediaUrl } from "../../api/artworks";
 import "./artworks.css";
 import { SvgIcon } from "../Icons";
 import ArtworkQR from "../Scanner/ArtworkQR";
+import { label, artworkTerm } from "../../i18n/catalog.mjs";
 
 export function useArtworks(id) {
   const { lang } = useLang();
@@ -188,7 +188,15 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
           </label>
           {[
             [t("Artist"), artist, setArtist, filters.artists],
-            [t("Material"), material, setMaterial, filters.materials],
+            [
+              t("Material"),
+              material,
+              setMaterial,
+              filters.materials.map((item) => ({
+                ...item,
+                name: artworkTerm(lang, item.name),
+              })),
+            ],
             [t("Current museum"), museum, setMuseum, filters.museums],
           ].map(([name, value, setter, options]) => (
             <label key={name}>
@@ -250,7 +258,7 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
                       )}
                     </div>
                     <div className="aw-card-info">
-                      <p>{a.category}</p>
+                      <p>{artworkTerm(lang, a.category)}</p>
                       <h3>{a.title}</h3>
                       <span>{a.artist}</span>
                       {a.creationPeriod && <small>{a.creationPeriod}</small>}

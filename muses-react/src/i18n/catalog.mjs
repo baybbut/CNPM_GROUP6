@@ -1,5 +1,19 @@
 // English is the stable message key; all PRD languages have reviewed UI strings.
 const messages = {
+    "Lacquer painting": [
+    "Tranh sơn mài",
+    "漆画",
+    "漆絵",
+    "옻칠화",
+  ],
+
+  "Lacquer": [
+    "Sơn mài",
+    "漆",
+    "漆",
+    "옻칠",
+  ],
+
   "Share the experience": [
     "Chia sẻ trải nghiệm",
     "分享体验",
@@ -753,3 +767,79 @@ export function label(lang, key, vi) {
   return messages[key]?.[index] || (lang === "vi" ? vi : null) || key;
 }
 export const catalogMessages = messages;
+
+export function artworkTerm(lang, value) {
+  if (typeof value !== "string" || !value.trim()) return value ?? "";
+  if (lang === "vi") return value;
+
+  // Thứ tự bản dịch: English, 中文, 日本語, 한국어.
+  const terms = {
+    "tranh sơn mài": [
+      "Lacquer painting", "漆画", "漆絵", "옻칠화",
+    ],
+    "tranh sơn dầu": [
+      "Oil painting", "油画", "油絵", "유화",
+    ],
+    "tác phẩm điêu khắc": [
+      "Sculpture", "雕塑", "彫刻", "조각",
+    ],
+    "điêu khắc": [
+      "Sculpture", "雕塑", "彫刻", "조각",
+    ],
+    "sơn mài": [
+      "Lacquer", "漆", "漆", "옻칠",
+    ],
+    "sơn mài trên gỗ": [
+      "Lacquer on wood", "木板漆画", "木板に漆", "목판에 옻칠",
+    ],
+    "sơn mài truyền thống": [
+      "Traditional lacquer", "传统漆艺", "伝統的な漆", "전통 옻칠",
+    ],
+    "sơn dầu": [
+      "Oil paint", "油彩", "油彩", "유채",
+    ],
+    "sơn dầu trên vải toan": [
+      "Oil on canvas", "布面油画", "キャンバスに油彩", "캔버스에 유채",
+    ],
+    "gỗ": [
+      "Wood", "木材", "木材", "목재",
+    ],
+    "gỗ mít": [
+      "Jackfruit wood", "菠萝蜜木", "パラミツ材", "잭프루트 목재",
+    ],
+    "gỗ liêm": [
+      "Liêm wood", "Liêm木材", "Liêm材", "Liêm 목재",
+    ],
+    "đồng": [
+      "Bronze", "青铜", "ブロンズ", "청동",
+    ],
+    "gốm": [
+      "Ceramic", "陶瓷", "陶磁器", "도자기",
+    ],
+    "không rõ": [
+      "Unknown", "不详", "不明", "미상",
+    ],
+    "chưa công bố": [
+      "Not published", "尚未公布", "未公表", "미공개",
+    ],
+    "đang cập nhật": [
+      "Being updated", "更新中", "更新中", "업데이트 중",
+    ],
+    "nghiên cứu màu minh họa": [
+      "Demo colour study", "演示色彩研究", "デモ用色彩研究", "시연용 색채 연구",
+    ],
+    "đồ họa vector minh họa": [
+      "Demo vector graphics", "演示矢量图形", "デモ用ベクター画像", "시연용 벡터 그래픽",
+    ],
+  };
+
+  const key = value
+    .normalize("NFC")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase("vi");
+
+  const index = { en: 0, zh: 1, ja: 2, ko: 3 }[lang];
+
+  return terms[key]?.[index] ?? value;
+}

@@ -1,44 +1,72 @@
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { SvgIcon } from "../Icons";
+import { EXPLORE_COPY } from "../../data/exploreData";
 
 export const Pic = ({ src, color, className = "" }) => (
   <div
     className={`xp-pic ${className}`}
-    style={src ? { backgroundImage: `url("${src}")` } : { background: color }}
+    style={
+      src
+        ? { backgroundImage: `url("${src}")` }
+        : { background: color }
+    }
   />
 );
 
 export function Hero({ img }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const copy = EXPLORE_COPY[lang] ?? EXPLORE_COPY.en;
+
   return (
     <section
-      className="xp-hero" data-scroll-intro
+      className="xp-hero"
+      data-scroll-intro
       style={
         img
           ? {
-              backgroundImage: `linear-gradient(rgba(90,70,50,.25),rgba(90,70,50,.25)), url("${img}")`,
+              backgroundImage: `
+                linear-gradient(
+                  180deg,
+                  rgba(21, 18, 13, 0.25),
+                  rgba(21, 18, 13, 0.78)
+                ),
+                url("${img}")
+              `,
             }
           : undefined
       }
     >
-      <h1>{t("EXPLORE")}</h1>
-      <p>{t("Collection")}</p>
+      <h1>{t("explore")}</h1>
+      <p>{copy.collectionTitle}</p>
     </section>
   );
 }
 
 export function Crumb() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const copy = EXPLORE_COPY[lang] ?? EXPLORE_COPY.en;
+
   return (
-    <nav className="xp-crumb" aria-label="breadcrumb">
-      <Link to="/" aria-label={t("Home")}>
+    <nav
+      className="xp-crumb"
+      aria-label={`${t("explore")} / ${copy.collectionTitle}`}
+    >
+      <Link to="/" aria-label={copy.home}>
         <SvgIcon kind="leaf" size={32} />
       </Link>
+
       <SvgIcon kind="chevronRight" size={16} />
-      <Link to="/explore">{t("EXPLORE")}</Link>
+
+      <Link to="/explore">
+        {t("explore")}
+      </Link>
+
       <SvgIcon kind="chevronRight" size={16} />
-      <Link to="/explore/collection">{t("COLLECTION")}</Link>
+
+      <Link to="/explore/collection">
+        {copy.collectionTitle}
+      </Link>
     </nav>
   );
 }

@@ -44,6 +44,20 @@
 .xp-map{position:relative;display:grid;place-items:center;aspect-ratio:773 / 246;background-size:cover;background-position:center}
 .xp-map::after{content:"";position:absolute;inset:0;background:rgba(63,54,38,.55)}
 .xp-map span{position:relative;z-index:1;color:#fff;font-size:clamp(16px,2.9vw,32px);letter-spacing:.06em;text-align:center;padding:0 12px}
+.xp-hero {
+  color: #fff;
+}
+
+img.xp-big-pic {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 6px;
+}
+
+.xp-text p + p {
+  margin-top: 24px;
+}
 
 @media (max-width:900px){
   .xp-big{width:88%;gap:4%;padding:14px}
@@ -53,3 +67,4 @@
   .xp-cols{grid-template-columns:1fr}
   .xp-themes{grid-template-columns:1fr 1fr}
 }
+

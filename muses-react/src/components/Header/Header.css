@@ -70,6 +70,7 @@
 .header.light {
   position: absolute;
   inset: 0 0 auto;
+  background: transparent;
   color: #fff;
 }
 .header.light .lang-toggle { border-color: currentColor; }
@@ -120,4 +121,86 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .header .nav-left a::after, .header .search-btn::after { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 8px;
+    row-gap: 12px;
+    padding: 12px 14px;
+  }
+
+  /* Hàng đầu: logo */
+  .header .logo {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    font-size: clamp(20px, 5.4vw, 27px);
+    gap: 6px;
+  }
+
+  .header .brand-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Hàng đầu: ngôn ngữ và giá vé */
+  .header .nav-right {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .header .nav-right > .search-btn {
+    display: none;
+  }
+
+  .header .nav-right .ticket-nav {
+    padding: 8px 10px;
+    gap: 5px;
+  }
+
+  .header .lang-toggle {
+    gap: 3px;
+    font-size: 11px;
+  }
+
+  /* Hàng dưới: menu sử dụng toàn bộ chiều ngang */
+  .header .nav-left {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 8px 14px;
+    overflow: visible;
+    white-space: normal;
+    font-size: 12px;
+  }
+
+  .header .nav-left > a {
+    flex-shrink: 1;
+    max-width: 100%;
+    min-height: 36px;
+    padding: 7px 0;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Hiện đầy đủ nhãn QR và bảo tàng */
+  .header .nav-left .scan-nav span,
+  .header .account-nav > span {
+    display: inline;
+  }
 }

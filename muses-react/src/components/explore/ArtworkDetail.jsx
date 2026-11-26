@@ -1,5 +1,5 @@
 import { CurrentExhibition } from "../Museums/Museums";
-import { label } from "../../i18n/catalog.mjs";
+import { label, artworkTerm } from "../../i18n/catalog.mjs";
 import { trackAudio } from "../../api/activity.mjs";
 import { useSearchParams } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
@@ -114,7 +114,7 @@ function ArtworkStudy({ artwork, lang, sculpture }) {
       </div>
       {sculpture && (
         <dl className="study-annotations">
-          {[[label(lang, "MATERIAL"), artwork.material], [label(lang, "DIMENSIONS"), artwork.dimensions]]
+          {[[label(lang, "MATERIAL"), artworkTerm(lang, artwork.material)], [label(lang, "DIMENSIONS"), artwork.dimensions]]
             .filter(([, value]) => value)
             .map(([term, value]) => (
               <div key={term}><dt>{term}</dt><dd>{value}</dd></div>
@@ -180,7 +180,7 @@ export default function ArtworkDetail() {
                 <SvgIcon kind="arrow" direction="left" size={17} />
                 {label(lang, "The collection", "Bộ sưu tập")}
               </Link>
-              <span>{artwork.category}</span>
+              <span>{artworkTerm(lang, artwork.category)}</span>
             </header>
             <div className="detail-intro">
               <div className="detail-summary">
@@ -191,7 +191,10 @@ export default function ArtworkDetail() {
                 <dl className="detail-facts">
                   {[
                     [label(lang, "ARTIST", "NGHỆ SĨ"), artwork.artist],
-                    [label(lang, "MATERIAL", "CHẤT LIỆU"), !sculpture && artwork.material],
+                    [
+                      label(lang, "MATERIAL", "CHẤT LIỆU"),
+                      !sculpture && artworkTerm(lang, artwork.material),
+                    ],
                     [label(lang, "YEAR", "NĂM"), artwork.creationPeriod],
                     [
                       label(lang, "DIMENSIONS", "KÍCH THƯỚC"),

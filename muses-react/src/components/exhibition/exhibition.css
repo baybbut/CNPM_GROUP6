@@ -9,13 +9,21 @@
 /* Exhibition banner */
 .ex-hero {
   height: clamp(320px, 60vw, 840px);
+
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+
   padding: 0 4.5% 8%;
+
   background:
-    linear-gradient(180deg, rgba(20, 18, 13, 0.08), rgba(20, 18, 13, 0.65)),
+    linear-gradient(
+      180deg,
+      rgba(21, 18, 13, 0.25),
+      rgba(21, 18, 13, 0.78)
+    ),
     var(--ex-hero-image) center / cover no-repeat;
+
   background-color: #7d705a;
 }
 .ex-hero h1 {

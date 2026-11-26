@@ -1,25 +1,45 @@
 import { Link } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { SvgIcon } from "../Icons";
-import { Hero, Crumb, Pic } from "./part";
-import { HERO_IMG, COLLECTIONS_CARD as C, INTRO } from "../../data/exploreData";
+import { Hero, Crumb } from "./part";
+
+import {
+  HERO_IMG,
+  COLLECTIONS_CARD,
+  EXPLORE_COPY,
+} from "../../data/exploreData";
+
 import "./explore.css";
 
 export default function Explore() {
-  const { t } = useLang();
+  const { lang } = useLang();
+  const copy = EXPLORE_COPY[lang] ?? EXPLORE_COPY.en;
+
   return (
     <div className="xp">
       <Hero img={HERO_IMG} />
       <Crumb />
 
       <Link to="/explore/collection" className="xp-big">
-        <Pic src={C.img} color={C.color} className="xp-big-pic" />
-        <span>{t(C.title)}</span>
-        <i><SvgIcon kind="arrow" size={30} /></i>
+        <img
+          src={COLLECTIONS_CARD.img}
+          alt=""
+          className="xp-big-pic"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <span>{copy.collectionTitle}</span>
+
+        <i>
+          <SvgIcon kind="arrow" size={30} />
+        </i>
       </Link>
 
       <div className="xp-text">
-        {INTRO.map((p, i) => <p key={i}>{t(p)}</p>)}
+        {copy.intro.map((paragraph, index) => (
+          <p key={`${lang}-${index}`}>{paragraph}</p>
+        ))}
       </div>
     </div>
   );

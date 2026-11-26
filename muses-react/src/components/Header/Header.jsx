@@ -11,8 +11,19 @@ export default function Header() {
   const { t, lang } = useLang();
   const { pathname } = useLocation();
 
-  const light = pathname === "/visit"; // trang Visit: chữ trắng
-  const sand = ["/exhibition", "/explore"].some((p) => pathname.startsWith(p)); // trang Exhibition: nền nâu xám
+const currentPath = pathname.replace(/\/+$/, "") || "/";
+
+const light = [
+  "/visit",
+  "/exhibition",
+  "/explore",
+].includes(currentPath);
+
+const sand =
+  !light &&
+  ["/exhibition", "/explore"].some((path) =>
+    currentPath.startsWith(path),
+  );
 
   return (
     <header className={`header ${light ? "light" : ""} ${sand ? "sand" : ""}`}>
