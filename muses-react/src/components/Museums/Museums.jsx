@@ -45,6 +45,7 @@ export function MuseumMap({ museum }) {
         places={places}
         route={directions.state?.route}
         position={position}
+        onSelect={() => directions.start(place)}
         title={`${t("Museum map")}: ${place.name}`}
       />
       <Directions
@@ -146,13 +147,11 @@ function DiscoverMuseums() {
   );
   const selected = places.find((p) => p.id === selectedId);
   const selectPlace = (id) => {
+    const place = places.find((item) => item.id === id);
+    if (!place) return;
     setSelectedId(id);
-    directions.clear();
-  };
-  function showDirections(place) {
-    setSelectedId(place.id);
     directions.start(place);
-  }
+  };
   useEffect(() => {
     if (selectedId && !places.some((p) => p.id === selectedId)) {
       setSelectedId(null);
@@ -261,7 +260,7 @@ function DiscoverMuseums() {
                 </button>
                 <button
                   disabled={!position}
-                  onClick={() => showDirections(place)}
+                  onClick={() => selectPlace(place.id)}
                 >
                   {t("Directions")}
                 </button>
@@ -311,7 +310,7 @@ function DiscoverMuseums() {
               <p>{selected.address}</p>
               <button
                 disabled={!position}
-                onClick={() => showDirections(selected)}
+                onClick={() => selectPlace(selected.id)}
               >
                 {t("Directions")}
               </button>

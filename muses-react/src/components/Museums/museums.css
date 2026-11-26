@@ -178,14 +178,18 @@
   background: transparent;
   border: 0;
 }
-.leaflet-tooltip.venue-distance-label {
-  max-width: min(210px, 48vw);
-  white-space: normal;
-  text-align: center;
-}
-.venue-distance {
-  display: block;
+.leaflet-tooltip.venue-route-label {
+  width: max-content;
+  white-space: nowrap;
+  padding: 5px 9px;
+  border: 1px solid #203677;
+  border-radius: 6px;
+  background: #203677;
+  color: white;
   font-weight: 600;
+}
+.leaflet-tooltip-top.venue-route-label::before {
+  border-top-color: #203677;
 }
 .venue-pin {
   display: block;

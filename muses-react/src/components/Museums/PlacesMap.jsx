@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useLang } from "../../context/LangContext";
-import { distanceKm } from "../../api/catalog.mjs";
+import { routeSummary } from "./routeModel.mjs";
 import { label } from "../../i18n/catalog.mjs";
 import { EXTENDED_MUSEUM_RADIUS_KM, HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
 import NearbyMuseumNotice from "./NearbyMuseumNotice";
@@ -52,8 +52,9 @@ export default function PlacesMap({
     const resize = new ResizeObserver(() => {
       map.invalidateSize();
       if (routeRef.current?.points?.length)
-        map.fitBounds(L.latLngBounds(routeRef.current.points), {
+        map.fitBounds(L.latLngBounds(routeRef.current.bounds), {
           padding: [36, 36],
+          maxZoom: 16,
           animate: false,
         });
     });
@@ -106,35 +107,8 @@ export default function PlacesMap({
       );
       const name = document.createElement("span");
       name.textContent = pinTitle;
-      const showDistance = place.id === selectedId && hasCoordinates(position);
-      if (showDistance) {
-        const origin = [position.latitude, position.longitude];
-        const km = distanceKm(position, place);
-        const distance = new Intl.NumberFormat(lang, {
-          style: "unit",
-          unit: km < 1 ? "meter" : "kilometer",
-          maximumFractionDigits: km < 1 ? 0 : 2,
-        }).format(km < 1 ? km * 1000 : km);
-        const detail = document.createElement("span");
-        detail.className = "venue-distance";
-        detail.textContent = `${label(lang, "Straight-line distance")} · ${distance}`;
-        name.append(detail);
-        if (!route) {
-          L.polyline([origin, center], {
-            color: "#395b76",
-            weight: 2,
-            dashArray: "5 6",
-            interactive: false,
-          }).addTo(layer);
-        }
-      }
       marker
-        .bindTooltip(name, {
-          direction: "top",
-          permanent: showDistance,
-          offset: showDistance ? [0, -28] : [0, 0],
-          className: showDistance ? "venue-distance-label" : "",
-        })
+        .bindTooltip(name, { direction: "top", offset: [0, -28] })
         .on("click", () => onSelectRef.current?.(place.id))
         .addTo(layer);
       markers.current.set(place.id, marker);
@@ -162,16 +136,12 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm, selectedId, route]);
+  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     if (route?.points?.length) {
       lastFittedRadius.current = null;
-      map.fitBounds(L.latLngBounds(route.points), {
-        padding: [36, 36],
-        animate: false,
-      });
       return;
     }
     if (hasCoordinates(position)) {
@@ -205,19 +175,24 @@ export default function PlacesMap({
     const marker = markers.current.get(selectedId);
     if (marker && !route) {
       mapRef.current?.panTo(marker.getLatLng(), { animate: false });
-      marker.openTooltip();
+      if (!hasCoordinates(position)) marker.openTooltip();
     }
   }, [selectedId, retry, route]);
   useEffect(() => {
     if (!route?.points?.length || !mapRef.current) return;
     const map = mapRef.current;
-    const line = L.polyline(route.points, {
-      color: "#2563eb",
-      weight: 6,
-      opacity: 0.9,
-    }).addTo(map);
-    return () => map.removeLayer(line);
-  }, [route, retry]);
+    const layer = L.layerGroup().addTo(map);
+    L.polyline(route.points, { color: "#203677", weight: 8, interactive: false }).addTo(layer);
+    L.polyline(route.points, { color: "#4878ff", weight: 5, interactive: false })
+      .bindTooltip(routeSummary(route, lang), {
+        permanent: true,
+        direction: "top",
+        className: "venue-route-label",
+      })
+      .addTo(layer);
+    map.fitBounds(route.bounds, { padding: [36, 36], maxZoom: 16, animate: false });
+    return () => map.removeLayer(layer);
+  }, [route, lang, retry]);
   return (
     <section
       className="places-map-panel"

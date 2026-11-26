@@ -72,7 +72,9 @@ export default function Itinerary() {
   function choose(id) {
     setSelected(id);
     setTopic(0);
-    directions.clear();
+    const stop = stops.find((item) => item.id === id);
+    if (stop) directions.start(stop);
+    else directions.clear();
   }
   function toggle(id) {
     setIds((old) =>
@@ -194,11 +196,7 @@ export default function Itinerary() {
                     </button>
                     <button
                       disabled={!position}
-                      onClick={() => {
-                        setSelected(p.id);
-                        setTopic(0);
-                        directions.start(p);
-                      }}
+                      onClick={() => choose(p.id)}
                     >
                       {t("Directions")}
                     </button>

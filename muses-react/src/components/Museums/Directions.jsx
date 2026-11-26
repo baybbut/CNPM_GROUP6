@@ -3,46 +3,54 @@ import { useLang } from "../../context/LangContext";
 import { label } from "../../i18n/catalog.mjs";
 import { directionsUrl } from "../../api/catalog.mjs";
 import { hasCoordinates } from "./placeModel.mjs";
-import { routeUrl, readRoute } from "./routeModel.mjs";
+import { routeUrl, readRoute, routeSummary } from "./routeModel.mjs";
 
 export function useDirections(position) {
-  const [state, setState] = useState(null);
-  const current = useRef(null);
+  const [request, setRequest] = useState(null);
+  const [result, setResult] = useState(null);
+  const latestPosition = useRef(position);
+  latestPosition.current = position;
   const located = hasCoordinates(position);
+
   useEffect(() => {
-    current.current?.abort();
-    setState(null);
-    return () => current.current?.abort();
-  }, [located]);
-  function clear() {
-    current.current?.abort();
-    setState(null);
-  }
-  async function start(place) {
-    if (!hasCoordinates(position)) return;
-    current.current?.abort();
-    const controller = new AbortController();
-    current.current = controller;
-    setState({ place, loading: true });
-    try {
-      const origin = position;
-      if (controller.signal.aborted) return;
-      const response = await fetch(routeUrl(origin, place), {
-        signal: AbortSignal.any([
-          controller.signal,
-          AbortSignal.timeout(15000),
-        ]),
-      });
-      if (!response.ok) throw Error("ROUTE");
-      const route = readRoute(await response.json());
-      if (!controller.signal.aborted)
-        setState({ place, origin, route, loading: false });
-    } catch {
-      if (!controller.signal.aborted)
-        setState({ place, loading: false, error: true });
+    if (!request || !located) {
+      setResult(null);
+      return;
     }
-  }
-  return { state: hasCoordinates(position) ? state : null, start, clear };
+    const origin = latestPosition.current;
+    const { place } = request;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    let active = true;
+    async function load() {
+      try {
+        const response = await fetch(routeUrl(origin, place), { signal: controller.signal });
+        if (!response.ok) throw Error("ROUTE");
+        const route = readRoute(await response.json());
+        route.bounds = [[origin.latitude, origin.longitude], ...route.points, [place.latitude, place.longitude]];
+        if (active) setResult({ request, place, route });
+      } catch {
+        if (active) setResult({ request, place, error: true });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    load();
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [request, located]);
+
+  const state = request && located
+    ? (result?.request === request ? result : { place: request.place, loading: true })
+    : null;
+  return {
+    state,
+    start: (place) => setRequest({ place }),
+    clear: () => setRequest(null),
+  };
 }
 
 export default function Directions({ state, onClose, onRetry }) {
@@ -66,7 +74,7 @@ export default function Directions({ state, onClose, onRetry }) {
     >
       <div className="map-directions-heading">
         <h3>
-          {t("Directions")} · {state.place.name}
+          {t("Directions")} · {state.place.names?.[lang] || state.place.name}
         </h3>
         <button onClick={onClose} aria-label={t("Close directions")}>
           ×
@@ -85,8 +93,7 @@ export default function Directions({ state, onClose, onRetry }) {
         )}
         {state.route && (
           <p>
-            {t("Driving route")} · {(state.route.distance / 1000).toFixed(1)} km
-            · {Math.max(1, Math.round(state.route.duration / 60))} {t("min")}
+            {t("Driving route")} · {routeSummary(state.route, lang)}
           </p>
         )}
       </div>

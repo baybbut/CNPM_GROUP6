@@ -32,3 +32,10 @@ export function readRoute(data) {
     duration: route.duration,
   };
 }
+
+export function routeSummary({ distance, duration }, lang) {
+  const format = (value, unit, digits = 0) =>
+    new Intl.NumberFormat(lang, { style: "unit", unit, maximumFractionDigits: digits }).format(value);
+  const length = distance < 1000 ? format(distance, "meter") : format(distance / 1000, "kilometer", 1);
+  return `${format(Math.max(1, Math.round(duration / 60)), "minute")} · ${length}`;
+}
