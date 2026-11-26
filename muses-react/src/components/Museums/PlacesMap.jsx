@@ -59,6 +59,11 @@ export default function PlacesMap({
     };
   }, [retry]);
   useEffect(() => {
+    const wheelZoom = mapRef.current?.scrollWheelZoom;
+    if (museumRadiusKm > 0) wheelZoom?.enable();
+    return () => wheelZoom?.disable();
+  }, [museumRadiusKm, retry]);
+  useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     const layer = L.layerGroup().addTo(map);
