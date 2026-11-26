@@ -262,6 +262,11 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
                       <h3>{a.title}</h3>
                       <span>{a.artist}</span>
                       {a.creationPeriod && <small>{a.creationPeriod}</small>}
+                      {a.currentExhibition && (
+                        <small>
+                          {t(a.currentExhibition.isDemo ? "Current museum (sample)" : "Current museum")} · {a.currentExhibition.name}
+                        </small>
+                      )}
                       {a.isDemo && (
                         <small>
                           {t("Demonstration data — not a real exhibition.")}

@@ -119,7 +119,7 @@ function attachCatalogRoutes(app, sql) {
           endDate: row.endDate,
           source: row.exhibitionSource,
           verifiedOn: row.verifiedOn,
-          isDemo: Boolean(row.isDemo || row.museumIsDemo),
+          isDemo: Boolean(row.isDemo || row.museumIsDemo || row.exhibitionSource === R.DEMO_LOCATION_SOURCE),
         }
       : null;
     return result;

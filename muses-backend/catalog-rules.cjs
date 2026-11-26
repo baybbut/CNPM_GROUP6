@@ -154,6 +154,7 @@ function translation(body) {
   };
 }
 module.exports = {
+  DEMO_LOCATION_SOURCE: "Muses · Phân bổ nơi trưng bày mẫu tại TP.HCM",
   LANGUAGES,
   CatalogError,
   fail,

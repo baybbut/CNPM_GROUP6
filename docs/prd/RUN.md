@@ -54,6 +54,15 @@ npm --prefix muses-backend run db:demo
 
 Lệnh cũng hỏi SQL quản trị và sao lưu trước khi ghi. Thêm 20 hiện vật giả lập riêng biệt, 3 bảo tàng minh họa, 5 hiện vật có nội dung đầy đủ 5 ngôn ngữ; có lịch hiện tại và ảnh SVG tự tạo. Không xóa hoặc sửa bản ghi thật. Mọi tác phẩm/bảo tàng đều có `IsDemo=1` và web gắn nhãn minh họa. Tọa độ chỉ phục vụ kiểm thử, không khẳng định địa điểm trưng bày thật. Nhóm cần duyệt ngôn ngữ và thay bằng dữ liệu có nguồn trước nghiệm thu thực tế.
 
+Để chia các tác phẩm hiện có cho bốn bảo tàng trên bản đồ TP.HCM, chạy từ thư mục gốc:
+
+```bash
+npm --prefix muses-backend run db:demo-locations
+```
+
+Lệnh dùng kết nối SQL trong `muses-backend/.env` và mô hình catalog hiện có. Các tác phẩm đã công bố được phân bổ trước để danh sách tra cứu cân đối, sau đó mới đến các tác phẩm còn lại. Mỗi lịch mẫu kết thúc khi lịch đã xác nhận tiếp theo bắt đầu. Có thể chạy lại khi thêm tác phẩm. Kết quả in số tác phẩm đã công bố và tổng số tại từng bảo tàng.
+
+
 ## Chạy ba terminal
 
 Từ thư mục gốc, mỗi lệnh ở một terminal:

@@ -551,6 +551,7 @@ const messages = {
   ],
   Artist: ["Tác giả", "艺术家", "作家", "작가"],
   Material: ["Chất liệu", "材质", "素材", "재료"],
+  "Current museum (sample)": ["Bảo tàng trưng bày (dữ liệu mẫu)", "当前展馆（示例）", "展示中の博物館（サンプル）", "현재 전시 박물관 (예시)"],
   "Current museum": [
     "Bảo tàng đang trưng bày",
     "当前展出博物馆",

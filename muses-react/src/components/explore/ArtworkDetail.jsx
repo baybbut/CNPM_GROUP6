@@ -197,6 +197,12 @@ export default function ArtworkDetail() {
                     ],
                     [label(lang, "YEAR", "NĂM"), artwork.creationPeriod],
                     [
+                      label(lang, artwork.currentExhibition?.isDemo ? "Current museum (sample)" : "Current museum"),
+                      artwork.currentExhibition && (
+                        <Link to={`/museums/${artwork.currentExhibition.museumId}`}>{artwork.currentExhibition.name}</Link>
+                      ),
+                    ],
+                    [
                       label(lang, "DIMENSIONS", "KÍCH THƯỚC"),
                       !sculpture && artwork.dimensions,
                     ],

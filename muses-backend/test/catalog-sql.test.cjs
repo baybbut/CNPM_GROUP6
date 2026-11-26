@@ -12,6 +12,7 @@ const express = require("express");
 const { attachActivityRoutes, hashPassword } = require("../activity.cjs");
 const { attachCatalogRoutes } = require("../catalog.cjs");
 const { todayVN } = require("../catalog-rules.cjs");
+const { seedArtworkLocations } = require("../scripts/seed-artwork-locations.cjs");
 const enabled = Boolean(
   process.env.TEST_SQL_USER && process.env.TEST_SQL_PASSWORD,
 );
@@ -319,6 +320,18 @@ test(
         undefined,
         409,
       );
+      const confirmed = (await api(`/api/artworks/${id}`)).currentExhibition;
+      for (let i = 0; i < 7; i++)
+        await add("artworks", { ...inlineBody, title: `Tác phẩm mẫu ${i}` });
+      const distribution = await seedArtworkLocations(pool);
+      assert.deepEqual(distribution.map(v => v.published), [2, 2, 2, 2]);
+      assert.deepEqual(await seedArtworkLocations(pool), distribution);
+      assert.deepEqual((await api(`/api/artworks/${id}`)).currentExhibition, confirmed);
+      const assigned = (await api(`/api/artworks/${inlineId}`)).currentExhibition;
+      assert.equal(assigned.isDemo, true);
+      const matches = await api(`/api/catalog/artworks?museum=${assigned.museumId}`);
+      assert.equal(matches.total, 2);
+      assert.deepEqual(matches.items.find(a => a.id === inlineId).currentExhibition, assigned);
       await api("/api/auth/logout", "POST", {});
       await api("/api/admin/catalog/artworks", "GET", undefined, 401);
     } finally {
