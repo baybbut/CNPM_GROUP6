@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useLang } from "../../context/LangContext";
+import { distanceKm } from "../../api/catalog.mjs";
 import { label } from "../../i18n/catalog.mjs";
 import { EXTENDED_MUSEUM_RADIUS_KM, HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
 import NearbyMuseumNotice from "./NearbyMuseumNotice";
@@ -105,8 +106,35 @@ export default function PlacesMap({
       );
       const name = document.createElement("span");
       name.textContent = pinTitle;
+      const showDistance = place.id === selectedId && hasCoordinates(position);
+      if (showDistance) {
+        const origin = [position.latitude, position.longitude];
+        const km = distanceKm(position, place);
+        const distance = new Intl.NumberFormat(lang, {
+          style: "unit",
+          unit: km < 1 ? "meter" : "kilometer",
+          maximumFractionDigits: km < 1 ? 0 : 2,
+        }).format(km < 1 ? km * 1000 : km);
+        const detail = document.createElement("span");
+        detail.className = "venue-distance";
+        detail.textContent = `${label(lang, "Straight-line distance")} · ${distance}`;
+        name.append(detail);
+        if (!route) {
+          L.polyline([origin, center], {
+            color: "#395b76",
+            weight: 2,
+            dashArray: "5 6",
+            interactive: false,
+          }).addTo(layer);
+        }
+      }
       marker
-        .bindTooltip(name, { direction: "top" })
+        .bindTooltip(name, {
+          direction: "top",
+          permanent: showDistance,
+          offset: showDistance ? [0, -28] : [0, 0],
+          className: showDistance ? "venue-distance-label" : "",
+        })
         .on("click", () => onSelectRef.current?.(place.id))
         .addTo(layer);
       markers.current.set(place.id, marker);
@@ -134,7 +162,7 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm]);
+  }, [places, position, lang, retry, museumRadiusKm, nearestId, searchRadiusKm, selectedId, route]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;

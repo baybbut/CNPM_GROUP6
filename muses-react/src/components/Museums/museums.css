@@ -178,6 +178,15 @@
   background: transparent;
   border: 0;
 }
+.leaflet-tooltip.venue-distance-label {
+  max-width: min(210px, 48vw);
+  white-space: normal;
+  text-align: center;
+}
+.venue-distance {
+  display: block;
+  font-weight: 600;
+}
 .venue-pin {
   display: block;
   width: 26px;

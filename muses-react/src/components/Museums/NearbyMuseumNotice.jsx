@@ -4,7 +4,6 @@ import { chooseVoice, speechLocale } from "../Narration/speechLanguage.mjs";
 
 export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius }) {
   const active = useRef(null);
-  const lastAnnouncement = useRef(null);
   const speech = window.speechSynthesis;
   const canSpeak = Boolean(speech && window.SpeechSynthesisUtterance);
   const expansion = searchRadius > radius
@@ -28,14 +27,13 @@ export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius
       .replace("{name}", () => nearest.place.names?.[lang] || nearest.place.name);
   }
   const message = expansion ? `${expansion} ${result}` : result;
-  const key = nearest ? JSON.stringify([nearest.place.id, nearest.zone, lang]) : null;
   const stop = useCallback(() => {
     if (active.current) {
       active.current = null;
       speech.cancel();
     }
   }, [speech]);
-  const speak = useCallback(() => {
+  function speak() {
     if (!canSpeak) return;
     stop();
     const utterance = new SpeechSynthesisUtterance(message);
@@ -47,22 +45,9 @@ export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius
       if (active.current === utterance) active.current = null;
     };
     speech.speak(utterance);
-  }, [canSpeak, speech, stop, message, lang]);
+  }
 
-  useEffect(() => {
-    if (lastAnnouncement.current === key) return;
-    stop();
-    if (!key) {
-      lastAnnouncement.current = null;
-      return;
-    }
-    const timer = setTimeout(() => {
-      lastAnnouncement.current = key;
-      speak();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [key, speak, stop]);
-  useEffect(() => stop, [stop]);
+  useEffect(() => stop, [stop, lang, nearest?.place.id, nearest?.zone]);
 
   return (
     <div className="nearby-museums">
