@@ -13,10 +13,13 @@ const { attachPlaceRoutes } = require("./places.cjs");
 const { attachTicketRoutes } = require("./tickets.cjs");
 const { attachArtworkQRRoutes } = require("./artwork-qr.cjs");
 const { attachCatalogRoutes } = require("./catalog.cjs");
+const { createTranslator, SUPPORTED } = require("./translation.cjs");
+const qrTranslator = createTranslator();
 const app = express();
-app.get("/api/translation/health", (_req, res) =>
-  res.json({ mode: "manual", languages: ["vi", "en", "zh", "ja", "ko"] }),
-);
+app.get("/api/translation/health", async (req, res) => {
+  if (req.query.mode === "listen") return res.json(await qrTranslator.health());
+  res.json({ mode: "manual", languages: SUPPORTED });
+});
 const PORT = Number(process.env.PORT || 3001);
 app.use("/api", (_req, res, next) => {
   const json = res.json.bind(res);
@@ -99,7 +102,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 attachArtworkQRRoutes(app, sql);
-attachCatalogRoutes(app, sql);
+attachCatalogRoutes(app, sql, qrTranslator);
 attachTicketRoutes(app, sql);
 attachPlaceRoutes(app);
 

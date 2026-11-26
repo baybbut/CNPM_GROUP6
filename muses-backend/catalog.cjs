@@ -1,4 +1,5 @@
 const R = require("./catalog-rules.cjs");
+const { createTranslator } = require("./translation.cjs");
 const TODAY = "CONVERT(date,DATEADD(minute,420,SYSUTCDATETIME()))";
 const CURRENT = `s.Status='Confirmed' AND m.IsPublic=1 AND s.StartDate<=${TODAY} AND (s.EndDate IS NULL OR ${TODAY}<s.EndDate)`;
 const selections = {
@@ -23,7 +24,7 @@ const entities = {
   materials: ["Materials", "MaterialID"],
   categories: ["Categories", "CategoryID"],
 };
-function attachCatalogRoutes(app, sql) {
+function attachCatalogRoutes(app, sql, translator = createTranslator()) {
   function query(connection, statement, values = {}) {
     const q = connection.request();
     for (const [key, value] of Object.entries(values))
@@ -173,14 +174,25 @@ function attachCatalogRoutes(app, sql) {
     wrap(async (req, res) => {
       const lang = R.language(req.query.lang || "vi"),
         id = R.id(req.params.id);
+      const listen = req.query.mode === "listen";
       const result = await query(
         app.locals.pool,
-        `SELECT ${fields} ${publicFrom} WHERE a.ArtworkID=@id AND a.PublicationStatus='Published';`,
+        `SELECT ${fields} ${publicFrom} WHERE a.ArtworkID=@id AND a.PublicationStatus='Published' ${listen ? "AND a.QRIsEnabled=1" : ""};`,
         { id, lang },
       );
       if (!result.recordset.length)
         R.fail("Không tìm thấy tác phẩm.", 404, "NOT_FOUND");
-      res.json(format(result.recordset[0], lang));
+      const item = format(result.recordset[0], lang);
+      if (!listen) return res.json(item);
+      const guide = await translator.artwork(item, lang);
+      res.json({
+        id: item.id,
+        title: item.title,
+        description: guide.description,
+        descriptionLanguage: guide.descriptionLanguage,
+        translationSource: guide.translationSource,
+        audioUrl: item.descriptionLanguage === lang ? item.audioUrl : null,
+      });
     }),
   );
   app.get(

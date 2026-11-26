@@ -627,6 +627,13 @@ const messages = {
     "次の作品",
     "다음 작품",
   ],
+  "QR type": ["Loại mã QR", "二维码类型", "QRコードの種類", "QR 코드 유형"],
+  "Artwork information": ["Thông tin tác phẩm", "作品信息", "作品情報", "작품 정보"],
+  "Translated audio guide": ["Thuyết minh đa ngôn ngữ", "多语言语音导览", "多言語音声ガイド", "다국어 음성 안내"],
+  "Listening language": ["Ngôn ngữ muốn nghe", "收听语言", "音声の言語", "청취 언어"],
+  "Open audio guide": ["Mở thuyết minh", "打开语音导览", "音声ガイドを開く", "음성 안내 열기"],
+  "Automatic translation": ["Bản dịch tự động", "自动翻译", "自動翻訳", "자동 번역"],
+  "Audio guide unavailable in this language.": ["Chưa có thuyết minh bằng ngôn ngữ này.", "此语言的语音导览暂不可用。", "この言語の音声ガイドは利用できません。", "이 언어의 음성 안내를 이용할 수 없습니다."],
   "Audio guide": [
     "Nghe thuyết minh",
     "语音导览",

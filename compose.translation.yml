@@ -4,7 +4,7 @@ services:
     ports:
       - "127.0.0.1:5000:5000"
     environment:
-      LT_LOAD_ONLY: "vi,en,fr,ja,zh"
+      LT_LOAD_ONLY: "vi,en,ja,zh,ko"
     volumes:
       - translation_models:/home/libretranslate/.local
     restart: unless-stopped

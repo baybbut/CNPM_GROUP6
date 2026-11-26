@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { CONTENT_LANGUAGES } from "../../api/contentLanguages.mjs";
+import { artworkQRPath } from "./parseArtworkQR.mjs";
 import { catalog } from "../../api/catalog.mjs";
 import { label } from "../../i18n/catalog.mjs";
 import { createPortal } from "react-dom";
@@ -13,22 +15,34 @@ export default function ArtworkQR({
   title,
 }) {
   const [open, setOpen] = useState(false),
-    [image, setImage] = useState(""),
+    [listen, setListen] = useState(false),
+    [voiceLang, setVoiceLang] = useState(language),
+    [code, setCode] = useState(null),
     [error, setError] = useState(false),
     [disabled, setDisabled] = useState(false);
   const dialog = useRef(null),
     trigger = useRef(null);
   const titleId = `qr-title-${id}`;
-  const url = `${window.location.origin}/explore/artworks/${id}?lang=${language}&source=qr`;
+  const path = artworkQRPath(id, listen ? voiceLang : language, { listen });
+  const url = window.location.origin + path;
+  const image = code?.url === url ? code.image : "";
+  const t = (key) => label(language, key);
   useEffect(() => {
     if (!open) return;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    dialog.current?.querySelector("button")?.focus();
+    return () => {
+      document.body.style.overflow = overflow;
+      trigger.current?.focus();
+    };
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
     let active = true;
-    setImage("");
+    setCode(null);
     setError(false);
     setDisabled(false);
-    dialog.current?.querySelector("button")?.focus();
     const c = new AbortController();
     catalog(`/api/qr/artworks/${encodeURIComponent(id)}`, c.signal)
       .then((result) => {
@@ -44,7 +58,7 @@ export default function ArtworkQR({
         }),
       )
       .then((src) => {
-        if (active) setImage(src);
+        if (active) setCode({ url, image: src });
       })
       .catch((e) => {
         if (active) {
@@ -55,10 +69,8 @@ export default function ArtworkQR({
     return () => {
       active = false;
       c.abort();
-      document.body.style.overflow = overflow;
-      trigger.current?.focus();
     };
-  }, [open, url]);
+  }, [open, id, url]);
   return (
     <>
       <button
@@ -66,7 +78,11 @@ export default function ArtworkQR({
         className={className || "detail-qr-button"}
         type="button"
         aria-haspopup="dialog"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setListen(false);
+          setVoiceLang(language);
+          setOpen(true);
+        }}
       >
         {children || (vi ? "Mã QR tác phẩm" : "Artwork QR")}
       </button>
@@ -84,7 +100,7 @@ export default function ArtworkQR({
                 if (e.key === "Escape") setOpen(false);
                 if (e.key === "Tab") {
                   const nodes =
-                    dialog.current.querySelectorAll("button,a[href]");
+                    dialog.current.querySelectorAll("button,select,a[href]");
                   const first = nodes[0],
                     last = nodes[nodes.length - 1];
                   if (e.shiftKey && document.activeElement === first) {
@@ -108,10 +124,27 @@ export default function ArtworkQR({
                   ×
                 </button>
               </header>
+              <div className="artwork-qr-options">
+                <label>
+                  {t("QR type")}
+                  <select value={listen ? "listen" : "details"} onChange={e => setListen(e.target.value === "listen")}>
+                    <option value="details">{t("Artwork information")}</option>
+                    <option value="listen">{t("Translated audio guide")}</option>
+                  </select>
+                </label>
+                {listen && (
+                  <label>
+                    {t("Listening language")}
+                    <select value={voiceLang} onChange={e => setVoiceLang(e.target.value)}>
+                      {CONTENT_LANGUAGES.map(({ code, label }) => <option key={code} value={code}>{label}</option>)}
+                    </select>
+                  </label>
+                )}
+              </div>
               {image ? (
                 <img
                   src={image}
-                  alt={vi ? "QR mở tác phẩm" : "QR linking to artwork"}
+                  alt={listen ? t("Translated audio guide") : vi ? "QR mở tác phẩm" : "QR linking to artwork"}
                 />
               ) : (
                 <p role="status">
@@ -144,14 +177,14 @@ export default function ArtworkQR({
               )}
               {!disabled && (
                 <Link
-                  to={`/explore/artworks/${id}?lang=${language}&source=qr`}
+                  to={path}
                   onClick={() => setOpen(false)}
                 >
-                  {vi ? "Xem đầy đủ tác phẩm" : "View full artwork"}
+                  {listen ? t("Open audio guide") : vi ? "Xem đầy đủ tác phẩm" : "View full artwork"}
                 </Link>
               )}
               {image && (
-                <a href={image} download={`muses-artwork-${id}.png`}>
+                <a href={image} download={`muses-artwork-${id}${listen ? `-listen-${voiceLang}` : ""}.png`}>
                   {vi ? "Tải ảnh QR" : "Download QR"}
                 </a>
               )}

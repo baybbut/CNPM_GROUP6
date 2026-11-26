@@ -5,7 +5,7 @@ import {
   CONTENT_LANGUAGES,
   contentLanguage,
 } from "../../api/contentLanguages.mjs";
-import { parseArtworkQR } from "./parseArtworkQR.mjs";
+import { artworkQRPath, parseArtworkQR } from "./parseArtworkQR.mjs";
 import { SvgIcon } from "../Icons";
 import "./scanner.css";
 
@@ -59,10 +59,9 @@ export default function Scanner() {
     locked.current = true;
     run.current++;
     release();
-    setLang(selectedRef.current);
-    navigate(
-      `/explore/artworks/${parsed.id}?lang=${selectedRef.current}&source=qr${parsed.point ? `&point=${encodeURIComponent(parsed.point)}` : ""}`,
-    );
+    const language = (parsed.listen && parsed.lang) || selectedRef.current;
+    setLang(language);
+    navigate(artworkQRPath(parsed.id, language, parsed));
   }
   async function camera() {
     stop();

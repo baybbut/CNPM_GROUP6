@@ -185,7 +185,12 @@ before(async () => {
       return tx;
     },
   };
-  attachCatalogRoutes(app, sql);
+  const { createTranslator } = require("../translation.cjs");
+  const translator = createTranslator({
+    enabled: true,
+    fetcher: async () => ({ ok: true, json: async () => ({ translatedText: "Translated guide" }) }),
+  });
+  attachCatalogRoutes(app, sql, translator);
   server = app.listen(0, "127.0.0.1");
   await new Promise((r) => server.once("listening", r));
   origin = `http://127.0.0.1:${server.address().port}`;
@@ -469,4 +474,17 @@ test("QR catalogue filters paused QR in both page and total without hiding ordin
   calls = [];
   assert.equal((await send("/api/catalog/artworks")).status, 200);
   assert.ok(calls.every((c) => !c.statement.includes("QRIsEnabled")));
+});
+
+test("QR audio guide translates published text on demand and enforces QR availability", async () => {
+  calls = [];
+  const guide = await (await send("/api/artworks/1?lang=en&mode=listen")).json();
+  assert.equal(guide.descriptionLanguage, "en");
+  assert.equal(guide.description, "Translated guide");
+  assert.equal(guide.translationSource, "automatic");
+  assert.equal(guide.audioUrl, null);
+  assert.match(calls[0].statement, /a.QRIsEnabled=1/);
+  const original = await (await send("/api/artworks/1?lang=vi&mode=listen")).json();
+  assert.equal(original.translationSource, "database");
+  assert.equal((await send("/api/artworks/999?lang=en&mode=listen")).status, 404);
 });

@@ -1,4 +1,4 @@
-const SUPPORTED = ["vi", "en", "fr", "ja", "zh"];
+const SUPPORTED = ["vi", "en", "ko", "ja", "zh"];
 function createTranslator({
   enabled = process.env.TRANSLATE_ENABLED !== "false",
   url = process.env.TRANSLATE_URL || "http://127.0.0.1:5000",

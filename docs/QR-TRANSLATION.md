@@ -1,53 +1,17 @@
-> Cập nhật PRD 29/10/2026: dùng [hướng dẫn mới](prd/RUN.md). Migration chính là `db:catalog`; bản dịch MVP nhập/duyệt thủ công, 5 ngôn ngữ vi/en/zh/ja/ko. Các phần LibreTranslate và workspace cũ dưới đây là tài liệu lịch sử.
+# QR thuyết minh đa ngôn ngữ
 
-# Quét QR và dịch tự động local
+Trong popup **Mã QR tác phẩm**, chọn **Thuyết minh đa ngôn ngữ**, rồi chọn **Ngôn ngữ muốn nghe**. Có thể mở thử hoặc tải ảnh QR để in. Camera điện thoại và trình quét của Muses đều mở trang nghe theo ngôn ngữ ghi trong mã. Khách bấm phát để nghe bản ghi âm hoặc bấm đọc để dùng giọng của thiết bị.
 
-Nhánh `muses/admin`. Website khách: `muses-react`; backend: `muses-backend`.
+QR thuyết minh ưu tiên mô tả đã công bố cho ngôn ngữ đã chọn. Khi thiếu bản dịch, backend gửi mô tả gốc đến LibreTranslate theo yêu cầu của lượt mở QR. Trang nghe ghi nhãn bản dịch tự động. Nếu dịch vụ chưa sẵn sàng, khách có thể thử lại. Cả hai loại QR đều dùng trạng thái kích hoạt của tác phẩm trong Admin.
 
-## Chạy LibreTranslate
+## Chạy dịch vụ dịch máy
 
-Mở Docker Desktop. Từ thư mục gốc repo (cùng cấp với `muses-react`):
+Trong thư mục gốc của repo, chạy:
 
 ```sh
 docker compose -f compose.translation.yml up -d
-docker compose -f compose.translation.yml logs -f --tail=30
 ```
 
-Lần đầu phải tải image và mô hình, có thể mất nhiều phút. Dịch mô tả dài trên CPU có thể mất gần một phút; web chờ tối đa 75 giây cho trang chi tiết. Container không thay đổi SQL Server hiện có. Mô hình được giữ trong Docker volume. Nếu Mac Apple Silicon báo thiếu image tương thích, dùng `DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose -f compose.translation.yml up -d` (chạy giả lập có thể chậm).
+Lần đầu LibreTranslate cần tải các mô hình. Backend mặc định dùng `http://127.0.0.1:5000`. Nếu chạy dịch vụ ở địa chỉ khác, đặt `TRANSLATE_URL` trong `muses-backend/.env` và khởi động lại backend. Dùng `TRANSLATE_ENABLED=false` để chỉ dùng mô tả đã dịch sẵn.
 
-Dịch tự động mặc định được bật và kết nối Docker tại `127.0.0.1:5000`. Có thể thêm/sửa trong `muses-backend/.env` (giữ nguyên cấu hình DB):
-
-```dotenv
-TRANSLATE_ENABLED=true
-TRANSLATE_URL=http://127.0.0.1:5000
-```
-
-Khởi động lại backend:
-
-```sh
-cd muses-backend
-npm ci
-npm start
-```
-
-Mở terminal khác, từ thư mục gốc:
-
-```sh
-cd muses-react
-npm ci
-npm run dev -- --port 5173
-```
-
-Kiểm tra `http://localhost:3001/api/translation/health`: `ready: true` và đủ `vi,en,fr,ja,zh`. Nếu false, xem log Docker và chờ mô hình tải xong. Nếu backend cũng chạy trong container, địa chỉ `127.0.0.1` phải đổi thành tên service cùng Docker network.
-
-## Kiểm thử trên web
-
-1. Mở tác phẩm có mô tả trong Bộ sưu tập. Chọn ngôn ngữ nội dung Việt / Anh / Pháp / Nhật / Trung.
-2. Bản dịch DB được ưu tiên. Thiếu bản dịch thì backend dịch mô tả dài và ngắn qua Docker; bản dịch tự động được ghi nhãn, cache tạm 1 giờ, không ghi đè DB. Tên tác phẩm và thông tin danh mục giữ nguyên dữ liệu DB. Danh sách bộ sưu tập không dịch hàng loạt.
-3. Bấm đọc văn bản: giọng đọc dùng đúng ngôn ngữ mô tả. Máy cần cài giọng tương ứng. Việc tô sáng từ phụ thuộc sự kiện mà giọng đọc trình duyệt cung cấp.
-4. Bấm **Mã QR tác phẩm**, tải ảnh. Mở **Quét QR** (`/scan`), chọn ngôn ngữ và tải ảnh QR hoặc bật camera. QR sẽ mở đúng tác phẩm cùng ngôn ngữ đã chọn. Có thể thử dán `muses:artwork:1` nếu tác phẩm 1 tồn tại.
-5. Tắt dịch vụ rồi đổi sang ngôn ngữ chưa cache: web phải báo chưa dịch được và giữ nguyên ngôn ngữ bản gốc. Bấm thử lại khi Docker sẵn sàng.
-
-Camera cần HTTPS hoặc localhost và quyền camera. QR chứa localhost chỉ mở được trên máy đó. Muốn điện thoại truy cập, chạy web với `--host 0.0.0.0` và dùng địa chỉ LAN của máy tính; camera trên HTTP LAN thường không được trình duyệt cho phép, hãy tải ảnh QR hoặc dùng HTTPS. Scanner chỉ điều hướng tới trang tác phẩm trong website này, không mở tên miền tùy ý từ QR. Không gửi ảnh camera lên backend.
-
-Không cần chạy lại script reset DB. Bản dịch tự động không yêu cầu thêm bảng SQL.
+Kiểm tra mô hình ngôn ngữ qua `/api/translation/health?mode=listen`. Để quét từ điện thoại, tạo QR từ địa chỉ web mà điện thoại truy cập được, chẳng hạn đường dẫn HTTPS của bản demo.

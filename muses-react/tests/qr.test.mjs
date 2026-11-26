@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseArtworkQR } from "../src/components/Scanner/parseArtworkQR.mjs";
+import { artworkQRPath, parseArtworkQR } from "../src/components/Scanner/parseArtworkQR.mjs";
 import { CONTENT_LANGUAGES } from "../src/api/contentLanguages.mjs";
 test("artwork QR IDs and five content languages", () => {
   assert.equal(CONTENT_LANGUAGES.length, 5);
@@ -39,4 +39,13 @@ test("reading point metadata survives decoding without following external hosts"
       .point,
     undefined,
   );
+});
+
+test("audio-guide QR keeps its listening language and reading point", () => {
+  for (const { code } of CONTENT_LANGUAGES) {
+    const path = artworkQRPath(12, code, { listen: true, point: "hall" });
+    const result = parseArtworkQR("https://other.example" + path);
+    assert.deepEqual(result, { id: 12, lang: code, listen: true, point: "hall", path });
+  }
+  assert.equal(parseArtworkQR("/explore/artworks/12?mode=other").listen, undefined);
 });
