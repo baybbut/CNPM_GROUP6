@@ -1,3 +1,4 @@
+import { LanguageSelect, useAdminLanguage } from "./AdminLanguage";
 import { createContext, useContext, useEffect, useState } from "react";
 import "./pages/analytics.css";
 export const AdminContext = createContext(null);
@@ -35,6 +36,7 @@ export async function adminApi(path, method = "GET", body, signal) {
   return data;
 }
 export default function AdminGate({ children }) {
+  const { t } = useAdminLanguage();
   const [user, setUser] = useState(null),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
@@ -82,26 +84,29 @@ export default function AdminGate({ children }) {
   if (loading)
     return (
       <div className="catalog-auth" role="status">
-        Checking login session…
+        {t("Checking login session…")}
       </div>
     );
   if (user && !["Admin", "Administrator"].includes(user.role))
     return (
       <div className="catalog-auth">
         <h1>MUSES</h1>
-        <p role="alert">Access denied.</p>
-        <button onClick={logout}>Logout</button>
+        <p role="alert">{t("Access denied.")}</p>
+        <button onClick={logout}>{t("Sign out")}</button>
       </div>
     );
   if (!user)
     return (
       <main className="catalog-auth">
         <div className="catalog-auth-card">
-          <p>MUSES · ADMIN</p>
-          <h1>Admin Login</h1>
+          <div className="admin-login-heading">
+            <p>MUSES · ADMIN</p>
+            <LanguageSelect />
+          </div>
+          <h1>{t("Admin Login")}</h1>
           <form onSubmit={submit}>
             <label>
-              Email
+              {t("Email")}
               <input
                 type="email"
                 name="email"
@@ -110,7 +115,7 @@ export default function AdminGate({ children }) {
               />
             </label>
             <label>
-              Password
+              {t("Password")}
               <input
                 type="password"
                 name="password"
@@ -120,9 +125,9 @@ export default function AdminGate({ children }) {
               />
             </label>
             <button className="primary" disabled={busy}>
-              {busy ? "Logging in…" : "Login"}
+              {busy ? t("Logging in…") : t("Login")}
             </button>
-            {error && <p role="alert">{error}</p>}
+            {error && <p role="alert">{t(error)}</p>}
           </form>
         </div>
       </main>

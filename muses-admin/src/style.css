@@ -199,13 +199,29 @@ a {
   justify-content: center;
   padding: 6px;
 }
+.admin-language {
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  padding: 6px 0;
+  cursor: pointer;
+}
+.admin-login-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .notification-wrap {
   position: relative;
   margin-left: auto;
 }
 .notification {
   position: relative;
-  margin: 0 10px 0 50px;
+  margin: 0 10px 0 0;
 }
 .notification i {
   position: absolute;

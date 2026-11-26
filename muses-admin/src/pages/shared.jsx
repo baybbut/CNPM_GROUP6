@@ -1,3 +1,4 @@
+import { useAdminLanguage } from "../AdminLanguage";
 import React, { useState, useEffect, useRef } from "react";
 import Icon from "../Icons";
 export function useSavedState(key, initial) {
@@ -176,10 +177,11 @@ export function Stats({ items }) {
   );
 }
 export function Header({ title, description, action }) {
+  const { t } = useAdminLanguage();
   return (
     <div className="pg-heading">
       <div>
-        <p className="pg-kicker">YOUR MUSEUM, THOUGHTFULLY MANAGED</p>
+        <p className="pg-kicker">{t("YOUR MUSEUM, THOUGHTFULLY MANAGED")}</p>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>

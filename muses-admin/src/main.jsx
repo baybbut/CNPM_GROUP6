@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import AdminGate, { useAdmin, adminApi } from "./AdminAuth";
+import { AdminLanguageProvider, LanguageSelect, useAdminLanguage } from "./AdminLanguage";
 import AdminPages from "./AdminPages";
 import Icon from "./Icons";
 import "./style.css";
@@ -42,6 +43,7 @@ function currentPage() {
   }
 }
 function App() {
+  const { t } = useAdminLanguage();
   const { user } = useAdmin();
   const [active, setActive] = useState(currentPage),
     [search, setSearch] = useState(""),
@@ -77,13 +79,13 @@ function App() {
   return (
     <div className={`shell ${collapsed ? "collapsed" : ""}`}>
       <aside className="sidebar">
-        <a className="brand" href="#Overview" aria-label="Muses overview">
+        <a className="brand" href="#Overview" aria-label={t("Muses overview")}>
           <Icon name="museum" size={35} />
           <span>MUSES</span>
         </a>
         <button
           className="collapse"
-          aria-label="Toggle sidebar"
+          aria-label={t("Toggle sidebar")}
           onClick={() => setCollapsed((v) => !v)}
         >
           ›
@@ -93,17 +95,17 @@ function App() {
             icon ? (
               <button
                 key={name}
-                aria-label={name === "QR Codes" ? "Manage QR" : name}
+                aria-label={t(name === "QR Codes" ? "Manage QR" : name)}
                 aria-current={active === name ? "page" : undefined}
                 className={`nav-item ${active === name ? "selected" : ""}`}
                 onClick={() => navigate(name)}
               >
                 <Icon name={icon} />
-                <span>{name === "QR Codes" ? "Manage QR" : name}</span>
+                <span>{t(name === "QR Codes" ? "Manage QR" : name)}</span>
               </button>
             ) : (
               <div className="nav-label" key={name}>
-                {name}
+                {t(name)}
               </div>
             ),
           )}
@@ -119,12 +121,12 @@ function App() {
           </div>
           <div>
             <strong>{user.name}</strong>
-            <small>Administrator</small>
+            <small>{t("Administrator")}</small>
           </div>
         </div>
-        <button className="signout" aria-label="Sign out" onClick={logout}>
+        <button className="signout" aria-label={t("Sign out")} onClick={logout}>
           <Icon name="logout" />
-          <span>Sign out</span>
+          <span>{t("Sign out")}</span>
         </button>
       </aside>
       <div className="workspace">
@@ -133,24 +135,25 @@ function App() {
             <Icon name="search" />
           </div>
           <input
-            aria-label={`Search ${active.toLowerCase()}`}
+            aria-label={t("Search {page}", { page: t(active === "QR Codes" ? "Manage QR" : active) })}
             disabled={active === "Reports"}
             placeholder={
               active === "Reports"
-                ? "Muses reports"
+                ? t("Muses reports")
                 : active === "Overview"
-                  ? "Find a customer or session ID…"
+                  ? t("Find a customer or session ID…")
                   : active === "QR Codes"
-                    ? "Find a QR name or artwork…"
-                    : `Search ${active.toLowerCase()}…`
+                    ? t("Find a QR name or artwork…")
+                    : t("Search {page}", { page: t(active) }) + "…"
             }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <LanguageSelect />
           <div className="notification-wrap">
             <button
               className="icon-button notification"
-              aria-label="Review content"
+              aria-label={t("Review content")}
               aria-expanded={notifications}
               onClick={() => setNotifications((v) => !v)}
             >
@@ -158,15 +161,15 @@ function App() {
             </button>
             {notifications && (
               <div className="notification-panel">
-                <strong>Content Review</strong>
-                <p>Check translations and information sources before publishing.</p>
+                <strong>{t("Content Review")}</strong>
+                <p>{t("Check translations and information sources before publishing.")}</p>
                 <button
                   onClick={() => {
                     setNotifications(false);
                     navigate("Languages & Audio");
                   }}
                 >
-                  View Translations →
+                  {t("View Translations")} →
                 </button>
               </div>
             )}
@@ -174,13 +177,13 @@ function App() {
         </header>
         <AdminPages page={active} search={search} />
         <footer className="page-footer">
-          MUSES ADMIN <span>A little art. A lot of possibility.</span>
+          MUSES ADMIN <span>{t("A little art. A lot of possibility.")}</span>
         </footer>
       </div>
       {notice && (
         <div className="toast" role="status">
           {notice}
-          <button aria-label="Close" onClick={() => setNotice("")}>
+          <button aria-label={t("Close")} onClick={() => setNotice("")}>
             ×
           </button>
         </div>
@@ -189,7 +192,9 @@ function App() {
   );
 }
 createRoot(document.getElementById("root")).render(
-  <AdminGate>
-    <App />
-  </AdminGate>,
+  <AdminLanguageProvider>
+    <AdminGate>
+      <App />
+    </AdminGate>
+  </AdminLanguageProvider>,
 );

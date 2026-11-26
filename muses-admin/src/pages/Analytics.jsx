@@ -1,3 +1,4 @@
+import { useAdminLanguage } from "../AdminLanguage";
 import { useEffect, useState } from "react";
 import { Header, Panel, Stats, Field } from "./shared";
 import "./analytics.css";
@@ -85,11 +86,12 @@ const today = () =>
   new Date(Date.now() + 420 * 60000).toISOString().slice(0, 10);
 const weekStart = () =>
   new Date(Date.now() + 420 * 60000 - 6 * 86400000).toISOString().slice(0, 10);
-const clock = (value) =>
-  new Date(value).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 const hourLabel = (hour) =>
   `${String(hour).padStart(2, "0")}:00–${String(hour + 1).padStart(2, "0")}:00`;
 export default function Analytics({ mode = "overview", search = "" }) {
+  const { t, lang } = useAdminLanguage();
+  const clock = (value) => new Date(value).toLocaleString(lang, { timeZone: "Asia/Ho_Chi_Minh" });
+  const formatDay = (day) => new Date(day + "T00:00:00Z").toLocaleDateString(lang, { timeZone: "UTC" });
   const [user, setUser] = useState(null),
     [authLoading, setAuthLoading] = useState(true),
     [authBusy, setAuthBusy] = useState(false),
@@ -117,7 +119,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
     setUser,
   );
   const hourly = sameDay ? { data, error, loading } : singleDayReport;
-  const dayLabel = hourDate.split("-").reverse().join("/");
+  const dayLabel = formatDay(hourDate);
   useEffect(() => {
     let live = true;
     api("/api/auth/me")
@@ -161,16 +163,16 @@ export default function Analytics({ mode = "overview", search = "" }) {
   if (authLoading)
     return (
       <div className="pg-workspace">
-        <p role="status">Đang kiểm tra tài khoản…</p>
+        <p role="status">{t("Checking login session…")}</p>
       </div>
     );
   if (!user)
     return (
       <div className="pg-workspace analytics">
-        <Panel title="Đăng nhập quản trị">
+        <Panel title={t("Admin Login")}>
           <form className="analytics-login" onSubmit={login}>
-            <p>Xem lượng truy cập và hoạt động tại các điểm đọc.</p>
-            <Field label="Email">
+            <p>{t("View visitor traffic and activity at reading points.")}</p>
+            <Field label={t("Email")}>
               <input
                 name="email"
                 type="email"
@@ -178,7 +180,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
                 autoComplete="username"
               />
             </Field>
-            <Field label="Mật khẩu">
+            <Field label={t("Password")}>
               <input
                 name="password"
                 type="password"
@@ -188,9 +190,9 @@ export default function Analytics({ mode = "overview", search = "" }) {
               />
             </Field>
             <button className="primary" disabled={authBusy}>
-              {authBusy ? "Logging in…" : "Log in"}
+              {authBusy ? t("Logging in…") : t("Login")}
             </button>
-            {authError && <p role="alert">{authError}</p>}
+            {authError && <p role="alert">{t(authError)}</p>}
           </form>
         </Panel>
       </div>
@@ -198,8 +200,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
   if (!["Admin", "Administrator"].includes(user.role))
     return (
       <div className="pg-workspace">
-        <p role="alert">This account does not have permission to view admin statistics.</p>
-        <button onClick={logout}>Log out</button>
+        <p role="alert">{t("This account does not have permission to view admin statistics.")}</p>
+        <button onClick={logout}>{t("Sign out")}</button>
       </div>
     );
   const s = data?.summary;
@@ -217,7 +219,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
       .toLowerCase();
   const recentRows = (data?.recent || []).filter(
     (row) =>
-      fold(`${row.id} ${row.name || "Guest"}`).includes(fold(search.trim())) &&
+      fold(`${row.id} ${row.name || t("Guest")}`).includes(fold(search.trim())) &&
       (!showVisitors ||
         visitorStatus === "all" ||
         (visitorStatus === "active" ? Boolean(row.active) : !row.active)),
@@ -232,23 +234,23 @@ export default function Analytics({ mode = "overview", search = "" }) {
   return (
     <div className="pg-workspace analytics">
       <Header
-        title={isOverview ? `Hello, ${user.name}` : "Reports"}
+        title={isOverview ? t("Hello, {name}", { name: user.name }) : t("Reports")}
         description={
           isOverview
-            ? "Overview of traffic, interactions, and recent sessions."
-            : "Monitor activity on the website and at reading points."
+            ? t("Overview of traffic, interactions, and recent sessions.")
+            : t("Monitor activity on the website and at reading points.")
         }
         action={
           isOverview ? (
             <a className="primary" href="#Reports">
-              View Reports
+              {t("View Reports")}
             </a>
           ) : null
         }
       />
       <div className="analytics-filters">
         <label>
-          From
+          {t("From")}
           <input
             type="date"
             value={from}
@@ -259,7 +261,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
           />
         </label>
         <label>
-          To
+          {t("To")}
           <input
             type="date"
             value={to}
@@ -277,7 +279,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
             setTo(today());
           }}
         >
-          Today
+          {t("Today")}
         </button>
         <button
           aria-pressed={from === weekStart() && to === today()}
@@ -286,69 +288,69 @@ export default function Analytics({ mode = "overview", search = "" }) {
             setTo(today());
           }}
         >
-          7 Days
+          {t("7 Days")}
         </button>
         <button
           onClick={() => setAttempt((n) => n + 1)}
           disabled={loading}
           aria-busy={loading}
         >
-          Refresh
+          {t("Refresh")}
         </button>
         <span role="status">
           {loading
-            ? "Updating…"
+            ? t("Updating…")
             : data
-              ? `Updated ${clock(data.updatedAt)}`
+              ? t("Updated {time}", { time: clock(data.updatedAt) })
               : ""}
         </span>
-        <small>Automatically updates every 5 seconds while viewing the page</small>
+        <small>{t("Automatically updates every 5 seconds while viewing the page")}</small>
       </div>
       {error && (
         <p className="analytics-error" role="alert">
-          {error}{" "}
-          <button onClick={() => setAttempt((n) => n + 1)}>Try again</button>
+          {t(error)}{" "}
+          <button onClick={() => setAttempt((n) => n + 1)}>{t("Try again")}</button>
         </p>
       )}
       {s?.trackingReady === 0 && (
         <p className="analytics-error" role="alert">
-          The SQL account of the backend does not have sufficient permissions to record access. Please update the permissions for the AnalyticsSessions and AnalyticsEvents tables using the db:setup command in muses-backend.
+          {t("The SQL account of the backend does not have sufficient permissions to record access. Please update the permissions for the AnalyticsSessions and AnalyticsEvents tables using the db:setup command in muses-backend.")}
         </p>
       )}
       <Stats
         items={[
           [
-            "Active Visitors",
+            t("Active Visitors"),
             s?.activeVisitors ?? "—",
-            "In the last 5 minutes",
+            t("In the last 5 minutes"),
             "green",
             "people",
           ],
           [
-            "Access Devices",
+            t("Access Devices"),
             s?.visitors ?? "—",
-            "Different devices used during the period",
+            t("Different devices used during the period"),
             "pink",
             "people",
           ],
           [
-            "Sessions",
+            t("Sessions"),
             s?.sessions ?? "—",
-            "Sessions during the period",
+            t("Sessions during the period"),
             "yellow",
             "chart",
           ],
           [
-            "QR Opens",
+            t("QR Opens"),
             s?.qrScans ?? "—",
-            "Opened the work page from QR",
+            t("Opened the work page from QR"),
             "green",
             "qr",
           ],
           [
-            "Audio Plays",
+            t("Audio Plays"),
             s?.audioPlays ?? "—",
-            "Excluding pause/Continue",
+            t("Excluding pause/Continue"),
             "blue",
             "audio",
           ],
@@ -356,16 +358,16 @@ export default function Analytics({ mode = "overview", search = "" }) {
       />
       {data && !data.trackingSince && (
         <p className="analytics-empty">
-          No activity recorded yet. Open the website or scan the QR code at the reading point to begin generating data.
+          {t("No activity recorded yet. Open the website or scan the QR code at the reading point to begin generating data.")}
         </p>
       )}
       <Panel
-        title="Report by time interval"
-        subtitle={`Days ${dayLabel} · time at Vietnam (GMT+7)`}
+        title={t("Report by time interval")}
+        subtitle={t("{date} · Vietnam time (GMT+7)", { date: dayLabel })}
       >
         <div className="analytics-hour-filters">
           <label>
-            Date viewed
+            {t("Date viewed")}
             <input
               type="date"
               value={hourDate}
@@ -380,10 +382,10 @@ export default function Analytics({ mode = "overview", search = "" }) {
             onClick={() => setHourDate(today())}
             aria-pressed={hourDate === today()}
           >
-            Today
+            {t("Today")}
           </button>
           <label>
-            From
+            {t("From")}
             <select
               value={fromHour}
               onChange={(e) => {
@@ -400,7 +402,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
             </select>
           </label>
           <label>
-            To hour
+            {t("To hour")}
             <select
               value={toHour}
               onChange={(e) => setToHour(Number(e.target.value))}
@@ -422,20 +424,20 @@ export default function Analytics({ mode = "overview", search = "" }) {
             }}
             aria-pressed={fromHour === 0 && toHour === 24}
           >
-            All day
+            {t("All day")}
           </button>
         </div>
         <p className="analytics-hour-summary" role="status">
-          {hourly.loading ? "Loading" : "Loading"} Day {dayLabel}
-          {hourDate === today() ? " (Today)" : ""} · {" "}
-          {fromHour === 0 && toHour === 24 ? "All day · " : ""}
+          {hourly.loading && t("Loading…") + " "}{dayLabel}
+          {hourDate === today() ? ` (${t("Today")})` : ""} · {" "}
+          {fromHour === 0 && toHour === 24 ? t("All day") + " · " : ""}
           {String(fromHour).padStart(2, "0")}:00–
           {String(toHour).padStart(2, "0")}:00
         </p>
         {hourly.error && (
           <p className="analytics-error" role="alert">
-            {hourly.error}{" "}
-            <button onClick={() => setAttempt((n) => n + 1)}>Try Again</button>
+            {t(hourly.error)}{" "}
+            <button onClick={() => setAttempt((n) => n + 1)}>{t("Try again")}</button>
           </p>
         )}
         <div className="analytics-chart-scroll" aria-busy={hourly.loading}>
@@ -448,12 +450,12 @@ export default function Analytics({ mode = "overview", search = "" }) {
                 hours.length < 6 ? `${hours.length * 100}px` : undefined,
             }}
             role="img"
-            aria-label={`Number of accessing devices by hour of the day ${dayLabel}`}
+            aria-label={t("Hourly devices on {date}", { date: dayLabel })}
           >
             {hours.map((row) => (
               <div
                 key={row.hour}
-                title={`${dayLabel} · ${hourLabel(row.hour)}: ${row.visitors} devices, ${row.interactions} interactions`}
+                title={`${dayLabel} · ${hourLabel(row.hour)}: ${t("{devices} devices, {interactions} interactions", { devices: row.visitors, interactions: row.interactions })}`}
               >
                 <strong>{hourly.data ? row.visitors : "—"}</strong>
                 <div>
@@ -469,26 +471,26 @@ export default function Analytics({ mode = "overview", search = "" }) {
       </Panel>
       {showDetails && (
         <Panel
-          title="Participation at each reading point"
-          subtitle="Devices that opened QR or started listening to the narration"
+          title={t("Participation at each reading point")}
+          subtitle={t("Devices that opened QR or started listening to the narration")}
         >
           <div className="pg-table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Point/ Entry</th>
-                  <th>Device</th>
-                  <th>Guest</th>
-                  <th>Watch Artwork</th>
-                  <th>Open QR</th>
-                  <th>Start Listening</th>
+                  <th>{t("Point/ Entry")}</th>
+                  <th>{t("Device")}</th>
+                  <th>{t("Guest")}</th>
+                  <th>{t("Watch Artwork")}</th>
+                  <th>{t("Open QR")}</th>
+                  <th>{t("Start Listening")}</th>
                 </tr>
               </thead>
               <tbody>
                 {pointRows.map((row) => (
                   <tr key={`${row.point}-${row.artworkId}`}>
                     <td>
-                      <strong>{row.title || "Read Point"}</strong>
+                      <strong>{row.title || t("Read Point")}</strong>
                       <small className="analytics-point-id">{row.point}</small>
                     </td>
                     <td>{row.participants}</td>
@@ -502,8 +504,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
                   <tr>
                     <td colSpan={6}>
                       {data
-                        ? "Not have matching read points."
-                        : "Failed to load data."}
+                        ? t("Not have matching read points.")
+                        : t("Failed to load data.")}
                     </td>
                   </tr>
                 )}
@@ -518,22 +520,22 @@ export default function Analytics({ mode = "overview", search = "" }) {
         }
       >
         {showDetails && (
-          <Panel title="Daily Activity">
+          <Panel title={t("Daily Activity")}>
             <div className="pg-table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Session</th>
-                    <th>Device</th>
+                    <th>{t("Date")}</th>
+                    <th>{t("Session")}</th>
+                    <th>{t("Device")}</th>
                     <th>QR</th>
-                    <th>Listening</th>
+                    <th>{t("Listening")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.daily.map((row) => (
                     <tr key={row.day}>
-                      <td>{row.day.split("-").reverse().join("/")}</td>
+                      <td>{formatDay(row.day)}</td>
                       <td>{row.sessions}</td>
                       <td>{row.visitors}</td>
                       <td>{row.qrScans}</td>
@@ -542,7 +544,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
                   ))}
                   {!data?.daily.length && (
                     <tr>
-                      <td colSpan={5}>No activity recorded.</td>
+                      <td colSpan={5}>{t("No activity recorded.")}</td>
                     </tr>
                   )}
                 </tbody>
@@ -552,25 +554,25 @@ export default function Analytics({ mode = "overview", search = "" }) {
         )}
         <Panel
           title={
-            showVisitors ? "List of Recent Sessions" : "Recent Sessions"
+            showVisitors ? t("List of Recent Sessions") : t("Recent Sessions")
           }
-          subtitle="Maximum 100 sessions, sorted by last activity"
+          subtitle={t("Maximum 100 sessions, sorted by last activity")}
         >
           {showVisitors && (
             <div className="analytics-visitor-tools">
               <label>
-                Status
+                {t("Status")}
                 <select
                   value={visitorStatus}
                   onChange={(e) => setVisitorStatus(e.target.value)}
                 >
-                  <option value="all">All</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="all">{t("All")}</option>
+                  <option value="active">{t("Active")}</option>
+                  <option value="inactive">{t("Inactive")}</option>
                 </select>
               </label>
               <span role="status">
-                Display {recentRows.length} / {data?.recent?.length || 0} recent sessions
+                {t("Showing {count} of {total} recent sessions", { count: recentRows.length, total: data?.recent?.length || 0 })}
               </span>
             </div>
           )}
@@ -578,21 +580,21 @@ export default function Analytics({ mode = "overview", search = "" }) {
             <table>
               <thead>
                 <tr>
-                  <th>Guest</th>
+                  <th>{t("Guest")}</th>
                   {showVisitors && (
                     <>
-                      <th>Sessions Code</th>
-                      <th>Start</th>
+                      <th>{t("Sessions Code")}</th>
+                      <th>{t("Start")}</th>
                     </>
                   )}
-                  <th>Last Active</th>
-                  <th>Status</th>
+                  <th>{t("Last Active")}</th>
+                  <th>{t("Status")}</th>
                 </tr>
               </thead>
               <tbody>
                 {recentRows.map((row) => (
                   <tr key={row.id}>
-                    <td>{row.name || `Guest · ${row.id.slice(0, 8)}`}</td>
+                    <td>{row.name || `${t("Guest")} · ${row.id.slice(0, 8)}`}</td>
                     {showVisitors && (
                       <>
                         <td>
@@ -602,17 +604,17 @@ export default function Analytics({ mode = "overview", search = "" }) {
                       </>
                     )}
                     <td>{clock(row.lastSeenAt)}</td>
-                    <td>{row.active ? "Active" : "Inactive"}</td>
+                    <td>{row.active ? t("Active") : t("Inactive")}</td>
                   </tr>
                 ))}
                 {!recentRows.length && (
                   <tr>
                     <td colSpan={showVisitors ? 5 : 3}>
                       {loading
-                        ? "Loading session..."
+                        ? t("Loading…")
                         : error && !data
-                          ? "Failed to load session."
-                          : "No matching sessions."}
+                          ? t("Failed to load session.")
+                          : t("No matching sessions.")}
                     </td>
                   </tr>
                 )}
@@ -623,8 +625,8 @@ export default function Analytics({ mode = "overview", search = "" }) {
       </div>
       <p className="analytics-caption">
         {showVisitors
-          ? "A single visitor can have multiple sessions. 'Active' status is determined based on interactions within the last 5 minutes."
-          : "A single device can be shared by multiple users. Each entry is recorded as a distinct device at a specific location; this does not verify the actual presence of the visitor at the museum."}
+          ? t("A single visitor can have multiple sessions. 'Active' status is determined based on interactions within the last 5 minutes.")
+          : t("A single device can be shared by multiple users. Each entry is recorded as a distinct device at a specific location; this does not verify the actual presence of the visitor at the museum.")}
       </p>
     </div>
   );
