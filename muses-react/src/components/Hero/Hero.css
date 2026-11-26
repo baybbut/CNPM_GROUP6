@@ -1,4 +1,7 @@
-.hero { position: relative; }
+.hero {
+  position: relative;
+  padding-bottom: clamp(16px, 2vw, 32px);
+}
 .hero-img
 {height:min(62vw,560px);
    background:center / cover url(../../../tranh/HOANHACTRONGGIADINHOHUE.jpg); 

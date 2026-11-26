@@ -5,12 +5,7 @@ import { catalog, directionsUrl } from "../../api/catalog.mjs";
 import { SvgIcon } from "../Icons";
 import { MuseumMap } from "../Museums/Museums";
 import { ArtworkImage } from "../explore/Artworks";
-import { ticketText } from "../Tickets/ticketText.mjs";
-import {
-  isClosed,
-  ticketToday,
-  ticketLastDay,
-} from "../Tickets/ticketModel.mjs";
+import { label } from "../../i18n/catalog.mjs";
 import {
   VISIT_SECTIONS,
   FACILITIES,
@@ -20,12 +15,10 @@ import {
 import { visitText } from "./visitText.mjs";
 import {
   visitDestinations,
-  visitTicketLink,
   mapSearchUrl,
 } from "./visitModel.mjs";
 import galleryImage from "../../../background/muses4.jpg";
 import coffeeImage from "../../../background/musescoffee.jpg";
-import familyImage from "../../../background/muses9.jpg";
 import "./visit.css";
 
 function SectionTitle({ id, number, children }) {
@@ -56,14 +49,9 @@ export default function Visit() {
     t = (key) => visitText(lang, key);
   const [activeTab, setActiveTab] = useState("hours"),
     [museums, setMuseums] = useState([]),
-    [offers, setOffers] = useState([]),
-    [ticketLoading, setTicketLoading] = useState(true),
-    [ticketError, setTicketError] = useState(false),
-    [attempt, setAttempt] = useState(0),
     [selectedId, setSelectedId] = useState(
       params.get("museum") || "hcm-reference-fine-arts",
     ),
-    [date, setDate] = useState(() => params.get("date") || ticketToday()),
     [artworks, setArtworks] = useState([]);
   const tabs = useRef(null);
   const destinations = useMemo(() => visitDestinations(museums), [museums]);
@@ -74,35 +62,15 @@ export default function Visit() {
       ) || destinations[0];
     return { ...item, name: item.names?.[lang] || item.name };
   }, [destinations, selectedId, lang]);
-  const offer = offers.find(
-    (o) =>
-      Number(o.id) === place.museumId &&
-      !o.isDemo &&
-      typeof o.adultPrice === "number",
-  );
-  const priceUrl = visitTicketLink(place, date);
   useEffect(() => {
     const c = new AbortController();
-    setTicketError(false);
-    setTicketLoading(true);
     catalog("/api/museums", c.signal)
       .then((data) => {
         if (Array.isArray(data)) setMuseums(data);
       })
       .catch(() => {});
-    catalog("/api/tickets/prices", c.signal)
-      .then((data) => {
-        if (!Array.isArray(data.items)) throw Error("INVALID_OFFERS");
-        setOffers(data.items);
-      })
-      .catch((e) => {
-        if (e.name !== "AbortError") setTicketError(true);
-      })
-      .finally(() => {
-        if (!c.signal.aborted) setTicketLoading(false);
-      });
     return () => c.abort();
-  }, [attempt]);
+  }, []);
   useEffect(() => {
     const c = new AbortController();
     setArtworks([]);
@@ -149,12 +117,6 @@ export default function Visit() {
     });
     window.history.replaceState(window.history.state, "", `#${id}`);
   }
-  const money = (value) =>
-    new Intl.NumberFormat(lang, {
-      style: "currency",
-      currency: "VND",
-      maximumFractionDigits: 0,
-    }).format(value);
   return (
     <div className="visit">
       <section
@@ -169,14 +131,10 @@ export default function Visit() {
           <h1>{t("heroTitle")}</h1>
           <p>{t("heroIntro")}</p>
           <div className="v-actions">
-            <a
-              className="btn btn-brown"
-              href="#hours"
-              onClick={(e) => jump(e, "hours")}
-            >
+            <Link className="btn btn-brown" to="/museums/itinerary">
               {t("plan")}
               <SvgIcon kind="arrow" size={20} />
-            </a>
+            </Link>
             <Link className="v-hero-link" to="/museums">
               {t("map")}
               <SvgIcon kind="pin" light size={20} />
@@ -186,7 +144,9 @@ export default function Visit() {
       </section>
       <nav className="v-tabs" aria-label={t("plan")}>
         <div className="v-tabs-list" ref={tabs}>
-          {VISIT_SECTIONS.map(([id, key]) => (
+          {VISIT_SECTIONS.map(([id, key]) => id === "hours" ? (
+            <Link key={id} to="/museums/itinerary">{t(key)}</Link>
+          ) : (
             <a
               key={id}
               href={`#${id}`}
@@ -201,13 +161,25 @@ export default function Visit() {
       </nav>
       <section className="v-sec v-tan">
         <SectionTitle id="hours" number="01">
-          {t("hours")}
+          {t("plan")}
+        </SectionTitle>
+        <div className="v-section-intro">
+          <h3>{label(lang, "Build a museum itinerary")}</h3>
+          <p>{label(lang, "Choose museums, arrange your stops and plan your visit time.")}</p>
+          <Link className="btn btn-brown" to="/museums/itinerary">
+            {t("plan")}
+            <SvgIcon kind="arrow" size={20} />
+          </Link>
+        </div>
+      </section>
+      <section className="v-sec">
+        <SectionTitle id="directions" number="02">
+          {t("directions")}
         </SectionTitle>
         <div className="v-row">
           <div className="v-text">
-            <span className="v-eyebrow">{t("destination")}</span>
-            <h3>{t("plan")}</h3>
-            <p>{t("hoursTip")}</p>
+            <h3>{t("routeTitle")}</h3>
+            <p>{t("routeTip")}</p>
             <div className="v-planner">
               <label htmlFor="visit-museum">
                 {t("choose")}
@@ -223,95 +195,7 @@ export default function Visit() {
                   ))}
                 </select>
               </label>
-              <label htmlFor="visit-date">
-                {t("date")}
-                <input
-                  id="visit-date"
-                  type="date"
-                  min={ticketToday()}
-                  max={ticketLastDay()}
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              </label>
             </div>
-          </div>
-          <div className="v-card v-destination-card">
-            <SvgIcon kind="logo" size={36} />
-            <h3>{place.name}</h3>
-            <p className="v-address">
-              <SvgIcon kind="pin" size={20} />
-              {place.address}
-            </p>
-            <ExternalLink href={mapSearchUrl(place)}>
-              {t("checkHours")}
-            </ExternalLink>
-          </div>
-        </div>
-        <div className="v-row v-admission-row">
-          <div className="v-text">
-            <h3>{t("prices")}</h3>
-            <p>{t("priceTip")}</p>
-            <Link className="btn btn-brown" to={priceUrl}>
-              {t("tickets")}
-              <SvgIcon kind="ticket" light size={20} />
-            </Link>
-          </div>
-          <div className="v-card v-admission-card">
-            {ticketLoading ? (
-              <p role="status">{ticketText(lang, "loading")}</p>
-            ) : ticketError ? (
-              <div role="status">
-                <p>{t("unavailable")}</p>
-                <button
-                  className="v-link"
-                  onClick={() => setAttempt((n) => n + 1)}
-                >
-                  {t("retry")}
-                  <SvgIcon kind="arrow" size={18} />
-                </button>
-              </div>
-            ) : offer ? (
-              <>
-                {[
-                  ["adult", "adultPrice"],
-                  ["concession", "concessionPrice"],
-                  ["child", "childPrice"],
-                ].map(([key, price]) => (
-                  <div className="v-price-row" key={key}>
-                    <span>{ticketText(lang, key)}</span>
-                    <strong>{money(offer[price])}</strong>
-                  </div>
-                ))}
-                {date && isClosed(offer, date) && (
-                  <p role="status" className="v-admission-note">
-                    {t("closedDate")}
-                  </p>
-                )}
-                {offer.terms && (
-                  <p className="v-admission-note">{offer.terms}</p>
-                )}
-              </>
-            ) : (
-              <>
-                <h4>{t("choose")}</h4>
-                <p>{t("noOffer")}</p>
-                <ExternalLink href={mapSearchUrl(place)}>
-                  {t("contact")}
-                </ExternalLink>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-      <section className="v-sec">
-        <SectionTitle id="directions" number="02">
-          {t("directions")}
-        </SectionTitle>
-        <div className="v-row">
-          <div className="v-text">
-            <h3>{t("routeTitle")}</h3>
-            <p>{t("routeTip")}</p>
             <p className="v-venue-name">
               {place.name}
               <br />
@@ -424,47 +308,7 @@ export default function Visit() {
         </div>
       </section>
       <section className="v-sec">
-        <SectionTitle id="family" number="06">
-          {t("family")}
-        </SectionTitle>
-        <div className="v-row">
-          <div className="v-text">
-            <h3>{t("familyTitle")}</h3>
-            <p>{t("familyTip")}</p>
-            <Link className="v-link" to={priceUrl}>
-              {t("tickets")}
-              <SvgIcon kind="arrow" size={18} />
-            </Link>
-          </div>
-          <div className="v-editorial-image v-family-image">
-            <img src={familyImage} alt="" loading="lazy" />
-          </div>
-        </div>
-      </section>
-      <section className="v-sec v-tan">
-        <SectionTitle id="group" number="07">
-          {t("group")}
-        </SectionTitle>
-        <div className="v-row">
-          <div className="v-text">
-            <h3>{t("groupTitle")}</h3>
-            <p>{t("groupTip")}</p>
-            <ExternalLink href={mapSearchUrl(place)}>
-              {t("contact")}
-            </ExternalLink>
-          </div>
-          <div className="v-group-card">
-            <span>MUSES</span>
-            <h3>{place.name}</h3>
-            <p>{place.address}</p>
-            <Link className="btn btn-brown" to={priceUrl}>
-              {t("tickets")}
-            </Link>
-          </div>
-        </div>
-      </section>
-      <section className="v-sec">
-        <SectionTitle id="accessibility" number="08">
+        <SectionTitle id="accessibility" number="06">
           {t("accessibility")}
         </SectionTitle>
         <div className="v-section-intro">
@@ -482,7 +326,7 @@ export default function Visit() {
         </div>
       </section>
       <section className="v-sec v-dark">
-        <SectionTitle id="faq" number="09">
+        <SectionTitle id="faq" number="07">
           {t("faq")}
         </SectionTitle>
         <div className="v-row">

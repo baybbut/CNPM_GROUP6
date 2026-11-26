@@ -94,11 +94,7 @@ export default function Footer() {
             })
           }
         >
-          <SvgIcon
-            kind="chevron"
-            size={22}
-            style={{ transform: "rotate(180deg)" }}
-          />
+          <SvgIcon kind="arrow" direction="up" size={28} />
         </button>
       )}
     </footer>

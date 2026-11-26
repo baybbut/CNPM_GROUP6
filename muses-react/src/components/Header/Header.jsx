@@ -15,7 +15,6 @@ const currentPath = pathname.replace(/\/+$/, "") || "/";
 const light = [
   "/visit",
   "/exhibition",
-  "/explore",
 ].includes(currentPath);
 
 const sand =
@@ -35,7 +34,7 @@ const sand =
               isActive && n.to !== "#" ? "active" : ""
             }
           >
-            {t(n.key)}
+            {n.key === "artworks" ? label(lang, "Artworks") : t(n.key)}
           </NavLink>
         ))}
         <NavLink

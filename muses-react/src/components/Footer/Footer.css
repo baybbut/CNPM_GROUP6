@@ -5,12 +5,27 @@
 .socials{display:flex;gap:12px}
 .footer .social{width:42px;height:42px;border:1.5px solid #fff;border-radius:50%;display:grid;place-items:center;margin:0;font-size:13px}
 .f-logo{font-family:var(--serif);font-size:48px;margin-top:70px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.35)}
-.to-top{position:fixed;z-index:10;right:max(20px,env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:50%;background:rgba(200,200,205,.8);color:#222;font-size:22px}
+.to-top {
+  position: fixed;
+  z-index: 10;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: white;
+  mix-blend-mode: difference;
+}
+.to-top:focus-visible { outline: 2px solid currentColor; }
+
 
 @media (max-width:900px){
   .f-cols{padding-inline-start:0;gap:40px}
 }
-.footer .social{border:0}.footer .social img{display:block;width:36px;height:36px;object-fit:contain}.footer .to-top{display:grid;place-items:center}
+.footer .social{border:0}.footer .social img{display:block;width:36px;height:36px;object-fit:contain}
 
-.to-top:hover{background:#dedee2}
 @media(max-width:600px){.to-top{width:46px;height:46px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom))}}

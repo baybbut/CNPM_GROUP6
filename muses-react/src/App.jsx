@@ -16,7 +16,6 @@ import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
 import Visit from "./components/visit/visit";
 import Exhibition from "./components/exhibition/exhibition";
-import Explore from "./components/explore/explore";
 import Collection from "./components/explore/collection";
 
 import QRArtworkPage from "./components/Scanner/QRArtworkPage";
@@ -73,7 +72,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/visit" element={<Visit />} />
           <Route path="/exhibition" element={<Exhibition />} />
-          <Route path="/explore" element={<Explore />} />
+          <Route path="/explore" element={<Collection />} />
           <Route path="/explore/collection" element={<Collection />} />
           <Route path="/explore/artworks/:id" element={<QRArtworkPage />} />
         </Routes>

@@ -694,11 +694,11 @@ const messages = {
     "近くの美術館を探す",
     "가까운 박물관 찾기",
   ],
-  "Location unavailable. You can still search by name.": [
-    "Không lấy được vị trí. M vẫn có thể tìm theo tên.",
-    "无法获取位置，您仍可按名称搜索。",
-    "位置情報を取得できません。名前で検索できます。",
-    "위치를 확인할 수 없습니다. 이름으로 검색할 수 있습니다.",
+  "Location unavailable.": [
+    "Không lấy được vị trí.",
+    "无法获取位置。",
+    "位置情報を取得できません。",
+    "위치를 확인할 수 없습니다.",
   ],
   "Your location is used only to sort this list.": [
     "Vị trí chỉ dùng để sắp xếp danh sách trên thiết bị.",

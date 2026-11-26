@@ -12,7 +12,7 @@ import img10 from "../../tranh/tranhsonmai/THIEUNUBENHOAPHUDUNG.jpg";
 
 export const NAV_LINKS = [
   { key: "visit", to: "/visit" },
-  { key: "explore", to: "/explore" },
+  { key: "artworks", to: "/explore" },
 ];
 
 export const HIGHLIGHTS = [

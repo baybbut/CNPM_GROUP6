@@ -31,7 +31,7 @@ export function MuseumLocationProvider({ children }) {
     }, (error) => {
       if (!live) return;
       if (error.code === 1) setPosition(null);
-      setError("Location unavailable. You can still search by name.");
+      setError("Location unavailable.");
     }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
     return () => {
       live = false;
@@ -53,7 +53,7 @@ export function MuseumLocationProvider({ children }) {
       setError(
         !window.isSecureContext
           ? "Location needs a secure connection. You can still explore the map."
-          : "Location unavailable. You can still search by name.",
+          : "Location unavailable.",
       );
       return;
     }
@@ -66,13 +66,13 @@ export function MuseumLocationProvider({ children }) {
           longitude: p.coords.longitude,
         };
         if (hasCoordinates(next)) setPosition(next);
-        else setError("Location unavailable. You can still search by name.");
+        else setError("Location unavailable.");
         setBusy(false);
       },
       () => {
         if (run !== generation.current) return;
         setBusy(false);
-        setError("Location unavailable. You can still search by name.");
+        setError("Location unavailable.");
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
     );

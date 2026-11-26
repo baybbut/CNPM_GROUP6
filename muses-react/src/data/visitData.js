@@ -1,11 +1,9 @@
 export const VISIT_SECTIONS = [
-  ["hours", "hours"],
+  ["hours", "plan"],
   ["directions", "directions"],
   ["galleries", "galleries"],
   ["amenities", "amenities"],
   ["restaurants", "restaurants"],
-  ["family", "family"],
-  ["group", "group"],
   ["accessibility", "accessibility"],
   ["faq", "faq"],
 ];

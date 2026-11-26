@@ -16,11 +16,11 @@
   text-transform: uppercase;
   margin: 0 0 14px;
 }
+.aw-heading h1,
 .aw-heading h2 {
   font-family: Georgia, serif;
   font-size: clamp(27px, 3vw, 42px);
   font-weight: 400;
-  max-width: 650px;
   line-height: 1.2;
 }
 .aw-link {
@@ -58,8 +58,8 @@
   border-radius: 0;
 }
 .aw-count {
-  font-size: 12px;
-  margin: 24px 0;
+  font: 500 0.875rem/1.5 var(--sans);
+  margin: clamp(16px, 2vw, 24px) 0;
   color: #706959;
 }
 .aw-grid {

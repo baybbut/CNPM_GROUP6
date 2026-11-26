@@ -164,12 +164,14 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
       aria-labelledby="collection-title"
     >
       <div className="aw-heading">
-        <div>
-          <p className="aw-eyebrow">MUSES · {t("Artworks")}</p>
-          <h2 id="collection-title">
-            {t("Discover the stories behind the art")}
-          </h2>
-        </div>
+        {compact || qrMode ? (
+          <div>
+            <p className="aw-eyebrow">MUSES · {t("Artworks")}</p>
+            <h2 id="collection-title">{t("Discover the stories behind the art")}</h2>
+          </div>
+        ) : (
+          <h1 id="collection-title">{t("Artworks")}</h1>
+        )}
         {compact && (
           <Link className="aw-link" to="/explore/collection">
             {t("Explore collection")} <SvgIcon kind="arrow" size={20} />
@@ -229,7 +231,7 @@ export function ArtworkCollection({ compact = false, qrMode = false }) {
         </p>
       ) : (
         <>
-          <p role="status">
+          <p className="aw-count" role="status">
             {t("Results")}: {data.total}
           </p>
           {items.length ? (
