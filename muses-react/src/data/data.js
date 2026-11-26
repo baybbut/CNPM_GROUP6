@@ -12,7 +12,6 @@ import img10 from "../../tranh/tranhsonmai/THIEUNUBENHOAPHUDUNG.jpg";
 
 export const NAV_LINKS = [
   { key: "visit", to: "/visit" },
-  { key: "exhibition", to: "/exhibition" },
   { key: "explore", to: "/explore" },
 ];
 

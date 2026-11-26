@@ -58,13 +58,7 @@
   flex-shrink: 0;
   font-size: inherit;
 }
-.header .nav-right .ticket-nav {
-  display: inline-flex;
-  padding: 10px 20px;
-  text-transform: none;
-}
-.header .search-icon,
-.header .ticket-icon { width: 20px; height: 20px; object-fit: contain; }
+.header .search-icon { width: 20px; height: 20px; object-fit: contain; }
 .header .museum-nav-icon { display: block; }
 .header .nav-left .scan-nav.active { border-bottom: 0; }
 .header.light {
@@ -98,7 +92,6 @@
 @media (max-width: 1400px) {
   .header { column-gap: 20px; padding-inline: 24px; }
   .header .nav-left, .header .nav-right { gap: 14px; font-size: 12px; }
-  .header .nav-right .ticket-nav { padding: 10px 16px; }
 }
 
 @media (max-width: 1400px) {
@@ -116,7 +109,6 @@
   .header .nav-left .scan-nav span,
   .header .account-nav > span { display: none; }
   .header .nav-left .museum-nav-icon { display: block; }
-  .header .nav-right .ticket-nav { padding: 8px 10px; gap: 5px; }
   .header .lang-toggle { gap: 3px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -146,7 +138,7 @@
     height: 26px;
   }
 
-  /* Hàng đầu: ngôn ngữ và giá vé */
+  /* Hàng đầu: ngôn ngữ */
   .header .nav-right {
     grid-column: 2;
     grid-row: 1;
@@ -159,10 +151,6 @@
     display: none;
   }
 
-  .header .nav-right .ticket-nav {
-    padding: 8px 10px;
-    gap: 5px;
-  }
 
   .header .lang-toggle {
     gap: 3px;

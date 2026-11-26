@@ -1,9 +1,8 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { NAV_LINKS } from "../../data/data";
-import { TicketIcon, SearchIcon, SvgIcon } from "../Icons";
+import { SearchIcon, SvgIcon } from "../Icons";
 import { label } from "../../i18n/catalog.mjs";
-import { priceText } from "../Tickets/priceText.mjs";
 import LangSwitcher from "../LangSwitcher/LangSwitcher";
 import "./Header.css";
 
@@ -73,13 +72,6 @@ const sand =
           <span>{t("search")}</span>
         </Link>
         <LangSwitcher />
-        <Link
-          to="/tickets"
-          className="btn btn-brown ticket-nav"
-          aria-label={priceText(lang, "title")}
-        >
-          <TicketIcon /> {priceText(lang, "shortTitle")}
-        </Link>
       </div>
     </header>
   );
