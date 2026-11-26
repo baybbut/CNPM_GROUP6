@@ -427,6 +427,18 @@ const messages = {
     "現在地を取得中…",
     "위치 확인 중…",
   ],
+  "Location access is blocked. Allow location in your browser and device settings, then try again.": [
+    "Quyền vị trí đang bị chặn. Bật quyền vị trí cho trang này trong trình duyệt và cho trình duyệt trong cài đặt thiết bị, rồi thử lại.",
+    "定位权限被阻止。请在浏览器和设备设置中允许定位，然后重试。",
+    "位置情報へのアクセスがブロックされています。ブラウザと端末の設定で許可してから、もう一度お試しください。",
+    "위치 접근이 차단되었습니다. 브라우저와 기기 설정에서 위치 권한을 허용한 후 다시 시도하세요.",
+  ],
+  "Location request timed out. Try again.": [
+    "Đã hết thời gian chờ vị trí. Hãy thử lại.", "获取位置超时，请重试。", "位置情報の取得がタイムアウトしました。もう一度お試しください。", "위치 요청 시간이 초과되었습니다. 다시 시도하세요.",
+  ],
+  "Showing your last known location.": [
+    "Đang hiển thị vị trí gần nhất đã lấy được.", "正在显示上次获取的位置。", "最後に取得した位置を表示しています。", "마지막으로 확인한 위치를 표시합니다.",
+  ],
   "Use my location": [
     "Dùng vị trí của tôi",
     "使用我的位置",

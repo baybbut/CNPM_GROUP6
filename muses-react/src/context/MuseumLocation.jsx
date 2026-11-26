@@ -4,11 +4,19 @@ import { hasCoordinates } from "../components/Museums/placeModel.mjs";
 import { useLang } from "./LangContext";
 import { label } from "../i18n/catalog.mjs";
 const LocationContext = createContext(null);
+function locationError(error) {
+  if (error?.code === 1 || error?.name === "SecurityError")
+    return "Location access is blocked. Allow location in your browser and device settings, then try again.";
+  if (error?.code === 3) return "Location request timed out. Try again.";
+  return "Location unavailable.";
+}
+
 export function MuseumLocationProvider({ children }) {
   const [position, setPosition] = useState(null),
     [gpsBusy, setBusy] = useState(false),
     [gpsError, setError] = useState(null);
   const generation = useRef(0);
+  const [positionRequest, setPositionRequest] = useState(0);
   useEffect(
     () => () => {
       generation.current++;
@@ -18,26 +26,27 @@ export function MuseumLocationProvider({ children }) {
   const { pathname } = useLocation();
   const tracking = Boolean(position) && /^\/museums(?:\/itinerary)?\/?$/.test(pathname);
   useEffect(() => {
-    if (!tracking || !navigator.geolocation?.watchPosition) return;
+    if (!tracking || gpsBusy || !navigator.geolocation?.watchPosition) return;
+    const run = generation.current;
     let live = true;
     const watch = navigator.geolocation.watchPosition(({ coords }) => {
-      if (!live || !hasCoordinates(coords)) return;
+      if (!live || run !== generation.current || !hasCoordinates(coords)) return;
       setPosition((previous) => {
-        if (!previous || (previous.latitude === coords.latitude && previous.longitude === coords.longitude))
+        if (previous?.latitude === coords.latitude && previous.longitude === coords.longitude)
           return previous;
         return { latitude: coords.latitude, longitude: coords.longitude };
       });
       setError(null);
     }, (error) => {
-      if (!live) return;
+      if (!live || run !== generation.current) return;
       if (error.code === 1) setPosition(null);
-      setError("Location unavailable.");
+      setError(locationError(error));
     }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
     return () => {
       live = false;
       navigator.geolocation.clearWatch(watch);
     };
-  }, [tracking]);
+  }, [tracking, gpsBusy, positionRequest]);
   function reset() {
     generation.current++;
     setPosition(null);
@@ -46,9 +55,9 @@ export function MuseumLocationProvider({ children }) {
   }
   function locate() {
     const run = ++generation.current;
-    setPosition(null);
+    setPositionRequest(run);
     setError(null);
-    if (!window.isSecureContext || !navigator.geolocation) {
+    if (!window.isSecureContext || !navigator.geolocation?.getCurrentPosition) {
       setBusy(false);
       setError(
         !window.isSecureContext
@@ -58,24 +67,37 @@ export function MuseumLocationProvider({ children }) {
       return;
     }
     setBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
+    function request(fresh) {
+      function failed(error) {
         if (run !== generation.current) return;
-        const next = {
-          latitude: p.coords.latitude,
-          longitude: p.coords.longitude,
-        };
-        if (hasCoordinates(next)) setPosition(next);
-        else setError("Location unavailable.");
+        if (!fresh && (error?.code === 2 || error?.code === 3)) {
+          request(true);
+          return;
+        }
+        if (error?.code === 1 || error?.name === "SecurityError") setPosition(null);
+        setError(locationError(error));
         setBusy(false);
-      },
-      () => {
-        if (run !== generation.current) return;
-        setBusy(false);
-        setError("Location unavailable.");
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
-    );
+      }
+      try {
+        navigator.geolocation.getCurrentPosition(({ coords }) => {
+          if (run !== generation.current) return;
+          if (!hasCoordinates(coords)) {
+            failed({ code: 2 });
+            return;
+          }
+          setPosition({ latitude: coords.latitude, longitude: coords.longitude });
+          setError(null);
+          setBusy(false);
+        }, failed, {
+          enableHighAccuracy: fresh,
+          maximumAge: fresh ? 0 : 60000,
+          timeout: fresh ? 20000 : 10000,
+        });
+      } catch (error) {
+        failed(error);
+      }
+    }
+    request(false);
   }
   return (
     <LocationContext.Provider
@@ -102,7 +124,7 @@ export function LocationControls({ hint = "Use my location to enable directions 
       ) : (
         <p>{t(hint)}</p>
       )}
-      {gpsError && <p role="status">{t(gpsError)}</p>}
+      {gpsError && <p role="status">{t(gpsError)} {position && t("Showing your last known location.")}</p>}
     </div>
   );
 }
