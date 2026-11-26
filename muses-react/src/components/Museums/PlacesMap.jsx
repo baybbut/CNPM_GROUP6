@@ -11,6 +11,7 @@ export default function PlacesMap({
   selectedId = null,
   onSelect,
   title,
+  museumRadiusKm = 0,
   focus = "results",
   route = null,
 }) {
@@ -63,8 +64,18 @@ export default function PlacesMap({
     const layer = L.layerGroup().addTo(map);
     markers.current.clear();
     for (const place of places.filter(hasCoordinates)) {
+      const center = [Number(place.latitude), Number(place.longitude)];
+      if (museumRadiusKm && place.kind === "museum") {
+        L.circle(center, {
+          radius: museumRadiusKm * 1000,
+          color: "#886b3e",
+          weight: 1,
+          fillOpacity: 0.05,
+          interactive: false,
+        }).addTo(layer);
+      }
       const marker = L.marker(
-        [Number(place.latitude), Number(place.longitude)],
+        center,
         {
           title: place.name,
           icon: L.divIcon({
@@ -95,7 +106,7 @@ export default function PlacesMap({
         .addTo(layer);
     }
     return () => map.removeLayer(layer);
-  }, [places, position, lang, retry]);
+  }, [places, position, lang, retry, museumRadiusKm]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -111,18 +122,22 @@ export default function PlacesMap({
         animate: false,
       });
     else {
-      const pins = places
-        .filter(hasCoordinates)
-        .map((p) => [Number(p.latitude), Number(p.longitude)]);
-      if (pins.length)
-        map.fitBounds(L.latLngBounds(pins), {
+      const bounds = L.latLngBounds([]);
+      for (const place of places.filter(hasCoordinates)) {
+        const pin = L.latLng(Number(place.latitude), Number(place.longitude));
+        bounds.extend(museumRadiusKm && place.kind === "museum"
+          ? pin.toBounds(museumRadiusKm * 2000)
+          : pin);
+      }
+      if (bounds.isValid())
+        map.fitBounds(bounds, {
           padding: [36, 36],
           maxZoom: 15,
           animate: false,
         });
       else map.setView(HCM_CENTER, 12, { animate: false });
     }
-  }, [places, position, retry, focus, route]);
+  }, [places, position, retry, focus, route, museumRadiusKm]);
   useEffect(() => {
     const marker = markers.current.get(selectedId);
     if (marker && !route) {

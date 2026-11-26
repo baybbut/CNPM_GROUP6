@@ -396,3 +396,11 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+.nearby-museums {
+  margin-block: 16px;
+  padding: 10px 16px;
+  border-inline-start: 3px solid #886b3e;
+}
+.nearby-museums p { margin: 4px 0; }
+.nearby-museums button { margin-top: 8px; text-decoration: underline; }

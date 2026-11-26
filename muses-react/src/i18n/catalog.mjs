@@ -14,6 +14,21 @@ const messages = {
     "옻칠",
   ],
 
+  "{name} is within {radius} km of you.": [
+    "{name} nằm trong bán kính {radius} km tính từ vị trí của bạn.",
+    "{name}位于您周围 {radius} 公里以内。",
+    "{name}は現在地から半径{radius}キロメートル以内にあります。",
+    "{name}은(는) 현재 위치에서 반경 {radius}km 이내에 있습니다.",
+  ],
+  "No matching museums within {radius} km.": [
+    "Không có bảo tàng nào trong kết quả nằm trong bán kính {radius} km.",
+    "结果中没有位于 {radius} 公里以内的博物馆。",
+    "検索結果に半径{radius}キロメートル以内の博物館はありません。",
+    "검색 결과에 반경 {radius}km 이내의 박물관이 없습니다.",
+  ],
+  "Read nearby museum alerts": [
+    "Đọc thông báo bảo tàng gần bạn", "朗读附近博物馆提示", "近くの博物館の通知を読み上げる", "주변 박물관 알림 듣기",
+  ],
   "Share the experience": [
     "Chia sẻ trải nghiệm",
     "分享体验",

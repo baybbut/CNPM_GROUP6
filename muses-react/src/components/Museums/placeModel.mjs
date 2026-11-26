@@ -1,4 +1,5 @@
 import { distanceKm } from "../../api/catalog.mjs";
+export const MUSEUM_RADIUS_KM = 2;
 export const HCM_CENTER = [10.7769, 106.7009];
 export function hasCoordinates(place) {
   return (
