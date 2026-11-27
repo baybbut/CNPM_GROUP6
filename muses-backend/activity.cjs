@@ -122,6 +122,10 @@ function attachActivityRoutes(app, sql) {
       });
     }
   };
+  app.use("/api/auth", (_req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+  });
   const cookieName = "muses_session";
   const cookie = (res, value, clear = false) =>
     res.setHeader(

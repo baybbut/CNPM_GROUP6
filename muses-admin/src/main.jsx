@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import AdminGate, { useAdmin, adminApi } from "./AdminAuth";
+import AdminGate, { useAdmin } from "./AdminAuth";
 import { AdminLanguageProvider, LanguageSelect, useAdminLanguage } from "./AdminLanguage";
 import AdminPages from "./AdminPages";
 import Icon from "./Icons";
@@ -44,12 +44,11 @@ function currentPage() {
 }
 function App() {
   const { t } = useAdminLanguage();
-  const { user } = useAdmin();
+  const { user, logout, busy, error } = useAdmin();
   const [active, setActive] = useState(currentPage),
     [search, setSearch] = useState(""),
     [collapsed, setCollapsed] = useState(false),
-    [notifications, setNotifications] = useState(false),
-    [notice, setNotice] = useState("");
+    [notifications, setNotifications] = useState(false);
   useEffect(() => {
     const changed = () => {
       setActive(currentPage());
@@ -58,23 +57,10 @@ function App() {
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
   }, []);
-  useEffect(() => {
-    if (!notice) return;
-    const timer = setTimeout(() => setNotice(""), 4000);
-    return () => clearTimeout(timer);
-  }, [notice]);
   function navigate(page) {
     setActive(page);
     setSearch("");
     location.hash = encodeURIComponent(page);
-  }
-  async function logout() {
-    try {
-      await adminApi("/api/auth/logout", "POST", {});
-      location.reload();
-    } catch (e) {
-      setNotice(e.message);
-    }
   }
   return (
     <div className={`shell ${collapsed ? "collapsed" : ""}`}>
@@ -124,9 +110,9 @@ function App() {
             <small>{t("Administrator")}</small>
           </div>
         </div>
-        <button className="signout" aria-label={t("Sign out")} onClick={logout}>
+        <button className="signout" aria-label={t(busy ? "Signing out…" : "Sign out")} disabled={busy} onClick={logout}>
           <Icon name="logout" />
-          <span>{t("Sign out")}</span>
+          <span>{t(busy ? "Signing out…" : "Sign out")}</span>
         </button>
       </aside>
       <div className="workspace">
@@ -180,14 +166,7 @@ function App() {
           MUSES ADMIN <span>{t("A little art. A lot of possibility.")}</span>
         </footer>
       </div>
-      {notice && (
-        <div className="toast" role="status">
-          {notice}
-          <button aria-label={t("Close")} onClick={() => setNotice("")}>
-            ×
-          </button>
-        </div>
-      )}
+      {error && <div className="toast" role="alert">{t(error)}</div>}
     </div>
   );
 }

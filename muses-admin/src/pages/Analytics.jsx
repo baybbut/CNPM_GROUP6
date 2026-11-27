@@ -1,45 +1,9 @@
 import { useAdminLanguage } from "../AdminLanguage";
 import { useEffect, useState } from "react";
-import { Header, Panel, Stats, Field } from "./shared";
+import { adminApi, useAdmin } from "../AdminAuth";
+import { Header, Panel, Stats } from "./shared";
 import "./analytics.css";
-const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
-async function api(path, body, signal) {
-  const controller = new AbortController();
-  const abort = () => controller.abort();
-  if (signal?.aborted) abort();
-  signal?.addEventListener("abort", abort, { once: true });
-  const timeout = setTimeout(abort, 15000);
-  try {
-    const response = await fetch(base + path, {
-      method: body ? "POST" : "GET",
-      credentials: "include",
-      headers: body ? { "Content-Type": "application/json" } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      throw Error("Cant connect to backend server.");
-    }
-    if (!response.ok) {
-      const error = Error(data.message || "Cant fetch data.");
-      error.status = response.status;
-      throw error;
-    }
-    return data;
-  } catch (error) {
-    if (error.name === "AbortError" && !signal?.aborted)
-      throw Error("Cant connect to backend server.");
-    throw error;
-  } finally {
-    clearTimeout(timeout);
-    signal?.removeEventListener("abort", abort);
-  }
-}
-function useReport(user, path, attempt, onUnauthorized) {
+function useReport(user, path, attempt) {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(false);
@@ -53,12 +17,11 @@ function useReport(user, path, attempt, onUnauthorized) {
       setLoading(true);
       setError("");
       try {
-        const result = await api(path, null, controller.signal);
+        const result = await adminApi(path, "GET", undefined, controller.signal);
         if (!controller.signal.aborted) setData(result);
       } catch (e) {
         if (!controller.signal.aborted) {
           setError(e.message);
-          if (e.status === 401) onUnauthorized(null);
         }
       } finally {
         pending = false;
@@ -79,7 +42,7 @@ function useReport(user, path, attempt, onUnauthorized) {
       window.removeEventListener("focus", refreshVisible);
       document.removeEventListener("visibilitychange", refreshVisible);
     };
-  }, [user, path, attempt, onUnauthorized]);
+  }, [user, path, attempt]);
   return { data, error, loading };
 }
 const today = () =>
@@ -92,10 +55,7 @@ export default function Analytics({ mode = "overview", search = "" }) {
   const { t, lang } = useAdminLanguage();
   const clock = (value) => new Date(value).toLocaleString(lang, { timeZone: "Asia/Ho_Chi_Minh" });
   const formatDay = (day) => new Date(day + "T00:00:00Z").toLocaleDateString(lang, { timeZone: "UTC" });
-  const [user, setUser] = useState(null),
-    [authLoading, setAuthLoading] = useState(true),
-    [authBusy, setAuthBusy] = useState(false),
-    [authError, setAuthError] = useState("");
+  const { user } = useAdmin();
   const [from, setFrom] = useState(weekStart),
     [to, setTo] = useState(today),
     [fromHour, setFromHour] = useState(0),
@@ -107,7 +67,6 @@ export default function Analytics({ mode = "overview", search = "" }) {
     user,
     `/api/admin/analytics?from=${from}&to=${to}&fromHour=${fromHour}&toHour=${toHour}`,
     attempt,
-    setUser,
   );
   const sameDay = from === hourDate && to === hourDate;
   const singleDayReport = useReport(
@@ -116,94 +75,9 @@ export default function Analytics({ mode = "overview", search = "" }) {
       ? null
       : `/api/admin/analytics?from=${hourDate}&to=${hourDate}&fromHour=${fromHour}&toHour=${toHour}`,
     attempt,
-    setUser,
   );
   const hourly = sameDay ? { data, error, loading } : singleDayReport;
   const dayLabel = formatDay(hourDate);
-  useEffect(() => {
-    let live = true;
-    api("/api/auth/me")
-      .then((result) => {
-        if (live) setUser(result.user);
-      })
-      .catch((e) => {
-        if (live) setAuthError(e.message);
-      })
-      .finally(() => {
-        if (live) setAuthLoading(false);
-      });
-    return () => {
-      live = false;
-    };
-  }, []);
-  async function login(e) {
-    e.preventDefault();
-    setAuthBusy(true);
-    setAuthError("");
-    try {
-      const result = await api(
-        "/api/auth/login",
-        Object.fromEntries(new FormData(e.currentTarget)),
-      );
-      setUser(result.user);
-    } catch (e) {
-      setAuthError(e.message);
-    } finally {
-      setAuthBusy(false);
-    }
-  }
-  async function logout() {
-    try {
-      await api("/api/auth/logout", {});
-      setUser(null);
-    } catch (e) {
-      setAuthError(e.message);
-    }
-  }
-  if (authLoading)
-    return (
-      <div className="pg-workspace">
-        <p role="status">{t("Checking login session…")}</p>
-      </div>
-    );
-  if (!user)
-    return (
-      <div className="pg-workspace analytics">
-        <Panel title={t("Admin Login")}>
-          <form className="analytics-login" onSubmit={login}>
-            <p>{t("View visitor traffic and activity at reading points.")}</p>
-            <Field label={t("Email")}>
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="username"
-              />
-            </Field>
-            <Field label={t("Password")}>
-              <input
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                maxLength={128}
-              />
-            </Field>
-            <button className="primary" disabled={authBusy}>
-              {authBusy ? t("Logging in…") : t("Login")}
-            </button>
-            {authError && <p role="alert">{t(authError)}</p>}
-          </form>
-        </Panel>
-      </div>
-    );
-  if (!["Admin", "Administrator"].includes(user.role))
-    return (
-      <div className="pg-workspace">
-        <p role="alert">{t("This account does not have permission to view admin statistics.")}</p>
-        <button onClick={logout}>{t("Sign out")}</button>
-      </div>
-    );
   const s = data?.summary;
   const pointRows = (data?.points || []).filter((row) =>
     `${row.point} ${row.title}`.toLowerCase().includes(search.toLowerCase()),

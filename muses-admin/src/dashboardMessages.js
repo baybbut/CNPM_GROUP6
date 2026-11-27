@@ -13,6 +13,7 @@ export const messages = {
   "Manage QR": ["Quản lý mã QR", "管理二维码", "QRコード管理", "QR 코드 관리"],
   "Museum Info & Maps": ["Thông tin và bản đồ bảo tàng", "博物馆信息与地图", "博物館情報と地図", "박물관 정보 및 지도"],
   "Administrator": ["Quản trị viên", "管理员", "管理者", "관리자"],
+  "Signing out…": ["Đang đăng xuất…", "正在退出…", "ログアウト中…", "로그아웃 중…"],
   "Sign out": ["Đăng xuất", "退出登录", "ログアウト", "로그아웃"],
   "Toggle sidebar": ["Thu gọn hoặc mở thanh bên", "展开或收起侧栏", "サイドバーを開閉", "사이드바 열기 및 닫기"],
   "Muses overview": ["Tổng quan MUSES", "MUSES 概览", "MUSES 概要", "MUSES 개요"],

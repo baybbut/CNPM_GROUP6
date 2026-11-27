@@ -10,6 +10,7 @@ export async function adminApi(path, method = "GET", body, signal) {
     response = await fetch(base + path, {
       method,
       credentials: "include",
+      cache: "no-store",
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(20000)])
         : AbortSignal.timeout(20000),
@@ -74,11 +75,17 @@ export default function AdminGate({ children }) {
     }
   }
   async function logout() {
+    if (busy) return;
+    setBusy(true);
+    setError("");
     try {
       await adminApi("/api/auth/logout", "POST", {});
       setUser(null);
     } catch (e) {
-      setError(e.message);
+      if (e.status === 401) setUser(null);
+      else setError(e.message);
+    } finally {
+      setBusy(false);
     }
   }
   if (loading)
@@ -92,7 +99,8 @@ export default function AdminGate({ children }) {
       <div className="catalog-auth">
         <h1>MUSES</h1>
         <p role="alert">{t("Access denied.")}</p>
-        <button onClick={logout}>{t("Sign out")}</button>
+        <button disabled={busy} onClick={logout}>{t(busy ? "Signing out…" : "Sign out")}</button>
+        {error && <p role="alert">{t(error)}</p>}
       </div>
     );
   if (!user)
@@ -133,7 +141,7 @@ export default function AdminGate({ children }) {
       </main>
     );
   return (
-    <AdminContext.Provider value={{ user, logout }}>
+    <AdminContext.Provider value={{ user, logout, busy, error }}>
       {children}
     </AdminContext.Provider>
   );
