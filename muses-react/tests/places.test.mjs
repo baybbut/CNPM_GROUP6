@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import {
   hasCoordinates,
   closestMuseumInRange,
+  countPlacesInRadius,
   MUSEUM_RADIUS_KM,
   searchPlaces,
   connectCatalogue,
@@ -90,4 +91,14 @@ test("proximity distinguishes the nearest museum, its approach zone and out-of-r
   assert.equal(nearest([at("m", 10.01)]), null);
   assert.equal(nearest(places, null), null);
   assert.equal(nearest([at("a", 0, "gallery")]), null);
+});
+
+test("counts every mapped place type up to and including 2 km from the visitor", () => {
+  const origin = { latitude: 0, longitude: 0 };
+  const at = (kind, km) => ({ kind, longitude: 0, latitude: km / 6371 * 180 / Math.PI });
+  const places = [at("museum", 0), at("gallery", 1), at("museum", 2), at("gallery", 2.001),
+    at("museum", 7), { kind: "gallery", longitude: 0, latitude: null }];
+  assert.equal(countPlacesInRadius(places, origin, MUSEUM_RADIUS_KM), 3);
+  assert.equal(countPlacesInRadius(places, { latitude: 10, longitude: 0 }, MUSEUM_RADIUS_KM), 0);
+  assert.equal(countPlacesInRadius(places, null, MUSEUM_RADIUS_KM), null);
 });

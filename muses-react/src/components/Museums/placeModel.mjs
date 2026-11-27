@@ -4,6 +4,13 @@ export const EXTENDED_MUSEUM_RADIUS_KM = 10;
 // Announce the approach up to 200 m before crossing the museum radius.
 export const APPROACH_MARGIN_KM = 0.2;
 
+export function countPlacesInRadius(places, position, radiusKm) {
+  if (!hasCoordinates(position) || !(radiusKm > 0)) return null;
+  return places.filter(place =>
+    hasCoordinates(place) && distanceKm(position, place) <= radiusKm
+  ).length;
+}
+
 export function closestMuseumInRange(places, position, radiusKm) {
   if (!hasCoordinates(position) || radiusKm <= 0) return null;
   let nearest = null;

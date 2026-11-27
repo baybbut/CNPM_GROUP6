@@ -293,6 +293,7 @@ function DiscoverMuseums() {
         <div className="discovery-map">
           <PlacesMap
             places={places}
+            allPlaces={allPlaces}
             museumRadiusKm={MUSEUM_RADIUS_KM}
             position={position}
             route={directions.state?.route}

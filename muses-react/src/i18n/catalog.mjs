@@ -14,6 +14,12 @@ const messages = {
     "옻칠",
   ],
 
+  "Points of interest within {radius} km of you: {count}.": [
+    "Có {count} địa điểm trong bán kính {radius} km quanh bạn.",
+    "您周围 {radius} 公里内有 {count} 个地点。",
+    "現在地から半径{radius}キロ以内に{count}件のスポットがあります。",
+    "현재 위치에서 반경 {radius}km 안에 있는 장소는 {count}곳입니다.",
+  ],
   "Nearest museum": ["Bảo tàng gần nhất", "最近的博物馆", "最寄りの博物館", "가장 가까운 박물관"],
   "{name} is the nearest museum, about {distance} away.": [
     "{name} là bảo tàng gần bạn nhất, cách khoảng {distance}.",

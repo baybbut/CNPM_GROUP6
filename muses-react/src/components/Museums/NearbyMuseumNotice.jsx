@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { label } from "../../i18n/catalog.mjs";
 import { chooseVoice, speechLocale } from "../Narration/speechLanguage.mjs";
 
-export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius }) {
+export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius, nearbyCount }) {
   const active = useRef(null);
   const speech = window.speechSynthesis;
   const canSpeak = Boolean(speech && window.SpeechSynthesisUtterance);
@@ -26,7 +26,9 @@ export default function NearbyMuseumNotice({ nearest, lang, radius, searchRadius
       .replace("{distance}", distance)
       .replace("{name}", () => nearest.place.names?.[lang] || nearest.place.name);
   }
-  const message = expansion ? `${expansion} ${result}` : result;
+  const countMessage = label(lang, "Points of interest within {radius} km of you: {count}.")
+    .replace("{radius}", radius).replace("{count}", nearbyCount);
+  const message = [countMessage, expansion, result].filter(Boolean).join(" ");
   const stop = useCallback(() => {
     if (active.current) {
       active.current = null;

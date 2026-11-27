@@ -4,11 +4,12 @@ import "leaflet/dist/leaflet.css";
 import { useLang } from "../../context/LangContext";
 import { routeSummary } from "./routeModel.mjs";
 import { label } from "../../i18n/catalog.mjs";
-import { EXTENDED_MUSEUM_RADIUS_KM, HCM_CENTER, closestMuseumInRange, hasCoordinates } from "./placeModel.mjs";
+import { EXTENDED_MUSEUM_RADIUS_KM, HCM_CENTER, closestMuseumInRange, countPlacesInRadius, hasCoordinates } from "./placeModel.mjs";
 import NearbyMuseumNotice from "./NearbyMuseumNotice";
 
 export default function PlacesMap({
   places,
+  allPlaces = places,
   position = null,
   selectedId = null,
   onSelect,
@@ -21,6 +22,7 @@ export default function PlacesMap({
   onLegSelect,
 }) {
   const { lang } = useLang();
+  const nearbyCount = countPlacesInRadius(allPlaces, position, museumRadiusKm);
   const nearest = closestMuseumInRange(places, position, museumRadiusKm);
   const nearestId = nearest?.place.id;
   const expanded = hasCoordinates(position) && museumRadiusKm > 0 && nearest?.zone !== "nearby";
@@ -222,8 +224,8 @@ export default function PlacesMap({
       className="places-map-panel"
       aria-label={title || label(lang, "Museum map")}
     >
-      {position && museumRadiusKm > 0 && (
-        <NearbyMuseumNotice nearest={nearest} lang={lang} radius={museumRadiusKm} searchRadius={searchRadiusKm} />
+      {nearbyCount !== null && (
+        <NearbyMuseumNotice nearbyCount={nearbyCount} nearest={nearest} lang={lang} radius={museumRadiusKm} searchRadius={searchRadiusKm} />
       )}
       <div className="places-map-canvas" ref={host} />
       {tileError && (

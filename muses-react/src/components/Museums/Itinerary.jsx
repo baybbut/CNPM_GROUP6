@@ -300,6 +300,7 @@ function ItineraryEditor({ places, firstStop }) {
           <section className="museum-map">
             <PlacesMap
               places={stops}
+              allPlaces={places}
               museumRadiusKm={MUSEUM_RADIUS_KM}
               position={position}
               selectedId={selected}
