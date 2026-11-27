@@ -135,6 +135,50 @@ function ArtworkStudy({ artwork, lang, sculpture }) {
   );
 }
 
+function DescriptionPlayer({ artwork, language, uiLanguage }) {
+  return (
+    <Narration
+      text={artwork.description}
+      language={artwork.descriptionLanguage || artwork.contentLanguage || "vi"}
+      requestedLanguage={language}
+      uiLanguage={uiLanguage}
+    />
+  );
+}
+
+function TranslatedDescription({ id, language, uiLanguage }) {
+  const state = useArtworks(id, language);
+  if (state.loading) return <p role="status">{label(uiLanguage, "Loading…")}</p>;
+  if (state.error) return <RequestState {...state} lang={uiLanguage} />;
+  return <DescriptionPlayer artwork={state.data} language={language} uiLanguage={uiLanguage} />;
+}
+
+function ArtworkNarration({ artwork, lang }) {
+  const pageLanguage = contentLanguage(lang);
+  const [language, setLanguage] = useState(pageLanguage);
+  return (
+    <>
+      <label className="detail-listening-language">
+        {label(lang, "Listening language")}
+        <select
+          aria-label={label(lang, "Listening language")}
+          value={language}
+          onChange={event => setLanguage(event.target.value)}
+        >
+          {CONTENT_LANGUAGES.map(({ code, label: name }) => (
+            <option key={code} value={code}>{name}</option>
+          ))}
+        </select>
+      </label>
+      {language === pageLanguage ? (
+        <DescriptionPlayer artwork={artwork} language={language} uiLanguage={lang} />
+      ) : (
+        <TranslatedDescription key={language} id={artwork.id} language={language} uiLanguage={lang} />
+      )}
+    </>
+  );
+}
+
 export default function ArtworkDetail() {
   const { id } = useParams();
   const { lang, setLang } = useLang();
@@ -254,17 +298,7 @@ export default function ArtworkDetail() {
                     {label(lang, "DESCRIPTION", "MÔ TẢ")}
                   </h2>
                   {artwork.description ? (
-                    <Narration
-                      key={`${id}-${lang}-${artwork.contentLanguage}`}
-                      text={artwork.description}
-                      language={
-                        artwork.contentLanguage ||
-                        artwork.descriptionLanguage ||
-                        "vi"
-                      }
-                      requestedLanguage={contentLanguage(lang)}
-                      vi={vi}
-                    />
+                    <ArtworkNarration key={`${id}-${lang}`} artwork={artwork} lang={lang} />
                   ) : (
                     <p>
                       {label(

@@ -15,9 +15,8 @@ export default function Narration({
   text = "",
   language = "vi",
   requestedLanguage = language,
-  vi = true,
+  uiLanguage = requestedLanguage,
 }) {
-  const uiLanguage = requestedLanguage;
   const supported =
     typeof window !== "undefined" &&
     typeof window.speechSynthesis?.speak === "function" &&
@@ -62,6 +61,7 @@ export default function Narration({
     const load = () => setVoices(synth.getVoices());
     load();
     synth.addEventListener("voiceschanged", load);
+    window.addEventListener("focus", load);
     const audioStarted = () => stop();
     window.addEventListener("muses-audio-play", audioStarted);
     return () => {
@@ -69,6 +69,7 @@ export default function Narration({
       if (current.current) synth.cancel();
       current.current = null;
       synth.removeEventListener("voiceschanged", load);
+      window.removeEventListener("focus", load);
       window.removeEventListener("muses-audio-play", audioStarted);
     };
   }, [text, lang, requestedLanguage, supported]);
@@ -127,7 +128,7 @@ export default function Narration({
       }
       const segment = segments[index];
       const utterance = new SpeechSynthesisUtterance(segment.text);
-      utterance.lang = lang;
+      utterance.lang = selectedVoice.lang.replaceAll("_", "-");
       utterance.rate = Number(speed);
       if (voice) utterance.voice = voice;
       current.current = utterance;
@@ -282,6 +283,9 @@ export default function Narration({
                 )}
               </small>
             </div>
+            {available.length === 1 && (
+              <p className="narration-note">{label(uiLanguage, "To use more voices, add voices for this language in your device’s speech settings.")}</p>
+            )}
             {!available.length && (
               <p className="narration-note">
                 {label(uiLanguage, "No voice available for this language.")} (

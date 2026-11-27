@@ -371,3 +371,21 @@
   }
 }
 .detail-map-link { background: #c7c0a3; }
+
+.detail-listening-language {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+
+.detail-listening-language select {
+  padding: 7px 10px;
+  border: 1px solid #a69d85;
+  border-radius: 8px;
+  background: #fffdf166;
+  font: inherit;
+  color: inherit;
+}

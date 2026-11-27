@@ -8,8 +8,9 @@ import { SvgIcon } from "../Icons";
 import ArtworkQR from "../Scanner/ArtworkQR";
 import { label, artworkTerm } from "../../i18n/catalog.mjs";
 
-export function useArtworks(id) {
-  const { lang } = useLang();
+export function useArtworks(id, language) {
+  const { lang: siteLanguage } = useLang();
+  const lang = language || siteLanguage;
   const [state, setState] = useState({
     loading: true,
     data: null,

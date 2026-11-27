@@ -650,6 +650,12 @@ const messages = {
   "QR type": ["Loại mã QR", "二维码类型", "QRコードの種類", "QR 코드 유형"],
   "Artwork information": ["Thông tin tác phẩm", "作品信息", "作品情報", "작품 정보"],
   "Translated audio guide": ["Thuyết minh đa ngôn ngữ", "多语言语音导览", "多言語音声ガイド", "다국어 음성 안내"],
+  "To use more voices, add voices for this language in your device’s speech settings.": [
+    "Muốn có thêm giọng đọc, hãy thêm giọng cho ngôn ngữ này trong cài đặt giọng nói của thiết bị.",
+    "如需更多声音，请在设备的语音设置中添加此语言的声音。",
+    "別の声を使うには、端末の音声設定でこの言語の声を追加してください。",
+    "다른 음성을 사용하려면 기기의 음성 설정에서 이 언어의 음성을 추가하세요.",
+  ],
   "Listening language": ["Ngôn ngữ muốn nghe", "收听语言", "音声の言語", "청취 언어"],
   "Open audio guide": ["Mở thuyết minh", "打开语音导览", "音声ガイドを開く", "음성 안내 열기"],
   "Automatic translation": ["Bản dịch tự động", "自动翻译", "自動翻訳", "자동 번역"],
