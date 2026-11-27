@@ -42,6 +42,11 @@ export default function AdminGate({ children }) {
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  function showLogin() {
+    setUser(null);
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    window.scrollTo(0, 0);
+  }
   useEffect(() => {
     let live = true;
     adminApi("/api/auth/me")
@@ -54,11 +59,10 @@ export default function AdminGate({ children }) {
       .finally(() => {
         if (live) setLoading(false);
       });
-    const expired = () => setUser(null);
-    window.addEventListener("muses-admin-session-ended", expired);
+    window.addEventListener("muses-admin-session-ended", showLogin);
     return () => {
       live = false;
-      window.removeEventListener("muses-admin-session-ended", expired);
+      window.removeEventListener("muses-admin-session-ended", showLogin);
     };
   }, []);
   async function submit(e) {
@@ -80,9 +84,9 @@ export default function AdminGate({ children }) {
     setError("");
     try {
       await adminApi("/api/auth/logout", "POST", {});
-      setUser(null);
+      showLogin();
     } catch (e) {
-      if (e.status === 401) setUser(null);
+      if (e.status === 401) showLogin();
       else setError(e.message);
     } finally {
       setBusy(false);
